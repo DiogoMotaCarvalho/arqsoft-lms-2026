@@ -1,0 +1,36 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="aRXG0mOFvARznHNa418W">
+    <mxGraphModel dx="1030" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="oAPE-Ui1SQ2NU-3Qhezu-1" parent="1" style="html=1;dropTarget=0;whiteSpace=wrap;" value="«component»&lt;br&gt;&lt;b&gt;Library Management System&lt;/b&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="310" y="251" as="geometry" />
+        </mxCell>
+        <mxCell id="oAPE-Ui1SQ2NU-3Qhezu-2" parent="oAPE-Ui1SQ2NU-3Qhezu-1" style="shape=module;jettyWidth=8;jettyHeight=4;" value="" vertex="1">
+          <mxGeometry height="20" relative="1" width="20" x="1" as="geometry">
+            <mxPoint x="-27" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oAPE-Ui1SQ2NU-3Qhezu-11" edge="1" parent="1" source="oAPE-Ui1SQ2NU-3Qhezu-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=oval;endFill=0;sketch=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;endSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="326" as="sourcePoint" />
+            <mxPoint x="400" y="181" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oAPE-Ui1SQ2NU-3Qhezu-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="REST API" vertex="1">
+          <mxGeometry height="30" width="60" x="370" y="141" as="geometry" />
+        </mxCell>
+        <mxCell id="oAPE-Ui1SQ2NU-3Qhezu-14" edge="1" parent="1" source="oAPE-Ui1SQ2NU-3Qhezu-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=halfCircle;endFill=0;endSize=6;strokeWidth=1;sketch=0;fontSize=12;curved=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="545" y="326" as="sourcePoint" />
+            <mxPoint x="580" y="296" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oAPE-Ui1SQ2NU-3Qhezu-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Ninjas REST API" vertex="1">
+          <mxGeometry height="30" width="60" x="550" y="251" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
