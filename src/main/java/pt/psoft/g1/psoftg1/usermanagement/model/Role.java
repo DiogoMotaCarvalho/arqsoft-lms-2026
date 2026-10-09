@@ -20,27 +20,21 @@
  */
 package pt.psoft.g1.psoftg1.usermanagement.model;
 
-import org.springframework.security.core.GrantedAuthority;
-
+import java.io.Serial;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serial;
-
-/**
- * Based on https://github.com/Yoh0xFF/java-spring-security-example
- *
- */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
 @Value
 @AllArgsConstructor
 public class Role implements GrantedAuthority {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
-	public static final String ADMIN = "ADMIN";
-	public static final String LIBRARIAN = "LIBRARIAN";
-	public static final String READER = "READER";
+  public static final String ADMIN = "ADMIN";
+  public static final String LIBRARIAN = "LIBRARIAN";
+  public static final String READER = "READER";
 
-	String authority;
+  String authority;
 }

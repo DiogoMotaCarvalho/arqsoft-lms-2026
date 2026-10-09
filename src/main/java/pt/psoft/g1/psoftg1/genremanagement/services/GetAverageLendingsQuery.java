@@ -9,9 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetAverageLendingsQuery {
-    private int year;
+  private int year;
 
-    @Min(value = 1)
-    @Max(value = 12)
-    private int month;
+  @Min(value = 1)
+  @Max(value = 12)
+  private int month;
 }

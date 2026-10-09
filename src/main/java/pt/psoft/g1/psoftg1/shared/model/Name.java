@@ -11,36 +11,37 @@ import org.springframework.context.annotation.PropertySource;
 @Embeddable
 @PropertySource({"classpath:config/library.properties"})
 public class Name {
-    @NotNull
-    @NotBlank
-    @Column(name="NAME", length = 150)
-    String name;
-    public Name(String name){
-        setName(name);
-    }
+  @NotNull
+  @NotBlank
+  @Column(name = "NAME", length = 150)
+  String name;
 
-    public void setName(String name){
-        if(name == null)
-            throw new IllegalArgumentException("Name cannot be null");
-        if(name.isBlank())
-            throw new IllegalArgumentException("Name cannot be blank, nor only white spaces");
-        if(!StringUtilsCustom.isAlphanumeric(name))
-            throw new IllegalArgumentException("Name can only contain alphanumeric characters");
+  public Name(String name) {
+    setName(name);
+  }
 
-/*
-        //  Logic moved to UserService.java, ReaderService.java
-        for(String forbidden : forbiddenNames){
-            if(name.contains(forbidden))
-                throw new IllegalArgumentException("Name contains forbidden word");
-        }
-*/
-        this.name = name;
-    }
-    public String toString() {
-        return this.name;
-    }
+  public void setName(String name) {
+    if (name == null) throw new IllegalArgumentException("Name cannot be null");
+    if (name.isBlank())
+      throw new IllegalArgumentException("Name cannot be blank, nor only white spaces");
+    if (!StringUtilsCustom.isAlphanumeric(name))
+      throw new IllegalArgumentException("Name can only contain alphanumeric characters");
 
-    protected Name() {
-        // for ORM only
-    }
+    /*
+            //  Logic moved to UserService.java, ReaderService.java
+            for(String forbidden : forbiddenNames){
+                if(name.contains(forbidden))
+                    throw new IllegalArgumentException("Name contains forbidden word");
+            }
+    */
+    this.name = name;
+  }
+
+  public String toString() {
+    return this.name;
+  }
+
+  protected Name() {
+    // for ORM only
+  }
 }

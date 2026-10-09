@@ -10,12 +10,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchLendingQuery {
-    @Setter
-    String readerNumber;
-    String isbn;
-    Boolean returned;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    String startDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    String endDate;
+  @Setter String readerNumber;
+  String isbn;
+  Boolean returned;
+
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
+  String startDate;
+
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
+  String endDate;
 }

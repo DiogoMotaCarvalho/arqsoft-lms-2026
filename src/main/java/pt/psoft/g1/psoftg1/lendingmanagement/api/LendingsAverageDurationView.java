@@ -7,6 +7,5 @@ import lombok.Data;
 @Data
 @Schema(description = "The average lending duration.")
 public class LendingsAverageDurationView {
-    @NotNull
-    private Double lendingsAverageDuration;
+  @NotNull private Double lendingsAverageDuration;
 }

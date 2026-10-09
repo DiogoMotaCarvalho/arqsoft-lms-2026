@@ -4,11 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-
 
 @Getter
 @Data
@@ -16,25 +14,15 @@ import java.util.List;
 @Schema(description = "A DTO for creating a Book")
 public class CreateBookRequest {
 
-    @Setter
-    private String description;
+  @Setter private String description;
 
-    @NotBlank
-    private String title;
+  @NotBlank private String title;
 
-    @NotBlank
-    private String genre;
+  @NotBlank private String genre;
 
-    @Nullable
-    @Getter
-    @Setter
-    private MultipartFile photo;
+  @Nullable @Getter @Setter private MultipartFile photo;
 
-    @Nullable
-    @Getter
-    @Setter
-    private String photoURI;
+  @Nullable @Getter @Setter private String photoURI;
 
-    @NotNull
-    private List<Long> authors;
+  @NotNull private List<Long> authors;
 }

@@ -1,14 +1,13 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.repositories;
 
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
-
 import java.util.Optional;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 
 public interface FineRepository {
 
-    Optional<Fine> findByLendingNumber(String lendingNumber);
-    Iterable<Fine> findAll();
+  Optional<Fine> findByLendingNumber(String lendingNumber);
 
-    Fine save(Fine fine);
+  Iterable<Fine> findAll();
 
+  Fine save(Fine fine);
 }

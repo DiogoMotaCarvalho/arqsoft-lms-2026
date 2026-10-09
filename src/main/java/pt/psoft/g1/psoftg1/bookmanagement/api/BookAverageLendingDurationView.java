@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Schema(description = "Book and its average lending duration")
 public class BookAverageLendingDurationView {
-    BookView book;
-    Double averageLendingDuration;
+  BookView book;
+  Double averageLendingDuration;
 }

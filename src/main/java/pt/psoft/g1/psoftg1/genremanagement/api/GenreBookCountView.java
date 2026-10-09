@@ -7,8 +7,7 @@ import lombok.Data;
 @Data
 @Schema(description = "A Genre with book count")
 public class GenreBookCountView {
-    @NotNull
-    private GenreView genreView;
+  @NotNull private GenreView genreView;
 
-    private Long bookCount;
+  private Long bookCount;
 }

@@ -21,21 +21,17 @@
 package pt.psoft.g1.psoftg1.exceptions;
 
 /**
- *
  * @author pgsousa
- *
  */
 public class FileStorageException extends RuntimeException {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+  /** */
+  private static final long serialVersionUID = 1L;
 
-	public FileStorageException(final String message) {
-		super(message);
-	}
+  public FileStorageException(final String message) {
+    super(message);
+  }
 
-	public FileStorageException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+  public FileStorageException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }

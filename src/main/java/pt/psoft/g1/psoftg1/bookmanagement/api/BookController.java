@@ -4,6 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,213 +36,213 @@ import pt.psoft.g1.psoftg1.shared.services.SearchRequest;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Tag(name = "Books", description = "Endpoints for managing Books")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/books")
 public class BookController {
-    private final BookService bookService;
-    private final LendingService lendingService;
-    private final ConcurrencyService concurrencyService;
-    private final FileStorageService fileStorageService;
-    private final UserService userService;
-    private final ReaderService readerService;
+  private final BookService bookService;
+  private final LendingService lendingService;
+  private final ConcurrencyService concurrencyService;
+  private final FileStorageService fileStorageService;
+  private final UserService userService;
+  private final ReaderService readerService;
 
-    private final BookViewMapper bookViewMapper;
+  private final BookViewMapper bookViewMapper;
 
-    @Operation(summary = "Register a new Book")
-    @PutMapping(value = "/{isbn}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BookView> create( CreateBookRequest resource, @PathVariable("isbn") String isbn) {
+  @Operation(summary = "Register a new Book")
+  @PutMapping(value = "/{isbn}")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<BookView> create(
+      CreateBookRequest resource, @PathVariable("isbn") String isbn) {
 
+    // Guarantee that the client doesn't provide a link on the body, null = no photo or error
+    resource.setPhotoURI(null);
+    MultipartFile file = resource.getPhoto();
 
-        //Guarantee that the client doesn't provide a link on the body, null = no photo or error
-        resource.setPhotoURI(null);
-        MultipartFile file = resource.getPhoto();
+    String fileName = fileStorageService.getRequestPhoto(file);
 
-        String fileName = fileStorageService.getRequestPhoto(file);
-
-        if (fileName != null) {
-            resource.setPhotoURI(fileName);
-        }
-
-        Book book;
-        try {
-            book = bookService.create(resource, isbn);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        //final var savedBook = bookService.save(book);
-        final var newBookUri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .pathSegment(book.getIsbn())
-                .build().toUri();
-
-        return ResponseEntity.created(newBookUri)
-                .eTag(Long.toString(book.getVersion()))
-                .body(bookViewMapper.toBookView(book));
+    if (fileName != null) {
+      resource.setPhotoURI(fileName);
     }
 
-    @Operation(summary = "Gets a specific Book by isbn")
-    @GetMapping(value = "/{isbn}")
-    public ResponseEntity<BookView> findByIsbn(@PathVariable final String isbn) {
+    Book book;
+    try {
+      book = bookService.create(resource, isbn);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    // final var savedBook = bookService.save(book);
+    final var newBookUri =
+        ServletUriComponentsBuilder.fromCurrentRequestUri()
+            .pathSegment(book.getIsbn())
+            .build()
+            .toUri();
 
-        final var book = bookService.findByIsbn(isbn);
+    return ResponseEntity.created(newBookUri)
+        .eTag(Long.toString(book.getVersion()))
+        .body(bookViewMapper.toBookView(book));
+  }
 
-        BookView bookView = bookViewMapper.toBookView(book);
+  @Operation(summary = "Gets a specific Book by isbn")
+  @GetMapping(value = "/{isbn}")
+  public ResponseEntity<BookView> findByIsbn(@PathVariable final String isbn) {
 
-        return ResponseEntity.ok()
-                .eTag(Long.toString(book.getVersion()))
-                .body(bookView);
+    final var book = bookService.findByIsbn(isbn);
+
+    BookView bookView = bookViewMapper.toBookView(book);
+
+    return ResponseEntity.ok().eTag(Long.toString(book.getVersion())).body(bookView);
+  }
+
+  @Operation(summary = "Deletes a book photo")
+  @DeleteMapping("/{isbn}/photo")
+  public ResponseEntity<Void> deleteBookPhoto(@PathVariable("isbn") final String isbn) {
+
+    var book = bookService.findByIsbn(isbn);
+    if (book.getPhoto() == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @Operation(summary = "Deletes a book photo")
-    @DeleteMapping("/{isbn}/photo")
-    public ResponseEntity<Void> deleteBookPhoto(@PathVariable("isbn") final String isbn) {
+    fileStorageService.deleteFile(book.getPhoto().getPhotoFile());
+    bookService.removeBookPhoto(book.getIsbn(), book.getVersion());
 
-        var book = bookService.findByIsbn(isbn);
-        if(book.getPhoto() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    return ResponseEntity.ok().build();
+  }
 
-        fileStorageService.deleteFile(book.getPhoto().getPhotoFile());
-        bookService.removeBookPhoto(book.getIsbn(), book.getVersion());
+  @Operation(summary = "Gets a book photo")
+  @GetMapping("/{isbn}/photo")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<byte[]> getSpecificBookPhoto(@PathVariable("isbn") final String isbn) {
 
-        return ResponseEntity.ok().build();
+    Book book = bookService.findByIsbn(isbn);
+
+    // In case the user has no photo, just return a 200 OK without body
+    if (book.getPhoto() == null) {
+      return ResponseEntity.ok().build();
     }
 
-    @Operation(summary= "Gets a book photo")
-    @GetMapping("/{isbn}/photo")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<byte[]> getSpecificBookPhoto(@PathVariable("isbn") final String isbn){
+    String photoFile = book.getPhoto().getPhotoFile();
+    byte[] image = fileStorageService.getFile(photoFile);
+    String fileFormat =
+        fileStorageService
+            .getExtension(book.getPhoto().getPhotoFile())
+            .orElseThrow(() -> new ValidationException("Unable to get file extension"));
 
-        Book book = bookService.findByIsbn(isbn);
-
-        //In case the user has no photo, just return a 200 OK without body
-        if(book.getPhoto() == null) {
-            return ResponseEntity.ok().build();
-        }
-
-        String photoFile = book.getPhoto().getPhotoFile();
-        byte[] image = fileStorageService.getFile(photoFile);
-        String fileFormat = fileStorageService.getExtension(book.getPhoto().getPhotoFile()).orElseThrow(() -> new ValidationException("Unable to get file extension"));
-
-        if(image == null) {
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.ok().contentType(fileFormat.equals("png") ? MediaType.IMAGE_PNG : MediaType.IMAGE_JPEG).body(image);
-
+    if (image == null) {
+      return ResponseEntity.ok().build();
     }
 
+    return ResponseEntity.ok()
+        .contentType(fileFormat.equals("png") ? MediaType.IMAGE_PNG : MediaType.IMAGE_JPEG)
+        .body(image);
+  }
 
-    @Operation(summary = "Updates a specific Book")
-    @PatchMapping(value = "/{isbn}")
-    public ResponseEntity<BookView> updateBook(@PathVariable final String isbn,
-                                               final WebRequest request,
-                                               @Valid final UpdateBookRequest resource) {
+  @Operation(summary = "Updates a specific Book")
+  @PatchMapping(value = "/{isbn}")
+  public ResponseEntity<BookView> updateBook(
+      @PathVariable final String isbn,
+      final WebRequest request,
+      @Valid final UpdateBookRequest resource) {
 
-        final String ifMatchValue = request.getHeader(ConcurrencyService.IF_MATCH);
-        if (ifMatchValue == null || ifMatchValue.isEmpty() || ifMatchValue.equals("null")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "You must issue a conditional PATCH using 'if-match'");
-        }
-
-        MultipartFile file = resource.getPhoto();
-
-        String fileName = fileStorageService.getRequestPhoto(file);
-
-        if (fileName != null) {
-            resource.setPhotoURI(fileName);
-        }
-
-        Book book;
-        resource.setIsbn(isbn);
-        try {
-            book = bookService.update(resource, String.valueOf(concurrencyService.getVersionFromIfMatchHeader(ifMatchValue)));
-        }catch (Exception e){
-            throw new ConflictException("Could not update book: "+ e.getMessage());
-        }
-        return ResponseEntity.ok()
-                .eTag(Long.toString(book.getVersion()))
-                .body(bookViewMapper.toBookView(book));
+    final String ifMatchValue = request.getHeader(ConcurrencyService.IF_MATCH);
+    if (ifMatchValue == null || ifMatchValue.isEmpty() || ifMatchValue.equals("null")) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "You must issue a conditional PATCH using 'if-match'");
     }
 
-    @Operation(summary = "Gets Books by title or genre")
-    @GetMapping
-    public ListResponse<BookView> findBooks(@RequestParam(value = "title", required = false) final String title,
-                                            @RequestParam(value = "genre", required = false) final String genre,
-                                            @RequestParam(value = "authorName", required = false) final String authorName) {
+    MultipartFile file = resource.getPhoto();
 
-        //Este método, como está, faz uma junção 'OR'.
-        //Para uma junção 'AND', ver o "/search"
+    String fileName = fileStorageService.getRequestPhoto(file);
 
-        List<Book> booksByTitle = null;
-        if (title != null)
-            booksByTitle = bookService.findByTitle(title);
-
-        List<Book> booksByGenre = null;
-        if (genre != null)
-            booksByGenre = bookService.findByGenre(genre);
-
-        List<Book> booksByAuthorName = null;
-        if (authorName != null)
-            booksByAuthorName = bookService.findByAuthorName(authorName);
-
-        Set<Book> bookSet = new HashSet<>();
-        if (booksByTitle!= null)
-            bookSet.addAll(booksByTitle);
-        if(booksByGenre != null)
-            bookSet.addAll(booksByGenre);
-        if(booksByAuthorName != null)
-            bookSet.addAll(booksByAuthorName);
-
-        List<Book> books = bookSet.stream()
-                .sorted(Comparator.comparing(b -> b.getTitle().toString()))
-                .collect(Collectors.toList());
-
-        if(books.isEmpty())
-            throw new NotFoundException("No books found with the provided criteria");
-
-        return new ListResponse<>(bookViewMapper.toBookView(books));
+    if (fileName != null) {
+      resource.setPhotoURI(fileName);
     }
 
-    @Operation(summary = "Gets the top 5 books lent")
-    @GetMapping("top5")
-    public ListResponse<BookCountView> getTop5BooksLent() {
-        return new ListResponse<>(bookViewMapper.toBookCountView(bookService.findTop5BooksLent()));
+    Book book;
+    resource.setIsbn(isbn);
+    try {
+      book =
+          bookService.update(
+              resource,
+              String.valueOf(concurrencyService.getVersionFromIfMatchHeader(ifMatchValue)));
+    } catch (Exception e) {
+      throw new ConflictException("Could not update book: " + e.getMessage());
     }
+    return ResponseEntity.ok()
+        .eTag(Long.toString(book.getVersion()))
+        .body(bookViewMapper.toBookView(book));
+  }
 
-    @Operation(summary = "Gets some books suggestions based on the reader's interests")
-    @GetMapping("suggestions")
-    public ListResponse<BookView> getBooksSuggestions(Authentication authentication) {
-        User loggedUser = userService.getAuthenticatedUser(authentication);
-        ReaderDetails readerDetails = readerService.findByUsername(loggedUser.getUsername())
-                .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
+  @Operation(summary = "Gets Books by title or genre")
+  @GetMapping
+  public ListResponse<BookView> findBooks(
+      @RequestParam(value = "title", required = false) final String title,
+      @RequestParam(value = "genre", required = false) final String genre,
+      @RequestParam(value = "authorName", required = false) final String authorName) {
 
-        return new ListResponse<>(bookViewMapper.toBookView(bookService.getBooksSuggestionsForReader(readerDetails.getReaderNumber())));
-    }
+    // Para uma junção 'AND', ver o "/search"
 
-    @Operation(summary = "Get average lendings duration")
-    @GetMapping(value = "/{isbn}/avgDuration")
-    public @ResponseBody ResponseEntity<BookAverageLendingDurationView>getAvgLendingDurationByIsbn(
-            @PathVariable("isbn") final String isbn) {
-        final var book = bookService.findByIsbn(isbn);
-        Double avgDuration = lendingService.getAvgLendingDurationByIsbn(isbn);
+    List<Book> booksByTitle = null;
+    if (title != null) booksByTitle = bookService.findByTitle(title);
 
-        return ResponseEntity.ok().body(bookViewMapper.toBookAverageLendingDurationView(book, avgDuration));
-    }
+    List<Book> booksByGenre = null;
+    if (genre != null) booksByGenre = bookService.findByGenre(genre);
 
-    @PostMapping("/search")
-    public ListResponse<BookView> searchBooks(
-            @RequestBody final SearchRequest<SearchBooksQuery> request) {
-        final var bookList = bookService.searchBooks(request.getPage(), request.getQuery());
-        return new ListResponse<>(bookViewMapper.toBookView(bookList));
-    }
+    List<Book> booksByAuthorName = null;
+    if (authorName != null) booksByAuthorName = bookService.findByAuthorName(authorName);
+
+    Set<Book> bookSet = new HashSet<>();
+    if (booksByTitle != null) bookSet.addAll(booksByTitle);
+    if (booksByGenre != null) bookSet.addAll(booksByGenre);
+    if (booksByAuthorName != null) bookSet.addAll(booksByAuthorName);
+
+    List<Book> books =
+        bookSet.stream()
+            .sorted(Comparator.comparing(b -> b.getTitle().toString()))
+            .collect(Collectors.toList());
+
+    if (books.isEmpty()) throw new NotFoundException("No books found with the provided criteria");
+
+    return new ListResponse<>(bookViewMapper.toBookView(books));
+  }
+
+  @Operation(summary = "Gets the top 5 books lent")
+  @GetMapping("top5")
+  public ListResponse<BookCountView> getTop5BooksLent() {
+    return new ListResponse<>(bookViewMapper.toBookCountView(bookService.findTop5BooksLent()));
+  }
+
+  @Operation(summary = "Gets some books suggestions based on the reader's interests")
+  @GetMapping("suggestions")
+  public ListResponse<BookView> getBooksSuggestions(Authentication authentication) {
+    User loggedUser = userService.getAuthenticatedUser(authentication);
+    ReaderDetails readerDetails =
+        readerService
+            .findByUsername(loggedUser.getUsername())
+            .orElseThrow(
+                () -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
+
+    return new ListResponse<>(
+        bookViewMapper.toBookView(
+            bookService.getBooksSuggestionsForReader(readerDetails.getReaderNumber())));
+  }
+
+  @Operation(summary = "Get average lendings duration")
+  @GetMapping(value = "/{isbn}/avgDuration")
+  public @ResponseBody ResponseEntity<BookAverageLendingDurationView> getAvgLendingDurationByIsbn(
+      @PathVariable("isbn") final String isbn) {
+    final var book = bookService.findByIsbn(isbn);
+    Double avgDuration = lendingService.getAvgLendingDurationByIsbn(isbn);
+
+    return ResponseEntity.ok()
+        .body(bookViewMapper.toBookAverageLendingDurationView(book, avgDuration));
+  }
+
+  @PostMapping("/search")
+  public ListResponse<BookView> searchBooks(
+      @RequestBody final SearchRequest<SearchBooksQuery> request) {
+    final var bookList = bookService.searchBooks(request.getPage(), request.getQuery());
+    return new ListResponse<>(bookViewMapper.toBookView(bookList));
+  }
 }
-

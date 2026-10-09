@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 @Schema(description = "A Genre and its average number of associated lendings.")
 public class GenreLendingsView {
-    @NotNull
-    private String genre;
-    private Number value;
+  @NotNull private String genre;
+  private Number value;
 }

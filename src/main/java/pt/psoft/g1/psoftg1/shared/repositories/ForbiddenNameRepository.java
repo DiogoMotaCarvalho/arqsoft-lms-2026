@@ -1,17 +1,17 @@
 package pt.psoft.g1.psoftg1.shared.repositories;
 
-import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
-
 import java.util.List;
 import java.util.Optional;
+import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
 
 public interface ForbiddenNameRepository {
-    Iterable<ForbiddenName> findAll();
-    List<ForbiddenName> findByForbiddenNameIsContained(String pat);
-    ForbiddenName save(ForbiddenName forbiddenName);
+  Iterable<ForbiddenName> findAll();
 
-    Optional<ForbiddenName> findByForbiddenName(String forbiddenName);
+  List<ForbiddenName> findByForbiddenNameIsContained(String pat);
 
-    int deleteForbiddenName(String forbiddenName);
+  ForbiddenName save(ForbiddenName forbiddenName);
 
+  Optional<ForbiddenName> findByForbiddenName(String forbiddenName);
+
+  int deleteForbiddenName(String forbiddenName);
 }

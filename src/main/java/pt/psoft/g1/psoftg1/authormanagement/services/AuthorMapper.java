@@ -8,9 +8,8 @@ import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 @Mapper(componentModel = "spring")
 public abstract class AuthorMapper extends MapperInterface {
-    @Mapping(target = "photo", source = "photoURI")
-    public abstract Author create(CreateAuthorRequest request);
+  @Mapping(target = "photo", source = "photoURI")
+  public abstract Author create(CreateAuthorRequest request);
 
-    public abstract void update(UpdateAuthorRequest request, @MappingTarget Author author);
-
+  public abstract void update(UpdateAuthorRequest request, @MappingTarget Author author);
 }

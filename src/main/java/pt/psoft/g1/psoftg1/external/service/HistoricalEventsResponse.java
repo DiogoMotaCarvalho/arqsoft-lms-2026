@@ -7,9 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Data
 public class HistoricalEventsResponse {
-    private String year;
-    private String month;
-    private String day;
-    @Getter
-    private String event;
+  private String year;
+  private String month;
+  private String day;
+  @Getter private String event;
 }

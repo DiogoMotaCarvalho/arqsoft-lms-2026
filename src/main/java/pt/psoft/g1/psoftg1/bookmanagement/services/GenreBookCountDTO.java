@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenreBookCountDTO {
-    private String genre;
-    private long bookCount;
+  private String genre;
+  private long bookCount;
 }

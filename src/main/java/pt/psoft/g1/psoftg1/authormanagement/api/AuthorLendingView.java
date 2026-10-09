@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthorLendingView {
-    @NotNull
-    private String authorName;
-    @NotNull
-    private Long lendingCount;
+  @NotNull private String authorName;
+  @NotNull private Long lendingCount;
 }

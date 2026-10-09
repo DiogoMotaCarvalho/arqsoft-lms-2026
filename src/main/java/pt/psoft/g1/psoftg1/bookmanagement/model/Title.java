@@ -9,37 +9,36 @@ import lombok.Getter;
 
 @Embeddable
 public class Title {
-    @Transient
-    private final int TITLE_MAX_LENGTH = 128;
-    @NotBlank(message = "Title cannot be blank")
-    @Size(min = 1, max = TITLE_MAX_LENGTH)
-    @Column(name="TITLE", length = TITLE_MAX_LENGTH)
-    @Getter
-    String title;
+  @Transient private final int TITLE_MAX_LENGTH = 128;
 
-    protected Title() {}
+  @NotBlank(message = "Title cannot be blank")
+  @Size(min = 1, max = TITLE_MAX_LENGTH)
+  @Column(name = "TITLE", length = TITLE_MAX_LENGTH)
+  @Getter
+  String title;
 
-    public Title(String title) {
-        setTitle(title);
-    }
+  protected Title() {}
 
-    public void setTitle(String title) {
+  public Title(String title) {
+    setTitle(title);
+  }
 
-/*
-        if (!StringUtilsCustom.startsOrEndsInWhiteSpace(title)) {
-            throw new IllegalArgumentException("Invalid title: " + title);
-        }
-*/
-        if(title == null)
-            throw new IllegalArgumentException("Title cannot be null");
-        if(title.isBlank())
-            throw new IllegalArgumentException("Title cannot be blank");
-        if(title.length() > TITLE_MAX_LENGTH)
-            throw new IllegalArgumentException("Title has a maximum of " + TITLE_MAX_LENGTH + " characters");
-        this.title = title.strip();
-    }
+  public void setTitle(String title) {
 
-    public String toString() {
-        return this.title;
-    }
+    /*
+            if (!StringUtilsCustom.startsOrEndsInWhiteSpace(title)) {
+                throw new IllegalArgumentException("Invalid title: " + title);
+            }
+    */
+    if (title == null) throw new IllegalArgumentException("Title cannot be null");
+    if (title.isBlank()) throw new IllegalArgumentException("Title cannot be blank");
+    if (title.length() > TITLE_MAX_LENGTH)
+      throw new IllegalArgumentException(
+          "Title has a maximum of " + TITLE_MAX_LENGTH + " characters");
+    this.title = title.strip();
+  }
+
+  public String toString() {
+    return this.title;
+  }
 }

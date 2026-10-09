@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 @Embeddable
 @AllArgsConstructor
 public class EmailAddress {
-    @Email
-    String address;
+  @Email String address;
 
-    protected EmailAddress() {}
+  protected EmailAddress() {}
 }

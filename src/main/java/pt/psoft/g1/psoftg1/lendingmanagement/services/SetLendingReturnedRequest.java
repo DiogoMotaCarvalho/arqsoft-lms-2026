@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "A DTO for setting a Lending as returned")
 public class SetLendingReturnedRequest {
-    @Size(max = 1024)
-    private String commentary;
-
+  @Size(max = 1024)
+  private String commentary;
 }
