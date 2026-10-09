@@ -1,0 +1,58 @@
+pipeline {
+  agent any
+  tools {
+    maven 'Maven3'
+    jdk 'JDK17'
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main',
+          url: 'https://github.com/your-org/your-repo.git',
+          credentialsId: 'github-credentials'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'mvn clean compile'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'mvn test'
+      }
+    }
+    stage('Package') {
+      steps {
+        sh 'mvn package'
+      }
+    }
+  }
+
+post {
+    always {
+      echo "Build completed with status: ${currentBuild.result}"
+    }
+    success {
+      slackSend(channel: '#ci-cd', message: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+      mail to: 'team@example.com',
+        subject: "Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: "Good job! Build passed. See details at ${env.BUILD_URL}"
+    }
+    unstable {
+      slackSend(channel: '#ci-cd', message: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+      mail to: 'qa@example.com',
+        subject: "Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: "Tests or quality checks unstable. Review at ${env.BUILD_URL}"
+    }
+    failure {
+      slackSend(channel: '#ci-cd', message: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+      mail to: 'dev-team@example.com',
+        subject: "Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: "Something went wrong. Check logs: ${env.BUILD_URL}"
+    }
+    aborted {
+      slackSend(channel: '#ci-cd', message: "ABORTED: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+    }
+  }
+}
