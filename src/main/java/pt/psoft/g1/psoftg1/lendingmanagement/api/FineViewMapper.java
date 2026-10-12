@@ -1,6 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.api;
 
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public abstract class FineViewMapper {

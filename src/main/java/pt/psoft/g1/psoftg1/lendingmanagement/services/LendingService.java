@@ -7,12 +7,16 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 
 public interface LendingService {
   /**
-   * @param lendingNumber
+   * Finds a lending by its lending number.
+   *
+   * @param lendingNumber the lending number to search for
    * @return {@code Optional<Lending>}
    */
   Optional<Lending> findByLendingNumber(String lendingNumber);
 
   /**
+   * Searches lendings matching the given reader, book and return filters.
+   *
    * @param readerNumber - Reader Number of the Reader associated with the lending
    * @param isbn - ISBN of the book associated with the lending
    * @param returned - Wether it's intended to filter by the return status of a lending

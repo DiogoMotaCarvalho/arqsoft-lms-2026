@@ -8,7 +8,7 @@ import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
+import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDto;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 @Mapper(componentModel = "spring")
@@ -27,6 +27,9 @@ public abstract class ReaderViewMapper extends MapperInterface {
       expression = "java(mapInterestList(readerDetails.getInterestList()))")
   public abstract ReaderView toReaderView(ReaderDetails readerDetails);
 
+  @Mapping(target = ".", qualifiedByName = "toReaderView")
+  public abstract List<ReaderView> toReaderView(Iterable<ReaderDetails> readerList);
+
   @Named(value = "toReaderQuoteView")
   @Mapping(target = "fullName", source = "reader.name.name")
   @Mapping(target = "email", source = "reader.username")
@@ -40,14 +43,11 @@ public abstract class ReaderViewMapper extends MapperInterface {
       expression = "java(mapInterestList(readerDetails.getInterestList()))")
   public abstract ReaderQuoteView toReaderQuoteView(ReaderDetails readerDetails);
 
-  @Mapping(target = ".", qualifiedByName = "toReaderView")
-  public abstract List<ReaderView> toReaderView(Iterable<ReaderDetails> readerList);
-
   @Mapping(target = "readerView", source = "readerDetails")
-  public abstract ReaderCountView toReaderCountView(ReaderBookCountDTO readerBookCountDTO);
+  public abstract ReaderCountView toReaderCountView(ReaderBookCountDto readerBookCountDto);
 
   public abstract List<ReaderCountView> toReaderCountViewList(
-      List<ReaderBookCountDTO> readerBookCountDTOList);
+      List<ReaderBookCountDto> readerBookCountDtoList);
 
   protected String generatePhotoUrl(ReaderDetails readerDetails) {
     String readerNumber = readerDetails.getReaderNumber();

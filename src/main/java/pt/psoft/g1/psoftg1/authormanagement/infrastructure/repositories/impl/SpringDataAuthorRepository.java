@@ -16,7 +16,8 @@ public interface SpringDataAuthorRepository extends AuthorRepository, CrudReposi
 
   @Override
   @Query(
-      "SELECT new pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView(a.name.name, COUNT(l.pk)) "
+      "SELECT new pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView("
+          + "a.name.name, COUNT(l.pk)) "
           + "FROM Book b "
           + "JOIN b.authors a "
           + "JOIN Lending l ON l.book.pk = b.pk "
@@ -27,7 +28,8 @@ public interface SpringDataAuthorRepository extends AuthorRepository, CrudReposi
   @Query(
       "SELECT DISTINCT coAuthor FROM Book b "
           + "JOIN b.authors coAuthor "
-          + "WHERE b IN (SELECT b FROM Book b JOIN b.authors a WHERE a.authorNumber = :authorNumber) "
+          + "WHERE b IN (SELECT b FROM Book b JOIN b.authors a "
+          + "WHERE a.authorNumber = :authorNumber) "
           + "AND coAuthor.authorNumber <> :authorNumber")
   List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
 }

@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.shared.services;
 
 import jakarta.validation.ValidationException;
@@ -40,7 +41,9 @@ import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.shared.api.UploadFileResponse;
 import pt.psoft.g1.psoftg1.shared.model.FileUtils;
 
-/** code based on https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example */
+/**
+ * code based on https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example.
+ */
 @RequiredArgsConstructor
 @Service
 public class FileStorageService {
@@ -137,10 +140,10 @@ public class FileStorageService {
         throw new ValidationException("Images can only be png or jpeg");
       }
 
-      String photoUUID = UUID.randomUUID().toString();
+      String photoUuid = UUID.randomUUID().toString();
 
       try {
-        up = FileUtils.doUploadFile(this, photoUUID, file);
+        up = FileUtils.doUploadFile(this, photoUuid, file);
       } catch (Exception e) {
         return null;
         // throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -149,21 +152,13 @@ public class FileStorageService {
       // String fileFormat = validImageFormats[formatIndex].split("/")[1];
       String originalFileName = file.getOriginalFilename();
       String fileFormat = originalFileName.substring(originalFileName.lastIndexOf('.') + 1);
-      return photoUUID + "." + fileFormat;
+      return photoUuid + "." + fileFormat;
     }
 
     return null;
   }
 
   private String determineFileName(final MultipartFile file) {
-    //		// Normalize file name
-    //		final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-    //		// Check if the file's name contains invalid characters
-    //		if (fileName.contains("..")) {
-    //			throw new FileStorageException("Sorry! Filename contains invalid path sequence " +
-    // fileName);
-    //		}
-    //		return fileName;
 
     return UUID.randomUUID().toString() + "." + getExtension(file.getOriginalFilename()).orElse("");
   }

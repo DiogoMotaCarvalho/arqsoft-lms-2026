@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.api;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +26,14 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pt.psoft.g1.psoftg1.shared.api.ListResponse;
 import pt.psoft.g1.psoftg1.shared.services.SearchRequest;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
@@ -35,7 +43,7 @@ import pt.psoft.g1.psoftg1.usermanagement.services.EditUserRequest;
 import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Tag(name = "UserAdmin")
 @RestController
 @RequestMapping(path = "api/admin/users")

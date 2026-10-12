@@ -9,7 +9,7 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 /**
- * Brief guide: <a href="https://www.baeldung.com/mapstruct">https://www.baeldung.com/mapstruct</a>
+ * Brief guide: <a href="https://www.baeldung.com/mapstruct">https://www.baeldung.com/mapstruct</a>.
  */
 @Mapper(
     componentModel = "spring",

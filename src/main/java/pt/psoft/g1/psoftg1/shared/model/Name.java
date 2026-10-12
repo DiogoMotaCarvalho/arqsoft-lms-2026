@@ -20,12 +20,20 @@ public class Name {
     setName(name);
   }
 
+  protected Name() {
+    // for ORM only
+  }
+
   public void setName(String name) {
-    if (name == null) throw new IllegalArgumentException("Name cannot be null");
-    if (name.isBlank())
+    if (name == null) {
+      throw new IllegalArgumentException("Name cannot be null");
+    }
+    if (name.isBlank()) {
       throw new IllegalArgumentException("Name cannot be blank, nor only white spaces");
-    if (!StringUtilsCustom.isAlphanumeric(name))
+    }
+    if (!StringUtilsCustom.isAlphanumeric(name)) {
       throw new IllegalArgumentException("Name can only contain alphanumeric characters");
+    }
 
     /*
             //  Logic moved to UserService.java, ReaderService.java
@@ -39,9 +47,5 @@ public class Name {
 
   public String toString() {
     return this.name;
-  }
-
-  protected Name() {
-    // for ORM only
   }
 }

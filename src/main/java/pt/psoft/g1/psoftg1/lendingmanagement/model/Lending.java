@@ -1,6 +1,18 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
@@ -102,6 +114,9 @@ public class Lending {
 
   @Getter private int fineValuePerDayInCents;
 
+  /** Protected empty constructor for ORM only. */
+  protected Lending() {}
+
   /**
    * Constructs a new {@code Lending} object to be persisted in the database.
    *
@@ -148,20 +163,24 @@ public class Lending {
    */
   public void setReturned(final long desiredVersion, final String commentary) {
 
-    if (this.returnedDate != null)
+    if (this.returnedDate != null) {
       throw new IllegalArgumentException("book has already been returned!");
+    }
 
     // check current version
-    if (this.version != desiredVersion)
+    if (this.version != desiredVersion) {
       throw new StaleObjectStateException("Object was already modified by another user", this.pk);
+    }
 
-    if (commentary != null) this.commentary = commentary;
+    if (commentary != null) {
+      this.commentary = commentary;
+    }
 
     this.returnedDate = LocalDate.now();
   }
 
   /**
-   * Returns the number of days that the lending is/was past its due date
+   * Returns the number of days that the lending is/was past its due date.
    *
    * @return If the book was returned on time, or there is still time for it be returned, returns 0.
    *     If the book has been returned with delay, returns the number of days of delay. If the book
@@ -219,9 +238,6 @@ public class Lending {
   public String getLendingNumber() {
     return this.lendingNumber.toString();
   }
-
-  /** Protected empty constructor for ORM only. */
-  protected Lending() {}
 
   /** Factory method meant to be only used in bootstrapping. */
   public static Lending newBootstrappingLending(

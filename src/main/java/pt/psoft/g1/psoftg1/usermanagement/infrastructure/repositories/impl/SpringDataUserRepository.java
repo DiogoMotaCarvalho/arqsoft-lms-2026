@@ -18,29 +18,22 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.infrastructure.repositories.impl;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
-import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Repository
 @CacheConfig(cacheNames = "users")
 public interface SpringDataUserRepository
@@ -58,17 +51,17 @@ public interface SpringDataUserRepository
       })
   <S extends User> S save(S entity);
 
-  /** findById searches a specific user and returns an optional */
+  /** findById searches a specific user and returns an optional. */
   @Override
   @Cacheable
   Optional<User> findById(Long objectId);
 
   /**
    * getById explicitly loads a user or throws an exception if the user does not exist or the
-   * account is not enabled
+   * account is not enabled.
    *
-   * @param id
-   * @return
+   * @param id the identifier of the user
+   * @return the user with the given identifier
    */
   @Cacheable
   default User getById(final Long id) {
@@ -84,58 +77,4 @@ public interface SpringDataUserRepository
 
   @Cacheable
   List<User> findByNameName(String name);
-}
-
-/**
- * Custom interface to add custom methods to spring repository.
- *
- * @see
- *     https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.custom-implementations
- */
-interface UserRepoCustom {
-
-  List<User> searchUsers(Page page, SearchUsersQuery query);
-}
-
-/**
- * use JPA Criteria API to build the custom query
- *
- * @see https://www.baeldung.com/hibernate-criteria-queries
- */
-@RequiredArgsConstructor
-class UserRepoCustomImpl implements UserRepoCustom {
-
-  // get the underlying JPA Entity Manager via spring thru constructor dependency
-  // injection
-  private final EntityManager em;
-
-  @Override
-  public List<User> searchUsers(final Page page, final SearchUsersQuery query) {
-
-    final CriteriaBuilder cb = em.getCriteriaBuilder();
-    final CriteriaQuery<User> cq = cb.createQuery(User.class);
-    final Root<User> root = cq.from(User.class);
-    cq.select(root);
-
-    final List<Predicate> where = new ArrayList<>();
-    if (StringUtils.hasText(query.getUsername())) {
-      where.add(cb.equal(root.get("username"), query.getUsername()));
-    }
-    if (StringUtils.hasText(query.getFullName())) {
-      where.add(cb.like(root.get("fullName"), "%" + query.getFullName() + "%"));
-    }
-
-    // search using OR
-    if (!where.isEmpty()) {
-      cq.where(cb.or(where.toArray(new Predicate[0])));
-    }
-
-    cq.orderBy(cb.desc(root.get("createdAt")));
-
-    final TypedQuery<User> q = em.createQuery(cq);
-    q.setFirstResult((page.getNumber() - 1) * page.getLimit());
-    q.setMaxResults(page.getLimit());
-
-    return q.getResultList();
-  }
 }

@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.model;
 
 import java.io.Serial;
@@ -25,7 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.springframework.security.core.GrantedAuthority;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Value
 @AllArgsConstructor
 public class Role implements GrantedAuthority {

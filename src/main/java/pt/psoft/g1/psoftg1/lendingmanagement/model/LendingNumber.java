@@ -38,10 +38,12 @@ public class LendingNumber implements Serializable {
    * @param sequential Sequential component of the {@code LendingNumber}
    */
   public LendingNumber(int year, int sequential) {
-    if (year < 1970 || LocalDate.now().getYear() < year)
+    if (year < 1970 || LocalDate.now().getYear() < year) {
       throw new IllegalArgumentException("Invalid year component");
-    if (sequential < 0)
+    }
+    if (sequential < 0) {
       throw new IllegalArgumentException("Sequencial component cannot be negative");
+    }
     this.lendingNumber = year + "/" + sequential;
   }
 
@@ -53,15 +55,19 @@ public class LendingNumber implements Serializable {
    * @param lendingNumber String containing the lending number.
    */
   public LendingNumber(String lendingNumber) {
-    if (lendingNumber == null) throw new IllegalArgumentException("Lending number cannot be null");
+    if (lendingNumber == null) {
+      throw new IllegalArgumentException("Lending number cannot be null");
+    }
 
-    int year, sequential;
+    int year;
+    int sequential;
     try {
       year = Integer.parseInt(lendingNumber, 0, 4, 10);
       sequential = Integer.parseInt(lendingNumber, 5, lendingNumber.length(), 10);
-      if (lendingNumber.charAt(4) != '/')
+      if (lendingNumber.charAt(4) != '/') {
         throw new IllegalArgumentException(
             "Lending number has wrong format. It should be \"{year}/{sequential}\"");
+      }
     } catch (NumberFormatException | IndexOutOfBoundsException e) {
       throw new IllegalArgumentException(
           "Lending number has wrong format. It should be \"{year}/{sequential}\"");
@@ -79,8 +85,9 @@ public class LendingNumber implements Serializable {
    * @param sequential Sequential component of the {@code LendingNumber}
    */
   public LendingNumber(int sequential) {
-    if (sequential < 0)
+    if (sequential < 0) {
       throw new IllegalArgumentException("Sequencial component cannot be negative");
+    }
     this.lendingNumber = LocalDate.now().getYear() + "/" + sequential;
   }
 

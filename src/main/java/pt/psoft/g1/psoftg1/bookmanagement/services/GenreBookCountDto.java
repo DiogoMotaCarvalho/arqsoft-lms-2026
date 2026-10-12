@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenreBookCountDTO {
+public class GenreBookCountDto {
   private String genre;
   private long bookCount;
 }

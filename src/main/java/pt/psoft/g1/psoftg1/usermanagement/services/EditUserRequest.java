@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.services;
 
 import java.util.Set;
@@ -25,7 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,6 +1,12 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
@@ -49,12 +55,19 @@ public class Author extends EntityWithPhoto {
   }
 
   public void applyPatch(final long desiredVersion, final UpdateAuthorRequest request) {
-    if (this.version != desiredVersion)
+    if (this.version != desiredVersion) {
       throw new StaleObjectStateException(
           "Object was already modified by another user", this.authorNumber);
-    if (request.getName() != null) setName(request.getName());
-    if (request.getBio() != null) setBio(request.getBio());
-    if (request.getPhotoURI() != null) setPhotoInternal(request.getPhotoURI());
+    }
+    if (request.getName() != null) {
+      setName(request.getName());
+    }
+    if (request.getBio() != null) {
+      setBio(request.getBio());
+    }
+    if (request.getPhotoURI() != null) {
+      setPhotoInternal(request.getPhotoURI());
+    }
   }
 
   public void removePhoto(long desiredVersion) {

@@ -77,7 +77,7 @@ public class ReaderServiceImpl implements ReaderService {
   }
 
   @Override
-  public List<ReaderBookCountDTO> findTopByGenre(
+  public List<ReaderBookCountDto> findTopByGenre(
       String genre, LocalDate startDate, LocalDate endDate) {
     if (startDate.isAfter(endDate)) {
       throw new IllegalArgumentException("Start date cannot be after end date");
@@ -191,13 +191,19 @@ public class ReaderServiceImpl implements ReaderService {
   @Override
   public List<ReaderDetails> searchReaders(
       pt.psoft.g1.psoftg1.shared.services.Page page, SearchReadersQuery query) {
-    if (page == null) page = new pt.psoft.g1.psoftg1.shared.services.Page(1, 10);
+    if (page == null) {
+      page = new pt.psoft.g1.psoftg1.shared.services.Page(1, 10);
+    }
 
-    if (query == null) query = new SearchReadersQuery("", "", "");
+    if (query == null) {
+      query = new SearchReadersQuery("", "", "");
+    }
 
     final var list = readerRepo.searchReaderDetails(page, query);
 
-    if (list.isEmpty()) throw new NotFoundException("No results match the search query");
+    if (list.isEmpty()) {
+      throw new NotFoundException("No results match the search query");
+    }
 
     return list;
   }

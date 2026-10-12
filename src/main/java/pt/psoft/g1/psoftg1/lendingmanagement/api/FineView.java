@@ -6,7 +6,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 import lombok.Data;
 
-/** DTO for {@link pt.psoft.g1.psoftg1.lendingmanagement.model.Fine} */
+/** DTO for {@link pt.psoft.g1.psoftg1.lendingmanagement.model.Fine}. */
 @Data
 @Schema(description = "A Fine")
 public class FineView implements Serializable {

@@ -1,6 +1,15 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.nio.file.InvalidPathException;
 import java.util.List;
 import lombok.Getter;
@@ -35,6 +44,10 @@ public class ReaderDetails extends EntityWithPhoto {
   @Version @Getter private Long version;
 
   @Getter @Setter @ManyToMany private List<Genre> interestList;
+
+  protected ReaderDetails() {
+    // for ORM only
+  }
 
   public ReaderDetails(
       int readerNumber,
@@ -95,13 +108,13 @@ public class ReaderDetails extends EntityWithPhoto {
       throw new ConflictException("Provided version does not match latest version of this object");
     }
 
-    String birthDate = request.getBirthDate();
-    String phoneNumber = request.getPhoneNumber();
-    boolean marketing = request.getMarketing();
-    boolean thirdParty = request.getThirdParty();
-    String fullName = request.getFullName();
-    String username = request.getUsername();
-    String password = request.getPassword();
+    final String birthDate = request.getBirthDate();
+    final String phoneNumber = request.getPhoneNumber();
+    final boolean marketing = request.getMarketing();
+    final boolean thirdParty = request.getThirdParty();
+    final String fullName = request.getFullName();
+    final String username = request.getUsername();
+    final String password = request.getPassword();
 
     if (username != null) {
       this.reader.setUsername(username);
@@ -134,7 +147,8 @@ public class ReaderDetails extends EntityWithPhoto {
     if (photoURI != null) {
       try {
         setPhotoInternal(photoURI);
-      } catch (InvalidPathException ignored) {
+      } catch (InvalidPathException expected) {
+        // ignore invalid photo paths
       }
     }
 
@@ -157,9 +171,5 @@ public class ReaderDetails extends EntityWithPhoto {
 
   public String getPhoneNumber() {
     return this.phoneNumber.toString();
-  }
-
-  protected ReaderDetails() {
-    // for ORM only
   }
 }

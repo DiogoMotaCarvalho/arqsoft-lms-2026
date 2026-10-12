@@ -2,7 +2,11 @@ package pt.psoft.g1.psoftg1.bookmanagement.services;
 
 import jakarta.annotation.Nullable;
 import java.util.List;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;

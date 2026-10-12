@@ -14,6 +14,8 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageProperties;
 
 /**
+ * OpenAPI/Swagger documentation configuration.
+ *
  * @author pgsousa
  */
 @Configuration
@@ -36,7 +38,7 @@ public class ApiConfig {
     return new OpenAPI()
         .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
         .components(
-            new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
+            new Components().addSecuritySchemes("Bearer Authentication", createApiKeyScheme()))
         .info(
             new Info()
                 .title("ApiDePsoft")
@@ -47,7 +49,7 @@ public class ApiConfig {
                 .license(new License().name("MIT").url("#")));
   }
 
-  private SecurityScheme createAPIKeyScheme() {
+  private SecurityScheme createApiKeyScheme() {
     return new SecurityScheme().type(SecurityScheme.Type.HTTP).bearerFormat("JWT").scheme("bearer");
   }
 }

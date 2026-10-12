@@ -18,11 +18,14 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.shared.api;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-/** code based on https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example */
+/**
+ * code based on https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example.
+ */
 @Schema(description = "Metadata about the uploaded file")
 public class UploadFileResponse {
 

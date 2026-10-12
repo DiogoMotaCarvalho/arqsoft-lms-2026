@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.services;
 
 import static java.util.stream.Collectors.toSet;
@@ -35,7 +36,7 @@ import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Mapper(componentModel = "spring")
 public abstract class EditUserMapper extends MapperInterface {
 

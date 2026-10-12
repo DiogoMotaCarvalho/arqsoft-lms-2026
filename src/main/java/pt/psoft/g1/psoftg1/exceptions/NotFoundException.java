@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.exceptions;
 
 import java.net.MalformedURLException;
@@ -25,12 +26,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
+ * Signals that a requested object could not be found.
+ *
  * @author pgsousa
  */
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Object Not Found")
 public class NotFoundException extends RuntimeException {
 
-  /** */
   private static final long serialVersionUID = 1L;
 
   public NotFoundException(final String string) {

@@ -22,7 +22,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -63,7 +72,8 @@ class ReaderController {
 
   @Operation(
       summary =
-          "Gets the reader data if authenticated as Reader or all readers if authenticated as Librarian")
+          "Gets the reader data if authenticated as Reader or all readers if "
+              + "authenticated as Librarian")
   @ApiResponse(
       description = "Success",
       responseCode = "200",
@@ -366,7 +376,9 @@ class ReaderController {
     }
     final var lendings = lendingService.listByReaderNumberAndIsbn(urlReaderNumber, isbn, returned);
 
-    if (lendings.isEmpty()) throw new NotFoundException("No lendings found with provided ISBN");
+    if (lendings.isEmpty()) {
+      throw new NotFoundException("No lendings found with provided ISBN");
+    }
 
     return lendingViewMapper.toLendingView(lendings);
   }
@@ -383,7 +395,9 @@ class ReaderController {
       @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
     final var books = readerService.findTopByGenre(genre, startDate, endDate);
 
-    if (books.isEmpty()) throw new NotFoundException("No lendings found with provided parameters");
+    if (books.isEmpty()) {
+      throw new NotFoundException("No lendings found with provided parameters");
+    }
 
     return new ListResponse<>(readerViewMapper.toReaderCountViewList(books));
   }

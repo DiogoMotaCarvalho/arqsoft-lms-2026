@@ -1,6 +1,10 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

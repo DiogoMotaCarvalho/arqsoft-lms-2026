@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.repositories;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 
-/** */
+/** Persistence operations for users. */
 public interface UserRepository {
 
   <S extends User> List<S> saveAll(Iterable<S> entities);

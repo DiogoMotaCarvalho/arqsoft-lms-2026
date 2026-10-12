@@ -7,7 +7,7 @@ import lombok.Data;
 
 /**
  * Based on <a
- * href="https://github.com/Yoh0xFF/java-spring-security-example">https://github.com/Yoh0xFF/java-spring-security-example</a>
+ * href="https://github.com/Yoh0xFF/java-spring-security-example">https://github.com/Yoh0xFF/java-spring-security-example</a>.
  */
 @AllArgsConstructor
 @Data

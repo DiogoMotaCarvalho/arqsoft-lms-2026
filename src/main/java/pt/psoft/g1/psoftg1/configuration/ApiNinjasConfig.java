@@ -7,14 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
-/** Based on https://www.baeldung.com/spring-5-webclient */
+/** Based on https://www.baeldung.com/spring-5-webclient. */
 @Configuration
 @EnableConfigurationProperties
 @RequiredArgsConstructor
 public class ApiNinjasConfig {
-  private final String VERSION = "v1/";
+  private static final String VERSION = "v1/";
 
-  private final String HEADER = "X-API-KEY";
+  private static final String HEADER = "X-API-KEY";
 
   @Value("${my.ninjas-key}")
   private String key;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.model.*;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -79,7 +79,7 @@ public class BookServiceImpl implements BookService {
   @Override
   public Book update(UpdateBookRequest request, String currentVersion) {
 
-    var book = findByIsbn(request.getIsbn());
+    final var book = findByIsbn(request.getIsbn());
     if (request.getAuthors() != null) {
       List<Long> authorNumbers = request.getAuthors();
       List<Author> authors = new ArrayList<>();
@@ -123,7 +123,7 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
-  public List<BookCountDTO> findTop5BooksLent() {
+  public List<BookCountDto> findTop5BooksLent() {
     LocalDate oneYearAgo = LocalDate.now().minusYears(1);
     Pageable pageableRules = PageRequest.of(0, 5);
     return this.bookRepository.findTop5BooksLent(oneYearAgo, pageableRules).getContent();

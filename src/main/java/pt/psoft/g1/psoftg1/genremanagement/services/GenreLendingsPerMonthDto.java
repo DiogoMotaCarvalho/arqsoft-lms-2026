@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GenreLendingsPerMonthDTO {
+public class GenreLendingsPerMonthDto {
   private int year;
   private int month;
-  List<GenreLendingsDTO> values;
+  List<GenreLendingsDto> values;
 }

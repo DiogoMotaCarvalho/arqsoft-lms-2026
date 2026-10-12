@@ -63,7 +63,8 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Manuel Antonio Pina",
-              "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
+              "Manuel António Pina foi um jornalista e escritor português, premiado em "
+                  + "2011 com o Prémio Camões",
               null);
       authorRepository.save(author);
     }
@@ -71,7 +72,17 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Antoine de Saint Exupéry",
-              "Antoine de Saint-Exupéry nasceu a 29 de junho de 1900 em Lyon. Faz o seu batismo de voo aos 12 anos, aos 22 torna-se piloto militar e é como capitão que em 1939 se junta à Força Aérea francesa em luta contra a ocupação nazi. A aviação e a guerra viriam a revelar-se elementos centrais de toda a sua obra literária, onde se destacam títulos como Correio do Sul (1929), o seu primeiro romance, Voo Noturno (1931), que logo se tornou um êxito de vendas internacional, e Piloto de Guerra (1942), retrato da sua participação na Segunda Guerra Mundial. Em 1943 publicaria aquela que é reconhecida como a sua obra-prima, O Principezinho, um dos livros mais traduzidos em todo o mundo. A sua morte, aos 44 anos, num acidente de aviação durante uma missão de reconhecimento no sul de França, permanece ainda hoje um mistério.",
+              "Antoine de Saint-Exupéry nasceu a 29 de junho de 1900 em Lyon. Faz o seu "
+                  + "batismo de voo aos 12 anos, aos 22 torna-se piloto militar e é como capitão "
+                  + "que em 1939 se junta à Força Aérea francesa em luta contra a ocupação nazi. "
+                  + "A aviação e a guerra viriam a revelar-se elementos centrais de toda a sua "
+                  + "obra literária, onde se destacam títulos como Correio do Sul (1929), o seu "
+                  + "primeiro romance, Voo Noturno (1931), que logo se tornou um êxito de vendas "
+                  + "internacional, e Piloto de Guerra (1942), retrato da sua participação na "
+                  + "Segunda Guerra Mundial. Em 1943 publicaria aquela que é reconhecida como a "
+                  + "sua obra-prima, O Principezinho, um dos livros mais traduzidos em todo o "
+                  + "mundo. A sua morte, aos 44 anos, num acidente de aviação durante uma missão "
+                  + "de reconhecimento no sul de França, permanece ainda hoje um mistério.",
               null);
       authorRepository.save(author);
     }
@@ -79,12 +90,24 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Alexandre Pereira",
-              "Alexandre Pereira é licenciado e mestre em Engenharia Electrotécnica e de Computadores, pelo Instituto Superior Técnico. É, também, licenciado em Antropologia, pela Faculdade de Ciências Sociais e Humanas da Universidade Nova de Lisboa.\n"
-                  + "É Professor Auxiliar Convidado na Universidade Lusófona de Humanidades e Tecnologias, desde Março de 1993, onde lecciona diversas disciplinas na Licenciatura de Informática e lecciona uma cadeira de introdução ao SPSS na Licenciatura de Psicologia.\n"
-                  + "Tem também leccionado cursos de formação na área da aplicação da informática ao cálculo estatístico e processamento de dados utilizando o SPSS, em diversas instituições, nomeadamente no Instituto Nacional de Estatística.\n"
-                  + "Para além disso, desenvolve aplicações informáticas na área da Psicologia Cognitiva, no âmbito de projectos de investigação do departamento de Psicologia Cognitiva da Faculdade de Psicologia da Universidade de Lisboa.\n"
-                  + "Está ainda ligado a projectos de ensino à distância desenvolvidos na Faculdade de Motricidade Humana da Universidade Técnica de Lisboa.\n"
-                  + "Paralelamente, tem desenvolvido aplicações de software comercial, área onde continua em actividade. ",
+              "Alexandre Pereira é licenciado e mestre em Engenharia Electrotécnica e de "
+                  + "Computadores, pelo Instituto Superior Técnico. É, também, licenciado em "
+                  + "Antropologia, pela Faculdade de Ciências Sociais e Humanas da Universidade "
+                  + "Nova de Lisboa.\n"
+                  + "É Professor Auxiliar Convidado na Universidade Lusófona de Humanidades e "
+                  + "Tecnologias, desde Março de 1993, onde lecciona diversas disciplinas na "
+                  + "Licenciatura de Informática e lecciona uma cadeira de introdução ao SPSS na "
+                  + "Licenciatura de Psicologia.\n"
+                  + "Tem também leccionado cursos de formação na área da aplicação da informática "
+                  + "ao cálculo estatístico e processamento de dados utilizando o SPSS, em "
+                  + "diversas instituições, nomeadamente no Instituto Nacional de Estatística.\n"
+                  + "Para além disso, desenvolve aplicações informáticas na área da Psicologia "
+                  + "Cognitiva, no âmbito de projectos de investigação do departamento de "
+                  + "Psicologia Cognitiva da Faculdade de Psicologia da Universidade de Lisboa.\n"
+                  + "Está ainda ligado a projectos de ensino à distância desenvolvidos na "
+                  + "Faculdade de Motricidade Humana da Universidade Técnica de Lisboa.\n"
+                  + "Paralelamente, tem desenvolvido aplicações de software comercial, área onde "
+                  + "continua em actividade. ",
               null);
       authorRepository.save(author);
     }
@@ -92,7 +115,10 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Filipe Portela",
-              " «Docente convidado na Escola de Engenharia da Universidade do Minho. Investigador integrado do Centro Algoritmi. CEO e fundador da startup tecnológica IOTech - Innovation on Technology. Coautor do livro Introdução ao Desenvolvimento Moderno para a Web. ",
+              " «Docente convidado na Escola de Engenharia da Universidade do Minho. "
+                  + "Investigador integrado do Centro Algoritmi. CEO e fundador da startup "
+                  + "tecnológica IOTech - Innovation on Technology. Coautor do livro Introdução "
+                  + "ao Desenvolvimento Moderno para a Web. ",
               null);
       authorRepository.save(author);
     }
@@ -100,7 +126,10 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Ricardo Queirós",
-              "Docente na Escola Superior de Media Artes e Design do Politécnico do Porto. Diretor da uniMAD (ESMAD) e membro efetivo do CRACS (INESC TEC). Autor de vários livros sobre tecnologias Web e programação móvel, publicados pela FCA. Coautor do livro Introdução ao Desenvolvimento Moderno para a Web.",
+              "Docente na Escola Superior de Media Artes e Design do Politécnico do Porto. "
+                  + "Diretor da uniMAD (ESMAD) e membro efetivo do CRACS (INESC TEC). Autor de "
+                  + "vários livros sobre tecnologias Web e programação móvel, publicados pela "
+                  + "FCA. Coautor do livro Introdução ao Desenvolvimento Moderno para a Web.",
               null);
       authorRepository.save(author);
     }
@@ -108,8 +137,14 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Freida Mcfadden",
-              "Freida McFadden é médica e especialista em lesões cerebrais. Autora de diversos thrillers psicológicos, todos eles bestsellers, já traduzidos para mais de 30 idiomas. As suas obras foram selecionadas para «O Melhor Livro do Ano» na Amazon e também para «Melhor Thriller» dos Goodreads Choice Awards.\n"
-                  + "Freida vive com a sua família e o gato preto numa casa de três andares com vista para o oceano, com escadas que rangem e gemem a cada passo, e ninguém conseguiria ouvi-la se gritasse. A menos que gritasse muito alto, talvez.",
+              "Freida McFadden é médica e especialista em lesões cerebrais. Autora de "
+                  + "diversos thrillers psicológicos, todos eles bestsellers, já traduzidos para "
+                  + "mais de 30 idiomas. As suas obras foram selecionadas para «O Melhor Livro do "
+                  + "Ano» na Amazon e também para «Melhor Thriller» dos Goodreads Choice "
+                  + "Awards.\n"
+                  + "Freida vive com a sua família e o gato preto numa casa de três andares com "
+                  + "vista para o oceano, com escadas que rangem e gemem a cada passo, e ninguém "
+                  + "conseguiria ouvi-la se gritasse. A menos que gritasse muito alto, talvez.",
               null);
       authorRepository.save(author);
     }
@@ -118,9 +153,16 @@ public class Bootstrapper implements CommandLineRunner {
           new Author(
               "J R R Tolkien",
               "J.R.R. Tolkien nasceu a 3 de Janeiro de 1892, em Bloemfontein.\n"
-                  + "Depois de ter combatido na Primeira Guerra Mundial, dedicou-se a uma ilustre carreira académica e foi reconhecido como um dos grandes filólogos do planeta.\n"
-                  + "Foi a criação da Terra Média, porém, a trazer-lhe a celebridade. Autor de extraordinários clássicos da ficção, de que são exemplo O Hobbit, O Senhor dos Anéis e O Silmarillion, os seus livros foram traduzidos em mais de 60 línguas e venderam largos milhões de exemplares no mundo inteiro.\n"
-                  + "Tolkien foi nomeado Comandante da Ordem do Império Britânico e, em 1972, foi-lhe atribuído o título de Doutor Honoris Causa, pela Universidade de Oxford.\n"
+                  + "Depois de ter combatido na Primeira Guerra Mundial, dedicou-se a uma ilustre "
+                  + "carreira académica e foi reconhecido como um dos grandes filólogos do "
+                  + "planeta.\n"
+                  + "Foi a criação da Terra Média, porém, a trazer-lhe a celebridade. Autor de "
+                  + "extraordinários clássicos da ficção, de que são exemplo O Hobbit, O Senhor "
+                  + "dos Anéis e O Silmarillion, os seus livros foram traduzidos em mais de 60 "
+                  + "línguas e venderam largos milhões de exemplares no mundo inteiro.\n"
+                  + "Tolkien foi nomeado Comandante da Ordem do Império Britânico e, em 1972, "
+                  + "foi-lhe atribuído o título de Doutor Honoris Causa, pela Universidade de "
+                  + "Oxford.\n"
                   + "Morreu em 1973, com 81 anos.",
               "authorPhotoTest.jpg");
       authorRepository.save(author);
@@ -129,8 +171,11 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Gardner Dozois",
-              "Gardner Raymond Dozois (23 de julho de 1947 – 27 de maio de 2018) foi um autor de ficção científica norte-americano.\n"
-                  + "Foi o fundador e editor do Melhores Do Ano de Ficção científica antologias (1984–2018) e foi editor da revista Asimov Ficção científica (1984-2004), ganhando vários prémios.",
+              "Gardner Raymond Dozois (23 de julho de 1947 – 27 de maio de 2018) foi um "
+                  + "autor de ficção científica norte-americano.\n"
+                  + "Foi o fundador e editor do Melhores Do Ano de Ficção científica antologias "
+                  + "(1984–2018) e foi editor da revista Asimov Ficção científica (1984-2004), "
+                  + "ganhando vários prémios.",
               null);
       authorRepository.save(author);
     }
@@ -138,8 +183,15 @@ public class Bootstrapper implements CommandLineRunner {
       final Author author =
           new Author(
               "Lisa Tuttle",
-              "Lisa Gracia Tuttle (nascida a 16 de setembro de 1952) é uma autora americana de ficção científica, fantasia e terror. Publicou mais de uma dúzia de romances, sete coleções de contos e vários títulos de não-ficção, incluindo um livro de referência sobre feminismo, \"Enciclopédia do Feminismo\" (1986). Também editou várias antologias e fez críticas de livros para diversas publicações. Vive no Reino Unido desde 1981.\n"
-                  + "Tuttle ganhou o Prémio John W. Campbell para Melhor Novo Escritor em 1974, recebeu o Prémio Nebula de Melhor Conto em 1982 por \"The Bone Flute\", que recusou, e o Prémio BSFA de Ficção Curta em 1989 por \"In Translation\".",
+              "Lisa Gracia Tuttle (nascida a 16 de setembro de 1952) é uma autora americana "
+                  + "de ficção científica, fantasia e terror. Publicou mais de uma dúzia de "
+                  + "romances, sete coleções de contos e vários títulos de não-ficção, incluindo "
+                  + "um livro de referência sobre feminismo, \"Enciclopédia do Feminismo\" "
+                  + "(1986). Também editou várias antologias e fez críticas de livros para "
+                  + "diversas publicações. Vive no Reino Unido desde 1981.\n"
+                  + "Tuttle ganhou o Prémio John W. Campbell para Melhor Novo Escritor em 1974, "
+                  + "recebeu o Prémio Nebula de Melhor Conto em 1982 por \"The Bone Flute\", que "
+                  + "recusou, e o Prémio BSFA de Ficção Curta em 1989 por \"In Translation\".",
               null);
       authorRepository.save(author);
     }
@@ -183,7 +235,13 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789720706386",
                 "O País das Pessoas de Pernas Para o Ar ",
-                "Fazendo uso do humor e do nonsense, o livro reúne quatro histórias divertidas e com múltiplos significados: um país onde as pessoas vivem de pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como as outras crianças; um bolo que queria ser comido, mas que não foi, por causa do pecado da gula. ",
+                "Fazendo uso do humor e do nonsense, o livro reúne quatro histórias "
+                    + "divertidas e com múltiplos significados: um país onde as pessoas vivem de "
+                    + "pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; "
+                    + "a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia "
+                    + "ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como "
+                    + "as outras crianças; um bolo que queria ser comido, mas que não foi, por "
+                    + "causa do pecado da gula. ",
                 genre.get(),
                 authors,
                 null);
@@ -201,7 +259,10 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789723716160",
                 "Como se Desenha Uma Casa",
-                "Como quem, vindo de países distantes fora de / si, chega finalmente aonde sempre esteve / e encontra tudo no seu lugar, / o passado no passado, o presente no presente, / assim chega o viajante à tardia idade / em que se confundem ele e o caminho. [...]",
+                "Como quem, vindo de países distantes fora de / si, chega finalmente aonde "
+                    + "sempre esteve / e encontra tudo no seu lugar, / o passado no passado, o "
+                    + "presente no presente, / assim chega o viajante à tardia idade / em que se "
+                    + "confundem ele e o caminho. [...]",
                 genre.get(),
                 authors,
                 null);
@@ -223,9 +284,16 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789895612864",
                 "C e Algoritmos",
-                "O C é uma linguagem de programação incontornável no estudo e aprendizagem das linguagens de programação. É um precursor das linguagens de programação estruturadas e a sua sintaxe foi reutilizada em muitas linguagens posteriores, mesmo de paradigmas diferentes, entre as quais se contam o Java, o Javascript, o Actionscript, o PHP, o Perl, o C# e o C++.\n"
+                "O C é uma linguagem de programação incontornável no estudo e aprendizagem "
+                    + "das linguagens de programação. É um precursor das linguagens de "
+                    + "programação estruturadas e a sua sintaxe foi reutilizada em muitas "
+                    + "linguagens posteriores, mesmo de paradigmas diferentes, entre as quais se "
+                    + "contam o Java, o Javascript, o Actionscript, o PHP, o Perl, o C# e o "
+                    + "C++.\n"
                     + "\n"
-                    + "Este livro apresenta a sintaxe da linguagem C tal como especificada pelas normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho ISO/IEC JTC1/SC22/WG14.",
+                    + "Este livro apresenta a sintaxe da linguagem C tal como especificada pelas "
+                    + "normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho "
+                    + "ISO/IEC JTC1/SC22/WG14.",
                 genre.get(),
                 authors,
                 null);
@@ -249,11 +317,26 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9782722203402",
                 "Introdução ao Desenvolvimento Moderno para a Web",
-                "Este livro foca o desenvolvimento moderno de aplicações Web, sendo apresentados os princípios básicos associados à programação para a Web, divididos em duas partes: front-end e back-end. Na parte do front-end, são introduzidos os conceitos de estruturação, estilização e interação, através das suas principais linguagens HTML, CSS e JavaScript. Na parte do back-end, é feita uma introdução aos servidores Web e respetivas linguagem (Node.js) e framework (Express), às bases de dados (SQL) e aos serviços na Web (REST). De forma a consolidar todos os conceitos teóricos apresentados, é descrita a implementação de um projeto prático completo.\n"
+                "Este livro foca o desenvolvimento moderno de aplicações Web, sendo "
+                    + "apresentados os princípios básicos associados à programação para a Web, "
+                    + "divididos em duas partes: front-end e back-end. Na parte do front-end, são "
+                    + "introduzidos os conceitos de estruturação, estilização e interação, "
+                    + "através das suas principais linguagens HTML, CSS e JavaScript. Na parte do "
+                    + "back-end, é feita uma introdução aos servidores Web e respetivas linguagem "
+                    + "(Node.js) e framework (Express), às bases de dados (SQL) e aos serviços na "
+                    + "Web (REST). De forma a consolidar todos os conceitos teóricos "
+                    + "apresentados, é descrita a implementação de um projeto prático completo.\n"
                     + "\n"
-                    + "Com capítulos que podem ser lidos sequencialmente ou de forma alternada, o livro é dirigido a todos aqueles que com conhecimentos básicos de programação pretendem (re)entrar no mundo da Web e a quem pretenda colocar-se rapidamente a par de todas as novidades introduzidas nos últimos anos.\n"
+                    + "Com capítulos que podem ser lidos sequencialmente ou de forma alternada, o "
+                    + "livro é dirigido a todos aqueles que com conhecimentos básicos de "
+                    + "programação pretendem (re)entrar no mundo da Web e a quem pretenda "
+                    + "colocar-se rapidamente a par de todas as novidades introduzidas nos "
+                    + "últimos anos.\n"
                     + "\n"
-                    + "O ambiente de desenvolvimento onde todos os exemplos da obra foram escritos é o Visual Studio Code e o controlo de versões foi feito no GitHub. Para colocar o servidor a correr, foi utilizada a plataforma Heroku.\n"
+                    + "O ambiente de desenvolvimento onde todos os exemplos da obra foram "
+                    + "escritos é o Visual Studio Code e o controlo de versões foi feito no "
+                    + "GitHub. Para colocar o servidor a correr, foi utilizada a plataforma "
+                    + "Heroku.\n"
                     + "\n"
                     + "Principais temas abordados:\n"
                     + "· Estruturação de conteúdos na Web com o HTML;\n"
@@ -292,7 +375,10 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789722328296",
                 "O Principezinho",
-                "Depois de deixar o seu asteroide e embarcar numa viagem pelo espaço, o principezinho chega, finalmente, à Terra. No deserto, o menino de cabelos da cor do ouro conhece um aviador, a quem conta todas as aventuras que viveu e tudo o que viu ao longo da sua jornada.",
+                "Depois de deixar o seu asteroide e embarcar numa viagem pelo espaço, o "
+                    + "principezinho chega, finalmente, à Terra. No deserto, o menino de cabelos "
+                    + "da cor do ouro conhece um aviador, a quem conta todas as aventuras que "
+                    + "viveu e tudo o que viu ao longo da sua jornada.",
                 genre.get(),
                 authors,
                 "bookPhotoTest.jpg");
@@ -314,7 +400,13 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789895702756",
                 "A Criada Está a Ver",
-                "A Sra. Lowell transborda simpatia ao acenar-me através da cerca que separa as nossas casas. “Devem ser os nossos novos vizinhos!” Agarro na mão da minha filha e sorrio de volta. No entanto, assim que vê o meu marido, uma expressão estranha atravessa-lhe o rosto. MILLIE, A MEMORÁVEL PROTAGONISTA DOS BESTSELLERS A CRIADA E O SEGREDO DA CRIADA, ESTÁ DE VOLTA!Eu costumava limpar a casa de outras pessoas. Nem posso acreditar que esta casa é realmente minha...",
+                "A Sra. Lowell transborda simpatia ao acenar-me através da cerca que "
+                    + "separa as nossas casas. “Devem ser os nossos novos vizinhos!” Agarro na "
+                    + "mão da minha filha e sorrio de volta. No entanto, assim que vê o meu "
+                    + "marido, uma expressão estranha atravessa-lhe o rosto. MILLIE, A MEMORÁVEL "
+                    + "PROTAGONISTA DOS BESTSELLERS A CRIADA E O SEGREDO DA CRIADA, ESTÁ DE "
+                    + "VOLTA!Eu costumava limpar a casa de outras pessoas. Nem posso acreditar "
+                    + "que esta casa é realmente minha...",
                 genre.get(),
                 authors,
                 null);
@@ -336,12 +428,25 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789897776090",
                 "O Hobbit",
-                "\"Esta é a história de como um Baggins viveu uma aventura e deu por si a fazer e a dizer coisas totalmente inesperadas...\n"
-                    + "Bilbo Baggins goza de uma vida confortável, calma e pouco ambiciosa. Raramente viaja mais longe do que a despensa ou a adega do seu buraco de hobbit, em Fundo-do-Saco.\n"
-                    + "Mas a sua tranquilidade é perturbada quando, um dia, o feiticeiro Gandalf e uma companhia de treze anões aparecem à sua porta, para o levar numa perigosa aventura.\n"
-                    + "Eles têm um plano: saquear o tesouro guardado por Smaug, O Magnífico, um dragão enorme e muito perigoso... Bilbo, embora relutante, junta-se a esta missão, desconhecendo que nesta viagem até à Montanha Solitária vai encontrar um anel mágico e uma estranha criatura conhecida como Gollum. Livro com nova tradução e edição.\n"
-                    + "Inclui mapas e ilustrações originais do autor. Situado no mundo imaginário da Terra Média,\n"
-                    + "O Hobbit, o prelúdio de O Senhor dos Anéis, vendeu milhões de exemplares em todo o mundo desde a sua publicação em 1937, impondo-se como um clássico intemporal e um dos livros mais adorados e influentes do século xx.\" ",
+                "\"Esta é a história de como um Baggins viveu uma aventura e deu por si a "
+                    + "fazer e a dizer coisas totalmente inesperadas...\n"
+                    + "Bilbo Baggins goza de uma vida confortável, calma e pouco ambiciosa. "
+                    + "Raramente viaja mais longe do que a despensa ou a adega do seu buraco de "
+                    + "hobbit, em Fundo-do-Saco.\n"
+                    + "Mas a sua tranquilidade é perturbada quando, um dia, o feiticeiro Gandalf "
+                    + "e uma companhia de treze anões aparecem à sua porta, para o levar numa "
+                    + "perigosa aventura.\n"
+                    + "Eles têm um plano: saquear o tesouro guardado por Smaug, O Magnífico, um "
+                    + "dragão enorme e muito perigoso... Bilbo, embora relutante, junta-se a esta "
+                    + "missão, desconhecendo que nesta viagem até à Montanha Solitária vai "
+                    + "encontrar um anel mágico e uma estranha criatura conhecida como Gollum. "
+                    + "Livro com nova tradução e edição.\n"
+                    + "Inclui mapas e ilustrações originais do autor. Situado no mundo imaginário "
+                    + "da Terra Média,\n"
+                    + "O Hobbit, o prelúdio de O Senhor dos Anéis, vendeu milhões de exemplares "
+                    + "em todo o mundo desde a sua publicação em 1937, impondo-se como um "
+                    + "clássico intemporal e um dos livros mais adorados e influentes do século "
+                    + "xx.\" ",
                 genre.get(),
                 authors,
                 null);
@@ -365,9 +470,18 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789896379636",
                 "Histórias de Vigaristas e Canalhas",
-                "Recomendamos cautela ao ler estes contos: há muitos vigaristas e canalhas à solta.\n"
-                    + "Se gostou de ler \"Histórias de Aventureiros e Patifes\", então não vai querer perder novas histórias com alguns dos maiores vigaristas e canalhas. São personagens infames que se recusam a agir preto no branco, e escolhem trilhar os seus próprios caminhos, à margem das leis dos homens. Personagens carismáticas, eloquentes, sem escrúpulos, que chegam até nós através de um formidável elenco de autores.\n"
-                    + "Com organização de George R. R. Martin, um nome que já dispensa apresentações, e Gardner Dozois, tem nas mãos uma antologia de géneros multifacetados e que reúne algumas das mentes mais perversas da literatura fantástica.",
+                "Recomendamos cautela ao ler estes contos: há muitos vigaristas e canalhas "
+                    + "à solta.\n"
+                    + "Se gostou de ler \"Histórias de Aventureiros e Patifes\", então não vai "
+                    + "querer perder novas histórias com alguns dos maiores vigaristas e "
+                    + "canalhas. São personagens infames que se recusam a agir preto no branco, e "
+                    + "escolhem trilhar os seus próprios caminhos, à margem das leis dos homens. "
+                    + "Personagens carismáticas, eloquentes, sem escrúpulos, que chegam até nós "
+                    + "através de um formidável elenco de autores.\n"
+                    + "Com organização de George R. R. Martin, um nome que já dispensa "
+                    + "apresentações, e Gardner Dozois, tem nas mãos uma antologia de géneros "
+                    + "multifacetados e que reúne algumas das mentes mais perversas da "
+                    + "literatura fantástica.",
                 genre.get(),
                 authors,
                 null);
@@ -393,8 +507,16 @@ public class Bootstrapper implements CommandLineRunner {
                 "Histórias de Aventureiros e Patifes",
                 "Recomendamos cautela a ler estes contos: Há muitos patifes à solta.\n"
                     + "\n"
-                    + "Há personagens malandras e sem escrúpulos cujo carisma e presença de espírito nos faz estimá-las mais do que devíamos. São patifes, mercenários e vigaristas com códigos de honra duvidosos mas que fazem de qualquer aventura uma delícia de ler.\n"
-                    + "George R. R. Martin é um grande admirador desse tipo de personagens – ou não fosse ele o autor de \"A Guerra dos Tronos\". Nesta monumental antologia, não só participa com um prefácio e um conto introduzindo uma das personagens mais canalhas da história de Westeros, como também a organiza com Gardner Dozois. Se é fã de literatura fantástica, vai deliciar-se!",
+                    + "Há personagens malandras e sem escrúpulos cujo carisma e presença de "
+                    + "espírito nos faz estimá-las mais do que devíamos. São patifes, mercenários "
+                    + "e vigaristas com códigos de honra duvidosos mas que fazem de qualquer "
+                    + "aventura uma delícia de ler.\n"
+                    + "George R. R. Martin é um grande admirador desse tipo de personagens – ou "
+                    + "não fosse ele o autor de \"A Guerra dos Tronos\". Nesta monumental "
+                    + "antologia, não só participa com um prefácio e um conto introduzindo uma "
+                    + "das personagens mais canalhas da história de Westeros, como também a "
+                    + "organiza com Gardner Dozois. Se é fã de literatura fantástica, vai "
+                    + "deliciar-se!",
                 genre.get(),
                 authors,
                 null);
@@ -417,12 +539,18 @@ public class Bootstrapper implements CommandLineRunner {
             new Book(
                 "9789896375225",
                 "Windhaven",
-                "Ao descobrirem neste novo planeta a habilidade de voar com asas de metal, os voadores de asas prateadas "
-                    + "tornam-se a elite e levam a todo o lado notícias, canções e histórias. Atravessam oceanos, enfrentam as "
-                    + "tempestades e são heróis lendários que enfrentam a morte a cada golpe traiçoeiro do vento. Maris de Amberly,"
-                    + " filha de um pescador, foi criada por um voador e nada mais deseja do que conquistar os céus de Windhaven. "
-                    + "A sua ambição é tão forte que a jovem desafia a tradição para se juntar à elite. Mas cedo irá descobrir que"
-                    + " nem todos os voadores estão dispostos a aceitá-la e terá de lutar e arriscar a vida pelo seu sonho. "
+                "Ao descobrirem neste novo planeta a habilidade de voar com asas de metal, "
+                    + "os voadores de asas prateadas "
+                    + "tornam-se a elite e levam a todo o lado notícias, canções e histórias. "
+                    + "Atravessam oceanos, enfrentam as "
+                    + "tempestades e são heróis lendários que enfrentam a morte a cada golpe "
+                    + "traiçoeiro do vento. Maris de Amberly,"
+                    + " filha de um pescador, foi criada por um voador e nada mais deseja do que "
+                    + "conquistar os céus de Windhaven. "
+                    + "A sua ambição é tão forte que a jovem desafia a tradição para se juntar à "
+                    + "elite. Mas cedo irá descobrir que"
+                    + " nem todos os voadores estão dispostos a aceitá-la e terá de lutar e "
+                    + "arriscar a vida pelo seu sonho. "
                     + "Conseguirá Maris vencer ou tornar-se-á uma testemunha do fim de Windhaven?",
                 genre.get(),
                 authors,

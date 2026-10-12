@@ -138,12 +138,17 @@ public class LendingServiceImpl implements LendingService {
     if (page == null) {
       page = new Page(1, 10);
     }
-    if (query == null)
+    if (query == null) {
       query = new SearchLendingQuery("", "", null, LocalDate.now().minusDays(10L).toString(), null);
+    }
 
     try {
-      if (query.getStartDate() != null) startDate = LocalDate.parse(query.getStartDate());
-      if (query.getEndDate() != null) endDate = LocalDate.parse(query.getEndDate());
+      if (query.getStartDate() != null) {
+        startDate = LocalDate.parse(query.getStartDate());
+      }
+      if (query.getEndDate() != null) {
+        endDate = LocalDate.parse(query.getEndDate());
+      }
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("Expected format is YYYY-MM-DD");
     }

@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.exceptions;
 
 import java.net.MalformedURLException;
@@ -25,12 +26,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
+ * Signals that a request conflicts with the current state of a resource.
+ *
  * @author pgsousa
  */
 @ResponseStatus(code = HttpStatus.CONFLICT)
 public class ConflictException extends RuntimeException {
 
-  /** */
   private static final long serialVersionUID = 1L;
 
   public ConflictException(final String string) {

@@ -6,7 +6,7 @@ import java.util.Optional;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
-/** */
+/** Application service for reader-related use cases. */
 public interface ReaderService {
   ReaderDetails create(CreateReaderRequest request, String photoURI);
 
@@ -22,7 +22,7 @@ public interface ReaderService {
 
   List<ReaderDetails> findTopReaders(int minTop);
 
-  List<ReaderBookCountDTO> findTopByGenre(String genre, LocalDate startDate, LocalDate endDate);
+  List<ReaderBookCountDto> findTopByGenre(String genre, LocalDate startDate, LocalDate endDate);
 
   // Optional<Reader> update(UpdateReaderRequest request) throws Exception;
   Optional<ReaderDetails> removeReaderPhoto(String readerNumber, long desiredVersion);

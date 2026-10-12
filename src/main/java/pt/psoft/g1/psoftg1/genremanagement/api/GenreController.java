@@ -3,7 +3,12 @@ package pt.psoft.g1.psoftg1.genremanagement.api;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreService;
 import pt.psoft.g1.psoftg1.genremanagement.services.GetAverageLendingsQuery;
@@ -29,7 +34,9 @@ public class GenreController {
   public ListResponse<GenreBookCountView> getTop() {
     final var list = genreService.findTopGenreByBooks();
 
-    if (list.isEmpty()) throw new NotFoundException("No genres to show");
+    if (list.isEmpty()) {
+      throw new NotFoundException("No genres to show");
+    }
 
     return new ListResponse<>(genreViewMapper.toGenreBookCountView(list));
   }
@@ -38,7 +45,9 @@ public class GenreController {
   public ListResponse<GenreLendingsCountPerMonthView> getLendingsPerMonthLastYearByGenre() {
     final var list = genreService.getLendingsPerMonthLastYearByGenre();
 
-    if (list.isEmpty()) throw new NotFoundException("No genres to show");
+    if (list.isEmpty()) {
+      throw new NotFoundException("No genres to show");
+    }
 
     final var viewList = genreViewMapper.toGenreLendingsCountPerMonthView(list);
 
@@ -50,7 +59,9 @@ public class GenreController {
       @RequestParam("startDate") final String start, @RequestParam("endDate") final String end) {
     final var list = genreService.getLendingsAverageDurationPerMonth(start, end);
 
-    if (list.isEmpty()) throw new NotFoundException("No genres to show");
+    if (list.isEmpty()) {
+      throw new NotFoundException("No genres to show");
+    }
 
     final var viewList = genreViewMapper.toGenreLendingsAveragePerMonthView(list);
 

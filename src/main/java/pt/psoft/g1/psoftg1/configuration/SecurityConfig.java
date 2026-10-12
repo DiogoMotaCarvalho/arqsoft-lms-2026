@@ -45,7 +45,7 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
 /**
  * Check https://www.baeldung.com/security-spring and
- * https://www.toptal.com/spring/spring-security-tutorial
+ * https://www.toptal.com/spring/spring-security-tutorial.
  *
  * <p>Based on https://github.com/Yoh0xFF/java-spring-security-example/
  *

@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.auth.api;
 
 import static java.lang.String.format;
@@ -48,7 +49,7 @@ import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.services.CreateUserRequest;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Tag(name = "Authentication")
 @RestController
 @RequiredArgsConstructor
@@ -105,10 +106,10 @@ public class AuthApi {
   }
 
   /**
-   * signup to the service
+   * signup to the service.
    *
-   * @param request
-   * @return
+   * @param request the signup request payload
+   * @return the view of the created user
    */
   @PostMapping("register")
   public UserView register(@RequestBody @Valid final CreateUserRequest request) {

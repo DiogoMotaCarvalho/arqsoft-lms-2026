@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
+ * JPA auditing and transaction-management configuration.
+ *
  * @author pgsousa
  */
 @Configuration
@@ -19,9 +21,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class JpaConfig {
 
   /**
-   * in case there is no authenticated user, for instance during bootstrapping, we will write SYSTEM
+   * in case there is no authenticated user, for instance during bootstrapping, we will write
+   * SYSTEM.
    *
-   * @return
+   * @return an {@code AuditorAware} that supplies the current auditor
    */
   @Bean("auditorProvider")
   public AuditorAware<String> auditorProvider() {

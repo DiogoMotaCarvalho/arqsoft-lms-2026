@@ -8,10 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
+import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDto;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
 
-/** */
+/** Persistence operations for reader details. */
 public interface ReaderRepository {
   Optional<ReaderDetails> findByReaderNumber(@Param("readerNumber") @NotNull String readerNumber);
 
@@ -29,7 +29,7 @@ public interface ReaderRepository {
 
   Page<ReaderDetails> findTopReaders(Pageable pageable);
 
-  Page<ReaderBookCountDTO> findTopByGenre(
+  Page<ReaderBookCountDto> findTopByGenre(
       Pageable pageable, String genre, LocalDate startDate, LocalDate endDate);
 
   void delete(ReaderDetails readerDetails);

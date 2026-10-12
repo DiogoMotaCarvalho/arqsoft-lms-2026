@@ -4,7 +4,7 @@ import java.util.List;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
-/** */
+/** Application service for book-related use cases. */
 public interface BookService {
   Book create(CreateBookRequest request, String isbn);
 
@@ -20,7 +20,7 @@ public interface BookService {
 
   List<Book> findByAuthorName(String authorName);
 
-  List<BookCountDTO> findTop5BooksLent();
+  List<BookCountDto> findTop5BooksLent();
 
   Book removeBookPhoto(String isbn, long desiredVersion);
 

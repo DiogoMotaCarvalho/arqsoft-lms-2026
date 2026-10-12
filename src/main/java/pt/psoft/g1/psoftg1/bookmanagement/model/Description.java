@@ -9,7 +9,7 @@ import pt.psoft.g1.psoftg1.shared.model.StringUtilsCustom;
 
 @Embeddable
 public class Description {
-  @Transient private final int DESC_MAX_LENGTH = 4096;
+  @Transient private static final int DESC_MAX_LENGTH = 4096;
 
   @Size(max = DESC_MAX_LENGTH)
   @Column(length = DESC_MAX_LENGTH)

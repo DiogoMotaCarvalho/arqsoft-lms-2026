@@ -10,7 +10,7 @@ import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDto;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 @Mapper(componentModel = "spring")
@@ -26,9 +26,9 @@ public abstract class BookViewMapper extends MapperInterface {
   public abstract List<BookView> toBookView(List<Book> bookList);
 
   @Mapping(target = "bookView", source = "book")
-  public abstract BookCountView toBookCountView(BookCountDTO bookCountDto);
+  public abstract BookCountView toBookCountView(BookCountDto bookCountDto);
 
-  public abstract List<BookCountView> toBookCountView(List<BookCountDTO> bookCountDtos);
+  public abstract List<BookCountView> toBookCountView(List<BookCountDto> bookCountDtos);
 
   public abstract BookAverageLendingDurationView toBookAverageLendingDurationView(
       Book book, Double averageLendingDuration);

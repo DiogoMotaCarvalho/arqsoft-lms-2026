@@ -18,9 +18,18 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package pt.psoft.g1.psoftg1.usermanagement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -39,7 +48,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.psoft.g1.psoftg1.shared.model.Name;
 
-/** Based on https://github.com/Yoh0xFF/java-spring-security-example */
+/** Based on https://github.com/Yoh0xFF/java-spring-security-example. */
 @Entity
 @Table(name = "T_USER")
 @EntityListeners(AuditingEntityListener.class)
@@ -97,7 +106,7 @@ public class User implements UserDetails {
   private String password;
 
   @Getter
-  //	@Setter
+  // @Setter
   @Embedded
   private Name name;
 
@@ -108,8 +117,10 @@ public class User implements UserDetails {
   }
 
   /**
-   * @param username
-   * @param password
+   * Creates a user with the given credentials.
+   *
+   * @param username the user's username
+   * @param password the user's password
    */
   public User(final String username, final String password) {
     this.username = username;
@@ -120,10 +131,10 @@ public class User implements UserDetails {
    * factory method. since mapstruct does not handle protected/private setters neither more than one
    * public constructor, we use these factory methods for helper creation scenarios
    *
-   * @param username
-   * @param password
-   * @param name
-   * @return
+   * @param username the user's username
+   * @param password the user's password
+   * @param name the user's name
+   * @return the newly created user
    */
   public static User newUser(final String username, final String password, final String name) {
     final var u = new User(username, password);
@@ -135,11 +146,11 @@ public class User implements UserDetails {
    * factory method. since mapstruct does not handle protected/private setters neither more than one
    * public constructor, we use these factory methods for helper creation scenarios
    *
-   * @param username
-   * @param password
-   * @param name
-   * @param role
-   * @return
+   * @param username the user's username
+   * @param password the user's password
+   * @param name the user's name
+   * @param role the user's role
+   * @return the newly created user
    */
   public static User newUser(
       final String username, final String password, final String name, final String role) {

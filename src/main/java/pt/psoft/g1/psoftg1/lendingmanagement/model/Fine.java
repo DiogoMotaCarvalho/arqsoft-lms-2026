@@ -1,6 +1,12 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.util.Objects;
 import lombok.Getter;
@@ -24,7 +30,7 @@ public class Fine {
   @Column(updatable = false)
   private int fineValuePerDayInCents;
 
-  /** Fine value in Euro cents */
+  /** Fine value in Euro cents. */
   @PositiveOrZero int centsValue;
 
   @Setter
@@ -39,7 +45,9 @@ public class Fine {
    * @param lending transaction which generates this fine.
    */
   public Fine(Lending lending) {
-    if (lending.getDaysDelayed() <= 0) throw new IllegalArgumentException("Lending is not overdue");
+    if (lending.getDaysDelayed() <= 0) {
+      throw new IllegalArgumentException("Lending is not overdue");
+    }
     fineValuePerDayInCents = lending.getFineValuePerDayInCents();
     centsValue = fineValuePerDayInCents * lending.getDaysDelayed();
     this.lending = Objects.requireNonNull(lending);

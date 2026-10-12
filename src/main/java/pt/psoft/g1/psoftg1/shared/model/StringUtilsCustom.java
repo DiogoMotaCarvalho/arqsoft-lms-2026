@@ -6,6 +6,8 @@ import org.owasp.html.Sanitizers;
 
 public class StringUtilsCustom {
   /**
+   * HTML sanitizer policy applied to user-provided text.
+   *
    * @see <a href="https://owasp.org/www-project-java-html-sanitizer/">OWASP Java HTML Sanitizer</a>
    */
   private static final PolicyFactory sanitizer = Sanitizers.FORMATTING.and(Sanitizers.LINKS);

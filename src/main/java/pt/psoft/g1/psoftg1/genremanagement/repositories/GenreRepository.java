@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDto;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDTO;
+import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDto;
+import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDto;
 
 public interface GenreRepository {
 
@@ -18,14 +18,14 @@ public interface GenreRepository {
 
   Genre save(Genre genre);
 
-  Page<GenreBookCountDTO> findTop5GenreByBookCount(Pageable pageable);
+  Page<GenreBookCountDto> findTop5GenreByBookCount(Pageable pageable);
 
-  List<GenreLendingsDTO> getAverageLendingsInMonth(
+  List<GenreLendingsDto> getAverageLendingsInMonth(
       LocalDate month, pt.psoft.g1.psoftg1.shared.services.Page page);
 
-  List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre();
+  List<GenreLendingsPerMonthDto> getLendingsPerMonthLastYearByGenre();
 
-  List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(
+  List<GenreLendingsPerMonthDto> getLendingsAverageDurationPerMonth(
       LocalDate startDate, LocalDate endDate);
 
   void delete(Genre genre);

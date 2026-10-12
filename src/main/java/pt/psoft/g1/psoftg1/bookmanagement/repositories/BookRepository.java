@@ -7,10 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDto;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
 
-/** */
+/** Persistence operations for books. */
 public interface BookRepository {
 
   List<Book> findByGenre(@Param("genre") String genre);
@@ -21,7 +21,7 @@ public interface BookRepository {
 
   Optional<Book> findByIsbn(@Param("isbn") String isbn);
 
-  Page<BookCountDTO> findTop5BooksLent(
+  Page<BookCountDto> findTop5BooksLent(
       @Param("oneYearAgo") LocalDate oneYearAgo, Pageable pageable);
 
   List<Book> findBooksByAuthorNumber(Long authorNumber);

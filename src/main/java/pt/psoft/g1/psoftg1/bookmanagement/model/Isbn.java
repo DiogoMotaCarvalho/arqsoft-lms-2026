@@ -22,10 +22,11 @@ public class Isbn implements Serializable {
   }
 
   protected Isbn() {}
-  ;
 
   private static boolean isValidIsbn(String isbn) {
-    if (isbn == null) throw new IllegalArgumentException("Isbn cannot be null");
+    if (isbn == null) {
+      throw new IllegalArgumentException("Isbn cannot be null");
+    }
     return (isbn.length() == 10) ? isValidIsbn10(isbn) : isValidIsbn13(isbn);
   }
 

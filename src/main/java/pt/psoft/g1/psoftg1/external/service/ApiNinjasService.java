@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-/** Based on https://www.baeldung.com/spring-5-webclient */
+/** Based on https://www.baeldung.com/spring-5-webclient. */
 @Service
 @RequiredArgsConstructor
 public class ApiNinjasService {

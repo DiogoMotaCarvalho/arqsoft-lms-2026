@@ -8,11 +8,11 @@ import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 @Data
 @AllArgsConstructor
-public class GenreLendingsDTO {
+public class GenreLendingsDto {
   @NotNull private String genre;
   private Number value;
 
-  public GenreLendingsDTO(String genre, Double value) {
+  public GenreLendingsDto(String genre, Double value) {
     this.genre = genre;
     if (value == null) {
       this.value = 0;
@@ -21,17 +21,17 @@ public class GenreLendingsDTO {
     }
   }
 
-  public GenreLendingsDTO(String genre, Long value) {
+  public GenreLendingsDto(String genre, Long value) {
     this.genre = genre;
     this.value = value;
   }
 
-  public GenreLendingsDTO(Genre genre, Double value) {
+  public GenreLendingsDto(Genre genre, Double value) {
     this.genre = genre.toString();
     this.value = formatValue(value);
   }
 
-  public GenreLendingsDTO(Genre genre, Long value) {
+  public GenreLendingsDto(Genre genre, Long value) {
     this.genre = genre.toString();
     this.value = value;
   }

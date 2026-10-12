@@ -14,7 +14,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -184,25 +195,39 @@ public class BookController {
     // Para uma junção 'AND', ver o "/search"
 
     List<Book> booksByTitle = null;
-    if (title != null) booksByTitle = bookService.findByTitle(title);
+    if (title != null) {
+      booksByTitle = bookService.findByTitle(title);
+    }
 
     List<Book> booksByGenre = null;
-    if (genre != null) booksByGenre = bookService.findByGenre(genre);
+    if (genre != null) {
+      booksByGenre = bookService.findByGenre(genre);
+    }
 
     List<Book> booksByAuthorName = null;
-    if (authorName != null) booksByAuthorName = bookService.findByAuthorName(authorName);
+    if (authorName != null) {
+      booksByAuthorName = bookService.findByAuthorName(authorName);
+    }
 
     Set<Book> bookSet = new HashSet<>();
-    if (booksByTitle != null) bookSet.addAll(booksByTitle);
-    if (booksByGenre != null) bookSet.addAll(booksByGenre);
-    if (booksByAuthorName != null) bookSet.addAll(booksByAuthorName);
+    if (booksByTitle != null) {
+      bookSet.addAll(booksByTitle);
+    }
+    if (booksByGenre != null) {
+      bookSet.addAll(booksByGenre);
+    }
+    if (booksByAuthorName != null) {
+      bookSet.addAll(booksByAuthorName);
+    }
 
     List<Book> books =
         bookSet.stream()
             .sorted(Comparator.comparing(b -> b.getTitle().toString()))
             .collect(Collectors.toList());
 
-    if (books.isEmpty()) throw new NotFoundException("No books found with the provided criteria");
+    if (books.isEmpty()) {
+      throw new NotFoundException("No books found with the provided criteria");
+    }
 
     return new ListResponse<>(bookViewMapper.toBookView(books));
   }
