@@ -60,27 +60,50 @@ class LendingTest {
   void ensureBookNotNull() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Lending(null, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents));
+        () ->
+            new Lending(
+                null,
+                readerDetails,
+                1,
+                LocalDate.now().plusDays(lendingDurationInDays),
+                fineValuePerDayInCents));
   }
 
   @Test
   void ensureReaderNotNull() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Lending(book, null, 1, lendingDurationInDays, fineValuePerDayInCents));
+        () ->
+            new Lending(
+                book,
+                null,
+                1,
+                LocalDate.now().plusDays(lendingDurationInDays),
+                fineValuePerDayInCents));
   }
 
   @Test
   void ensureValidReaderNumber() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Lending(book, readerDetails, -1, lendingDurationInDays, fineValuePerDayInCents));
+        () ->
+            new Lending(
+                book,
+                readerDetails,
+                -1,
+                LocalDate.now().plusDays(lendingDurationInDays),
+                fineValuePerDayInCents));
   }
 
   @Test
   void testSetReturned() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     lending.setReturned(0, null);
     assertEquals(LocalDate.now(), lending.getReturnedDate());
   }
@@ -88,70 +111,120 @@ class LendingTest {
   @Test
   void testGetDaysDelayed() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(0, lending.getDaysDelayed());
   }
 
   @Test
   void testGetDaysUntilReturn() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(Optional.of(lendingDurationInDays), lending.getDaysUntilReturn());
   }
 
   @Test
   void testGetDaysOverDue() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(Optional.empty(), lending.getDaysOverdue());
   }
 
   @Test
   void testGetTitle() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals("O Inspetor Max", lending.getTitle());
   }
 
   @Test
   void testGetLendingNumber() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(LocalDate.now().getYear() + "/1", lending.getLendingNumber());
   }
 
   @Test
   void testGetBook() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(book, lending.getBook());
   }
 
   @Test
   void testGetReaderDetails() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(readerDetails, lending.getReaderDetails());
   }
 
   @Test
   void testGetStartDate() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(LocalDate.now(), lending.getStartDate());
   }
 
   @Test
   void testGetLimitDate() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertEquals(LocalDate.now().plusDays(lendingDurationInDays), lending.getLimitDate());
   }
 
   @Test
   void testGetReturnedDate() {
     Lending lending =
-        new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        new Lending(
+            book,
+            readerDetails,
+            1,
+            LocalDate.now().plusDays(lendingDurationInDays),
+            fineValuePerDayInCents);
     assertNull(lending.getReturnedDate());
   }
 }

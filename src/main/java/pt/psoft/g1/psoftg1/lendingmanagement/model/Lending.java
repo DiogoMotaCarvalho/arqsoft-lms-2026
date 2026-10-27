@@ -120,20 +120,21 @@ public class Lending {
   /**
    * Constructs a new {@code Lending} object to be persisted in the database.
    *
-   * <p>Sets {@code startDate} as the current date, and {@code limitDate} as the current date plus
-   * the business specified number of days a reader can take to return the book ({@link
-   * Lending#MAX_DAYS_PER_LENDING}).
+   * <p>Sets {@code startDate} as the current date. The {@code limitDate} is <em>not</em> computed
+   * here: it is decided by the applicable {@code LendingPolicy} and supplied by the service, so the
+   * entity no longer owns the lending-period rule.
    *
    * @param book {@code Book} object, which should be retrieved from the database.
    * @param readerDetails {@code Reader} object, which should be retrieved from the database.
    * @param seq sequential number, which should be obtained from the year's count on the database.
+   * @param limitDate the date the lending is due, as decided by the applicable lending policy.
    * @throws NullPointerException if any of the arguments is {@code null}
    */
   public Lending(
       Book book,
       ReaderDetails readerDetails,
       int seq,
-      int lendingDuration,
+      LocalDate limitDate,
       int fineValuePerDayInCents) {
     try {
       this.book = Objects.requireNonNull(book);
@@ -143,7 +144,7 @@ public class Lending {
     }
     this.lendingNumber = new LendingNumber(seq);
     this.startDate = LocalDate.now();
-    this.limitDate = LocalDate.now().plusDays(lendingDuration);
+    this.limitDate = Objects.requireNonNull(limitDate, "limitDate is required");
     this.returnedDate = null;
     this.fineValuePerDayInCents = fineValuePerDayInCents;
     setDaysUntilReturn();

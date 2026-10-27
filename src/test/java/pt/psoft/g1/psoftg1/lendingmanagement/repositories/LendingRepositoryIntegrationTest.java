@@ -100,7 +100,9 @@ public class LendingRepositoryIntegrationTest {
 
   @Test
   public void testSave() {
-    Lending newLending = new Lending(lending.getBook(), lending.getReaderDetails(), 2, 14, 50);
+    Lending newLending =
+        new Lending(
+            lending.getBook(), lending.getReaderDetails(), 2, LocalDate.now().plusDays(14), 50);
     Lending savedLending = lendingRepository.save(newLending);
     assertThat(savedLending).isNotNull();
     assertThat(savedLending.getLendingNumber()).isEqualTo(newLending.getLendingNumber());
