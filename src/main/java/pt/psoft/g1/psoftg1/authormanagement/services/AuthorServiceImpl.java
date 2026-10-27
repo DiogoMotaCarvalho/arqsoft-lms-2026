@@ -91,7 +91,8 @@ public class AuthorServiceImpl implements AuthorService {
     }
     // since we got the object from the database we can check the version in memory
     // and apply the patch
-    author.applyPatch(desiredVersion, request);
+    author.applyPatch(
+        desiredVersion, request.getName(), request.getBio(), request.getPhotoURI());
 
     // in the meantime some other user might have changed this object on the
     // database, so concurrency control will still be applied when we try to save

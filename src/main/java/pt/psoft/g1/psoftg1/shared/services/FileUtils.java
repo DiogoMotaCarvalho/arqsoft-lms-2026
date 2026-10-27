@@ -1,9 +1,8 @@
-package pt.psoft.g1.psoftg1.shared.model;
+package pt.psoft.g1.psoftg1.shared.services;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.shared.api.UploadFileResponse;
-import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 
 public class FileUtils {
   public static UploadFileResponse doUploadFile(

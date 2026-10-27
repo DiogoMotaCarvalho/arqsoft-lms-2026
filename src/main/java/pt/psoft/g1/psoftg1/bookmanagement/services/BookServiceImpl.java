@@ -110,7 +110,13 @@ public class BookServiceImpl implements BookService {
       request.setGenreObj(genre.get());
     }
 
-    book.applyPatch(Long.parseLong(currentVersion), request);
+    book.applyPatch(
+        Long.parseLong(currentVersion),
+        request.getTitle(),
+        request.getDescription(),
+        request.getGenreObj(),
+        request.getAuthorObjList(),
+        request.getPhotoURI());
 
     bookRepository.save(book);
 

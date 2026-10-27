@@ -37,7 +37,9 @@ class AuthorTest {
   void whenVersionIsStaleItIsNotPossibleToPatch() {
     final var subject = new Author(validName, validBio, null);
 
-    assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
+    assertThrows(
+        StaleObjectStateException.class,
+        () -> subject.applyPatch(999, request.getName(), request.getBio(), request.getPhotoURI()));
   }
 
   @Test

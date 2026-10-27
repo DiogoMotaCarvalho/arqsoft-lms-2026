@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
-import pt.psoft.g1.psoftg1.readermanagement.services.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
@@ -101,20 +100,18 @@ public class ReaderDetails extends EntityWithPhoto {
 
   public void applyPatch(
       final long currentVersion,
-      final UpdateReaderRequest request,
+      final String username,
+      final String password,
+      final String fullName,
+      final String birthDate,
+      final String phoneNumber,
+      final boolean marketing,
+      final boolean thirdParty,
       String photoURI,
       List<Genre> interestList) {
     if (currentVersion != this.version) {
       throw new ConflictException("Provided version does not match latest version of this object");
     }
-
-    final String birthDate = request.getBirthDate();
-    final String phoneNumber = request.getPhoneNumber();
-    final boolean marketing = request.getMarketing();
-    final boolean thirdParty = request.getThirdParty();
-    final String fullName = request.getFullName();
-    final String username = request.getUsername();
-    final String password = request.getPassword();
 
     if (username != null) {
       this.reader.setUsername(username);
