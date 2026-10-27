@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
+package pt.psoft.g1.psoftg1.readermanagement.infrastructure.repositories.impl;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
