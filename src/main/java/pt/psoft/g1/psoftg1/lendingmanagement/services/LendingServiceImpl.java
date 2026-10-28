@@ -16,6 +16,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.ReaderLendingContext;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.RenewalContext;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
@@ -123,6 +124,48 @@ public class LendingServiceImpl implements LendingService {
     }
 
     return lendingRepository.save(lending);
+  }
+
+  @Override
+  public Lending renew(final String lendingNumber, final long desiredVersion) {
+
+    final var lending =
+        lendingRepository
+            .findByLendingNumber(lendingNumber)
+            .orElseThrow(
+                () -> new NotFoundException("Cannot renew lending with this lending number"));
+
+    // Re-evaluate the applicable policy at renewal time (lending spec §4.3), then delegate the
+    // renewal decision and the renewed limit date to it; the service only gathers the situation
+    // and maps a denial to the exception. The state change itself stays on the entity (ADR-0007).
+    final LendingPolicy policy = lendingPolicyProvider.policyFor(lending.getReaderDetails());
+    final RenewalContext context = buildRenewalContext(lending);
+
+    policy
+        .canRenew(context)
+        .getReason()
+        .ifPresent(
+            reason -> {
+              throw new LendingForbiddenException(reason);
+            });
+
+    lending.renew(desiredVersion, policy.renewalLimitDateFor(context));
+
+    return lendingRepository.save(lending);
+  }
+
+  /**
+   * Summarizes the facts a {@link LendingPolicy} needs to decide a renewal: the lending's current
+   * limit date, how many times it has already been renewed, whether it is currently overdue, and
+   * how many active lendings the reader holds (the lending being renewed is itself active and is
+   * therefore included in that count).
+   */
+  private RenewalContext buildRenewalContext(final Lending lending) {
+    final boolean overdue = lending.getDaysDelayed() > 0;
+    final int activeLendings =
+        lendingRepository.listOutstandingByReaderNumber(lending.getReaderNumber()).size();
+    return new RenewalContext(
+        lending.getLimitDate(), lending.getRenewalCount(), overdue, activeLendings);
   }
 
   @Override

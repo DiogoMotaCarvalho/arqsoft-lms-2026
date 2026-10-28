@@ -213,6 +213,8 @@ public class SecurityConfig {
         .hasRole(Role.LIBRARIAN)
         .requestMatchers(HttpMethod.GET, "/api/lendings/overdue")
         .hasRole(Role.LIBRARIAN)
+        .requestMatchers(HttpMethod.PATCH, "/api/lendings/{year}/{seq}/renew")
+        .hasRole(Role.READER)
         .requestMatchers(HttpMethod.PATCH, "/api/lendings/{year}/{seq}")
         .hasRole(Role.READER)
         .requestMatchers(HttpMethod.POST, "/api/lendings/search")

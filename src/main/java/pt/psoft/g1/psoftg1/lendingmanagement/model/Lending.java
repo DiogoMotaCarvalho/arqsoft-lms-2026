@@ -114,6 +114,16 @@ public class Lending {
 
   @Getter private int fineValuePerDayInCents;
 
+  /**
+   * Number of times this lending has been renewed. Starts at zero and is incremented by {@link
+   * #renew(long, LocalDate)}. The applicable {@code LendingPolicy} decides whether a further renewal
+   * is allowed (e.g. the Standard policy caps it at {@code maxRenewals}); the entity only keeps the
+   * count and the state change (ADR-0007). The column is created by {@code ddl-auto=update}.
+   */
+  @Column(nullable = false)
+  @Getter
+  private int renewalCount;
+
   /** Protected empty constructor for ORM only. */
   protected Lending() {}
 
@@ -181,6 +191,39 @@ public class Lending {
   }
 
   /**
+   * Extends this lending to a new limit date decided by the applicable {@code LendingPolicy} and
+   * records the renewal.
+   *
+   * <p>The eligibility decision (not overdue, within the renewal cap, correct band period) belongs
+   * to the policy and is taken by the service before this is called; this method only performs the
+   * state change, consistent with {@link #setReturned} and ADR-0007. It still guards the two
+   * invariants the entity owns: a returned lending cannot be renewed, and the edit must be against
+   * the current version.
+   *
+   * @param desiredVersion the client's expected version, to prevent editing a stale object.
+   * @param newLimitDate the renewed limit date, as computed by the applicable lending policy.
+   * @throws IllegalArgumentException if the lending has already been returned.
+   * @throws StaleObjectStateException if the object was already modified by another user.
+   * @throws NullPointerException if {@code newLimitDate} is {@code null}.
+   */
+  public void renew(final long desiredVersion, final LocalDate newLimitDate) {
+
+    if (this.returnedDate != null) {
+      throw new IllegalArgumentException("Cannot renew a lending that has already been returned");
+    }
+
+    // check current version
+    if (this.version != desiredVersion) {
+      throw new StaleObjectStateException("Object was already modified by another user", this.pk);
+    }
+
+    this.limitDate = Objects.requireNonNull(newLimitDate, "newLimitDate is required");
+    this.renewalCount++;
+    setDaysUntilReturn();
+    setDaysOverdue();
+  }
+
+  /**
    * Returns the number of days that the lending is/was past its due date.
    *
    * @return If the book was returned on time, or there is still time for it be returned, returns 0.
@@ -238,6 +281,11 @@ public class Lending {
 
   public String getLendingNumber() {
     return this.lendingNumber.toString();
+  }
+
+  /** The reader number of the reader this lending belongs to. */
+  public String getReaderNumber() {
+    return this.readerDetails.getReaderNumber();
   }
 
   /** Factory method meant to be only used in bootstrapping. */
