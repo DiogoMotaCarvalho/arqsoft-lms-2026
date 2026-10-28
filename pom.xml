@@ -32,6 +32,10 @@
 		<spotless.plugin.version>2.43.0</spotless.plugin.version>
 		<google.java.format.version>1.25.2</google.java.format.version>
 
+		<!-- mutation testing (PIT); run on demand via the `mutation` profile -->
+		<pitest.maven.version>1.16.3</pitest.maven.version>
+		<pitest.junit5.version>1.2.1</pitest.junit5.version>
+
 		<!-- SonarQube analysis settings (host.url & token passed at runtime / by Jenkins) -->
 		<sonar.projectKey>pt.psoft.g1:psoft-g1</sonar.projectKey>
 		<sonar.projectName>psoft-g1</sonar.projectName>
@@ -112,13 +116,6 @@
 			<artifactId>owasp-java-html-sanitizer</artifactId>
 			<version>20220608.1</version>
 		</dependency>
-
-		<!-- Testing framework-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
 
 		<!-- Web client -->
 		<dependency>
@@ -292,5 +289,58 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- Mutation testing (PIT). Run on demand so the normal build stays fast:
+		     `./mvnw -Pmutation test`. Reports land in target/pit-reports. See
+		     docs/testing/mutation-testing.md and docs/adr/0005-pit-mutation-testing-tooling.md. -->
+		<profile>
+			<id>mutation</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<version>${pitest.maven.version}</version>
+						<!-- Required: the test suite runs on the JUnit 5 Platform (Jupiter). -->
+						<dependencies>
+							<dependency>
+								<groupId>org.pitest</groupId>
+								<artifactId>pitest-junit5-plugin</artifactId>
+								<version>${pitest.junit5.version}</version>
+							</dependency>
+						</dependencies>
+						<configuration>
+							<!-- Scope: the lending-policy domain logic (branch/comparison conditions).
+							     Override per run with -DtargetClasses / -DtargetTests. -->
+							<targetClasses>
+								<param>pt.psoft.g1.psoftg1.lendingmanagement.model.policy.*</param>
+							</targetClasses>
+							<targetTests>
+								<param>pt.psoft.g1.psoftg1.lendingmanagement.model.policy.*</param>
+							</targetTests>
+							<outputFormats>
+								<param>HTML</param>
+								<param>XML</param>
+							</outputFormats>
+							<timestampedReports>false</timestampedReports>
+							<!-- No build-failing threshold: survivor analysis is the deliverable. -->
+						</configuration>
+						<executions>
+							<!-- Bound to the test phase *within this profile only*, so a plain
+							     `./mvnw test` (no -Pmutation) never triggers mutation analysis. -->
+							<execution>
+								<id>pit-mutation-coverage</id>
+								<phase>test</phase>
+								<goals>
+									<goal>mutationCoverage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
