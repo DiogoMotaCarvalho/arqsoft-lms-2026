@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.repositories.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
@@ -38,6 +39,17 @@ public interface SpringDataLendingRepository
           + "WHERE r.readerNumber.readerNumber = :readerNumber "
           + "AND l.returnedDate IS NULL")
   List<Lending> listOutstandingByReaderNumber(@Param("readerNumber") String readerNumber);
+
+  @Override
+  @Query(
+      "SELECT l "
+          + "FROM Lending l "
+          + "JOIN ReaderDetails r ON l.readerDetails.pk = r.pk "
+          + "WHERE r.readerNumber.readerNumber = :readerNumber "
+          + "AND l.returnedDate IS NOT NULL "
+          + "AND l.returnedDate >= :since")
+  List<Lending> listCompletedByReaderNumberSince(
+      @Param("readerNumber") String readerNumber, @Param("since") LocalDate since);
 
   @Override
   @Query(

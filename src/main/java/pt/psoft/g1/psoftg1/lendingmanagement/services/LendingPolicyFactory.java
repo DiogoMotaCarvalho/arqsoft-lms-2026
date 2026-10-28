@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.lendingmanagement.services;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.AdaptiveLendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.SelectionCriteria;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.StandardLendingPolicy;
 
 /**
@@ -58,5 +59,12 @@ public class LendingPolicyFactory {
         a.getLongPeriod(),
         a.getStandardPeriod(),
         a.getShortPeriod());
+  }
+
+  /** The configured lending-policy selection criteria (#12). */
+  public SelectionCriteria selectionCriteria() {
+    final LendingPolicyProperties.Selection s = properties.getSelection();
+    return new SelectionCriteria(
+        s.getHistoryPeriodInMonths(), s.getMinCompletedLendings(), s.getMinOnTimeRatio());
   }
 }

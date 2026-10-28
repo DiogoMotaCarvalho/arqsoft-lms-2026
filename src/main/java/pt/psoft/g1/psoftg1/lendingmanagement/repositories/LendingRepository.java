@@ -15,6 +15,9 @@ public interface LendingRepository {
 
   List<Lending> listOutstandingByReaderNumber(String readerNumber);
 
+  /** Completed (returned) lendings of a reader whose return date is on or after {@code since}. */
+  List<Lending> listCompletedByReaderNumberSince(String readerNumber, LocalDate since);
+
   Double getAverageDuration();
 
   Double getAvgLendingDurationByIsbn(String isbn);
