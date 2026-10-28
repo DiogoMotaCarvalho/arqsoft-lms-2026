@@ -29,7 +29,9 @@ class LayeringRulesTest {
           .dependOnClassesThat()
           .resideInAPackage("..infrastructure..");
 
-  /** The domain sits at the bottom: it must not depend on the service, api or infrastructure layers. */
+  /**
+   * The domain sits at the bottom: it must not depend on the service, api or infrastructure layers.
+   */
   @ArchTest
   static final ArchRule domain_should_not_depend_on_outer_layers =
       noClasses()
@@ -40,9 +42,9 @@ class LayeringRulesTest {
           .resideInAnyPackage("..services..", "..api..", "..infrastructure..");
 
   /**
-   * New feature domain must be framework-free (no Spring, no JPA). Allow-list, extended per feature.
-   * {@code allowEmptyShould} because the first entry ({@code lendingmanagement.model.policy}) is
-   * created by #8, which this ticket precedes.
+   * New feature domain must be framework-free (no Spring, no JPA). Allow-list, extended per
+   * feature. {@code allowEmptyShould} because the first entry ({@code
+   * lendingmanagement.model.policy}) is created by #8, which this ticket precedes.
    */
   @ArchTest
   static final ArchRule new_domain_must_be_framework_free =

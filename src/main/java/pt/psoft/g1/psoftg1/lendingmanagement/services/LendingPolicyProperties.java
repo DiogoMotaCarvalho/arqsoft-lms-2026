@@ -13,8 +13,8 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * The externalized lending-policy parameters (ARQSOFT P1, #9), bound from the standard Spring
- * configuration under the {@code lending.policy} prefix and validated at application startup against
- * each policy's constraints (lending spec §5.3). See ADR-0003.
+ * configuration under the {@code lending.policy} prefix and validated at application startup
+ * against each policy's constraints (lending spec §5.3). See ADR-0003.
  *
  * <p>Three sections mirror the domain — {@link Standard}, {@link Adaptive}, {@link Selection}.
  * Single-field bounds use JSR-380 annotations; the Adaptive/Selection cross-field ordering

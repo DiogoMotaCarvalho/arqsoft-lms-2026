@@ -1,36 +1,36 @@
 # Mutation testing (PIT)
 
-Mutation testing with [PIT](https://pitest.org/) measures how well our tests *detect* faults, not just
-how much code they execute. PIT seeds small faults ("mutants") into the target classes — e.g. flipping
-`<` to `<=` or `>=` to `>` — reruns the tests, and reports each mutant as **killed** (a test failed,
-good) or **survived** (no test noticed, a gap). The deliverable here is the **survivor analysis**, not
-the score (see ADR-0005).
+Mutation testing with [PIT](https://pitest.org/) measures how well the tests detect faults, rather
+than how much code they execute. PIT seeds small faults, called mutants, into the target classes, for
+example by changing `<` to `<=` or `>=` to `>`, reruns the tests, and reports each mutant as killed (a
+test failed, which is the desired outcome) or survived (no test noticed, which indicates a gap). The
+deliverable is the analysis of the survivors, not the score (see ADR-0005).
 
 ## Scope
 
-By default PIT targets the lending-policy domain package
-(`pt.psoft.g1.psoftg1.lendingmanagement.model.policy`) and its tests — the domain logic with
-branch/comparison conditions that mutation testing is meant to probe (rubric C3.3). This is overridable
-per run (see below).
+By default PIT targets the lending-policy domain package,
+`pt.psoft.g1.psoftg1.lendingmanagement.model.policy`, and its tests, that is, the domain logic with
+branch and comparison conditions that mutation testing is intended to probe (criterion C3.3). The
+scope is overridable per run, as shown below.
 
 ## Prerequisites
 
-- JDK 17. The shell default may be Java 8, so set `JAVA_HOME` explicitly:
-  ```
-  export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
-  ```
-- A green test suite (`./mvnw test`) — PIT only mutates code whose tests currently pass.
+1. JDK 17. The shell default may be Java 8, so set `JAVA_HOME` explicitly:
+   ```
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home
+   ```
+2. A passing test suite (`./mvnw test`), because PIT only mutates code whose tests currently pass.
 
 ## Running
 
-PIT is **not** part of the normal build (`./mvnw test` does not run it, to keep the loop fast). Run it
-on demand via the `mutation` profile:
+PIT is not part of the normal build, so `./mvnw test` does not run it, which keeps the loop fast. Run
+it on demand through the `mutation` profile:
 
 ```
 JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home ./mvnw -Pmutation test
 ```
 
-Override the scope for a one-off run (standard PIT parameters):
+Override the scope for a single run with the standard PIT parameters:
 
 ```
 ./mvnw -Pmutation test \
@@ -40,17 +40,18 @@ Override the scope for a one-off run (standard PIT parameters):
 
 ## Reading the report
 
-Reports are written to `target/pit-reports/` (non-timestamped, so the path is stable):
+Reports are written to `target/pit-reports/`, which is non-timestamped so that the path is stable:
 
-- `index.html` — open in a browser; drill into each class to see surviving mutants line-by-line.
-- `mutations.xml` — machine-readable, for diffing before/after.
+1. `index.html`, to be opened in a browser, allows drilling into each class to see the surviving
+   mutants line by line.
+2. `mutations.xml` is machine-readable and is used to compare results before and after a change.
 
-For each **surviving** mutant, decide and record which it is:
+For each surviving mutant, decide and record which of the following two cases applies.
 
-1. **A test gap** — a real behaviour no test pins down. Add/strengthen a test so the mutant is killed,
-   then rerun and show the before/after.
-2. **An equivalent mutant** — a change that cannot alter observable behaviour (e.g. a mutation on a
-   branch that is unreachable given the class's constraints). Document *why* it is equivalent; these are
-   legitimately left alive.
+1. A test gap, that is, a real behaviour that no test pins down. Add or strengthen a test so that the
+   mutant is killed, then rerun and show the result before and after.
+2. An equivalent mutant, that is, a change that cannot alter observable behaviour, for example a
+   mutation on a branch that is unreachable given the constraints of the class. Document the reason it
+   is equivalent. These are legitimately left alive.
 
-A high kill score with no analysis is not evidence; an analysed set of survivors is.
+A high kill score without analysis is not evidence. An analysed set of survivors is.

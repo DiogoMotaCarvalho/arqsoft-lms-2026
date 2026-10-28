@@ -1,17 +1,18 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
 import org.springframework.stereotype.Component;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.AdaptiveLendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.StandardLendingPolicy;
 
 /**
- * Builds {@link LendingPolicy} instances from the externalized, validated configuration
- * ({@link LendingPolicyProperties}), keeping config and framework concerns out of the {@code
- * model.policy} domain. The configuration is bound and validated at startup (#9, ADR-0003); each
- * policy additionally validates its own parameters at construction, so an invalid configuration
- * fails fast.
+ * Builds {@link LendingPolicy} instances from the externalized, validated configuration ({@link
+ * LendingPolicyProperties}), keeping config and framework concerns out of the {@code model.policy}
+ * domain. The configuration is bound and validated at startup (#9, ADR-0003); each policy
+ * additionally validates its own parameters at construction, so an invalid configuration fails
+ * fast.
  *
- * <p>Only the Standard policy is built today; the {@code "adaptive"} branch is added by #10.
+ * <p>Builds the Standard (#8) and Adaptive (#10) policies; runtime selection between them is #12.
  */
 @Component
 public class LendingPolicyFactory {
@@ -31,6 +32,9 @@ public class LendingPolicyFactory {
     if (StandardLendingPolicy.NAME.equals(name)) {
       return standard();
     }
+    if (AdaptiveLendingPolicy.NAME.equals(name)) {
+      return adaptive();
+    }
     throw new IllegalArgumentException("Unknown lending policy: " + name);
   }
 
@@ -42,5 +46,17 @@ public class LendingPolicyFactory {
         s.getLendingDurationInDays(),
         s.getMaxRenewals(),
         s.getRenewalDurationInDays());
+  }
+
+  /** The configured Adaptive policy. */
+  public LendingPolicy adaptive() {
+    final LendingPolicyProperties.Adaptive a = properties.getAdaptive();
+    return new AdaptiveLendingPolicy(
+        a.getMaxActiveLendings(),
+        a.getFirstThreshold(),
+        a.getSecondThreshold(),
+        a.getLongPeriod(),
+        a.getStandardPeriod(),
+        a.getShortPeriod());
   }
 }
