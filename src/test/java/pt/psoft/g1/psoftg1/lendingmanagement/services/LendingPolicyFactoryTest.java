@@ -2,32 +2,30 @@ package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.StandardLendingPolicy;
 
 /**
- * Transparent-box tests for the config-reading factory: it builds a valid Standard policy from its
- * parameters, rejects unknown policy names, and fails fast when configured with invalid parameters.
+ * Transparent-box tests for the config-reading factory: it builds a valid Standard policy from the
+ * {@link LendingPolicyProperties}, rejects unknown policy names, and fails fast when the
+ * configuration violates a policy constraint (the domain constructor's defense-in-depth layer).
  */
 class LendingPolicyFactoryTest {
 
-  private LendingPolicyFactory factory;
-
-  @BeforeEach
-  void setUp() {
-    factory = new LendingPolicyFactory();
-    setParams(3, 15, 3, 15);
+  private static LendingPolicyProperties standardProps(
+      int maxActive, int duration, int maxRenewals, int renewalDuration) {
+    LendingPolicyProperties props = new LendingPolicyProperties();
+    LendingPolicyProperties.Standard s = props.getStandard();
+    s.setMaxActiveLendings(maxActive);
+    s.setLendingDurationInDays(duration);
+    s.setMaxRenewals(maxRenewals);
+    s.setRenewalDurationInDays(renewalDuration);
+    return props;
   }
 
-  private void setParams(int maxActive, int duration, int maxRenewals, int renewalDuration) {
-    ReflectionTestUtils.setField(factory, "standardMaxActiveLendings", maxActive);
-    ReflectionTestUtils.setField(factory, "standardLendingDurationInDays", duration);
-    ReflectionTestUtils.setField(factory, "standardMaxRenewals", maxRenewals);
-    ReflectionTestUtils.setField(factory, "standardRenewalDurationInDays", renewalDuration);
-  }
+  private final LendingPolicyFactory factory =
+      new LendingPolicyFactory(standardProps(3, 15, 3, 15));
 
   @Test
   void buildsStandardPolicyByName() {
@@ -48,7 +46,7 @@ class LendingPolicyFactoryTest {
 
   @Test
   void failsFastOnInvalidConfiguration() {
-    setParams(0, 15, 3, 15);
-    assertThrows(IllegalArgumentException.class, () -> factory.standard());
+    LendingPolicyFactory invalid = new LendingPolicyFactory(standardProps(0, 15, 3, 15));
+    assertThrows(IllegalArgumentException.class, invalid::standard);
   }
 }

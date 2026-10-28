@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
+import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingPolicyProperties;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageProperties;
 
 /**
@@ -19,7 +20,7 @@ import pt.psoft.g1.psoftg1.shared.services.FileStorageProperties;
  * @author pgsousa
  */
 @Configuration
-@EnableConfigurationProperties({FileStorageProperties.class})
+@EnableConfigurationProperties({FileStorageProperties.class, LendingPolicyProperties.class})
 public class ApiConfig {
 
   /*

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
@@ -16,12 +15,13 @@ class DefaultLendingPolicyProviderTest {
 
   @BeforeEach
   void setUp() {
-    LendingPolicyFactory factory = new LendingPolicyFactory();
-    ReflectionTestUtils.setField(factory, "standardMaxActiveLendings", 3);
-    ReflectionTestUtils.setField(factory, "standardLendingDurationInDays", 15);
-    ReflectionTestUtils.setField(factory, "standardMaxRenewals", 3);
-    ReflectionTestUtils.setField(factory, "standardRenewalDurationInDays", 15);
-    provider = new DefaultLendingPolicyProvider(factory);
+    LendingPolicyProperties props = new LendingPolicyProperties();
+    LendingPolicyProperties.Standard s = props.getStandard();
+    s.setMaxActiveLendings(3);
+    s.setLendingDurationInDays(15);
+    s.setMaxRenewals(3);
+    s.setRenewalDurationInDays(15);
+    provider = new DefaultLendingPolicyProvider(new LendingPolicyFactory(props));
   }
 
   @Test

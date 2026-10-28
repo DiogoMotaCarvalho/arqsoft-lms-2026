@@ -1,32 +1,26 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.StandardLendingPolicy;
 
 /**
- * Builds {@link LendingPolicy} instances from externalized configuration, keeping config and
- * framework concerns out of the {@code model.policy} domain. Parameters are read from {@code
- * overrides.properties} (the externalized-config mechanism is formalized in #9); each policy
- * validates its own parameters at construction, so an invalid configuration fails fast on startup.
+ * Builds {@link LendingPolicy} instances from the externalized, validated configuration
+ * ({@link LendingPolicyProperties}), keeping config and framework concerns out of the {@code
+ * model.policy} domain. The configuration is bound and validated at startup (#9, ADR-0003); each
+ * policy additionally validates its own parameters at construction, so an invalid configuration
+ * fails fast.
+ *
+ * <p>Only the Standard policy is built today; the {@code "adaptive"} branch is added by #10.
  */
 @Component
-@PropertySource({"classpath:config/overrides.properties"})
 public class LendingPolicyFactory {
 
-  @Value("${lending.policy.standard.maxActiveLendings:3}")
-  private int standardMaxActiveLendings;
+  private final LendingPolicyProperties properties;
 
-  @Value("${lending.policy.standard.lendingDurationInDays:15}")
-  private int standardLendingDurationInDays;
-
-  @Value("${lending.policy.standard.maxRenewals:3}")
-  private int standardMaxRenewals;
-
-  @Value("${lending.policy.standard.renewalDurationInDays:15}")
-  private int standardRenewalDurationInDays;
+  public LendingPolicyFactory(LendingPolicyProperties properties) {
+    this.properties = properties;
+  }
 
   /**
    * Builds the policy with the given stable name.
@@ -42,10 +36,11 @@ public class LendingPolicyFactory {
 
   /** The configured Standard policy. */
   public LendingPolicy standard() {
+    final LendingPolicyProperties.Standard s = properties.getStandard();
     return new StandardLendingPolicy(
-        standardMaxActiveLendings,
-        standardLendingDurationInDays,
-        standardMaxRenewals,
-        standardRenewalDurationInDays);
+        s.getMaxActiveLendings(),
+        s.getLendingDurationInDays(),
+        s.getMaxRenewals(),
+        s.getRenewalDurationInDays());
   }
 }
