@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicData;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicEnrichmentService;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
@@ -58,6 +60,7 @@ public class BookController {
   private final FileStorageService fileStorageService;
   private final UserService userService;
   private final ReaderService readerService;
+  private final BibliographicEnrichmentService enrichmentService;
 
   private final BookViewMapper bookViewMapper;
 
@@ -102,8 +105,28 @@ public class BookController {
     final var book = bookService.findByIsbn(isbn);
 
     BookView bookView = bookViewMapper.toBookView(book);
+    // Enrich only when there is a gap to fill (#6): a complete local record makes no external call,
+    // so the external dependency never touches a read it cannot improve. Best-effort, local-wins.
+    if (bookView.getDescription() == null || bookView.getDescription().isBlank()) {
+      enrichmentService.enrichmentFor(isbn).ifPresent(data -> fillGaps(bookView, data));
+    }
 
     return ResponseEntity.ok().eTag(Long.toString(book.getVersion())).body(bookView);
+  }
+
+  /**
+   * Fills only the gaps in the view from the external data. Local values always win, and the title,
+   * ISBN, genre, and authors are never touched (#6, ADR-0013). In practice this fills the description
+   * when the local one is blank and the external one is present: the authors are not gap-filled
+   * because a {@code Book} is required to have at least one author, so a retrieved book's author list
+   * is never empty.
+   */
+  private static void fillGaps(final BookView view, final BibliographicData data) {
+    if ((view.getDescription() == null || view.getDescription().isBlank())
+        && data.getDescription() != null
+        && !data.getDescription().isBlank()) {
+      view.setDescription(data.getDescription());
+    }
   }
 
   @Operation(summary = "Deletes a book photo")

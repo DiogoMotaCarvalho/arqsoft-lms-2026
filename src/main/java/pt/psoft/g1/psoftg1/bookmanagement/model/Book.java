@@ -67,7 +67,7 @@ public class Book extends EntityWithPhoto {
   }
 
   public String getDescription() {
-    return this.description.toString();
+    return this.description == null ? null : this.description.toString();
   }
 
   public Book(
