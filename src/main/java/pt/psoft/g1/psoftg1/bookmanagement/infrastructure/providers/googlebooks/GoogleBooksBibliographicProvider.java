@@ -40,6 +40,11 @@ public class GoogleBooksBibliographicProvider implements BibliographicProvider {
   }
 
   @Override
+  public String source() {
+    return SOURCE;
+  }
+
+  @Override
   public Optional<BibliographicData> findByIsbn(String isbn) {
     // The whole call and mapping run inside the try, so the port's two-outcome contract holds: a
     // response with no usable volume returns empty, and any transport, decode, or mapping failure

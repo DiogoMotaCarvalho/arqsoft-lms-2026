@@ -16,6 +16,18 @@ class InMemoryBibliographicProvider implements BibliographicProvider {
 
   private final Map<String, BibliographicData> byIsbn = new HashMap<>();
   private final Map<String, String> failingIsbns = new HashMap<>();
+  private String source = "in-memory";
+
+  /** Sets the stable source name this stub reports from {@link #source()}. */
+  InMemoryBibliographicProvider named(String source) {
+    this.source = source;
+    return this;
+  }
+
+  @Override
+  public String source() {
+    return source;
+  }
 
   InMemoryBibliographicProvider with(BibliographicData data) {
     byIsbn.put(data.getIsbn(), data);

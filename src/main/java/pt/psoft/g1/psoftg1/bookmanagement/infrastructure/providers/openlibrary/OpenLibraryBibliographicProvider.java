@@ -46,6 +46,11 @@ public class OpenLibraryBibliographicProvider implements BibliographicProvider {
   }
 
   @Override
+  public String source() {
+    return SOURCE;
+  }
+
+  @Override
   public Optional<BibliographicData> findByIsbn(String isbn) {
     final String bibkey = "ISBN:" + isbn;
     // The whole call and mapping run inside the try, so the port's two-outcome contract holds: a

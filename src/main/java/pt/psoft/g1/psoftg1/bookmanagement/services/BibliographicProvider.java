@@ -24,6 +24,14 @@ import java.util.Optional;
 public interface BibliographicProvider {
 
   /**
+   * The provider's stable source name (for example {@code "google-books"}, {@code "open-library"}),
+   * used by source selection (#5) to refer to a source by name in configuration and to index the
+   * available providers. Added in #5 (ADR-0012) as an additive extension of the original single-method
+   * port (ADR-0008), so each adapter is self-identifying.
+   */
+  String source();
+
+  /**
    * Looks a book up by its ISBN.
    *
    * @param isbn the ISBN to look up, as a raw string. Validation of the ISBN shape stays the Book
