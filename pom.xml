@@ -25,6 +25,11 @@
 
 		<jacoco.version>0.8.12</jacoco.version>
 
+		<!-- toolchain compatibility: Lombok >= 1.18.36 and Byte Buddy >= 1.17 are required to
+		     compile / mock on recent JDKs (22+); both still target release 17 -->
+		<lombok.version>1.18.38</lombok.version>
+		<byte-buddy.version>1.17.5</byte-buddy.version>
+
 		<!-- static analysis / quality tooling -->
 		<sonar.maven.plugin.version>4.0.0.4121</sonar.maven.plugin.version>
 		<checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
@@ -270,7 +275,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.30</version>
+							<version>${lombok.version}</version>
 						</path>
 						<!-- Mapper library to automate model transformations DTO: <-> Model -->
 						<path>
