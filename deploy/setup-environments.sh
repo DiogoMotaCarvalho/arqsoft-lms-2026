@@ -2,13 +2,13 @@
 set -eu
 
 if [ "$#" -ne 0 ] && [ "$#" -ne 3 ]; then
-  echo 'Usage: setup-environments.sh [DEV_PORT UAT_PORT PROD_PORT]' >&2
+  echo 'Usage: setup-environments.sh [DEV_PORT PP_PORT PROD_PORT]' >&2
   exit 1
 fi
 dev_port=${1:-8181}
-uat_port=${2:-8182}
+pp_port=${2:-8182}
 prod_port=${3:-8183}
-for port in "$dev_port" "$uat_port" "$prod_port"; do
+for port in "$dev_port" "$pp_port" "$prod_port"; do
   case "$port" in
     '' | *[!0-9]*) echo "Invalid port: $port" >&2; exit 1 ;;
   esac
@@ -17,7 +17,7 @@ for port in "$dev_port" "$uat_port" "$prod_port"; do
     exit 1
   fi
 done
-if [ "$dev_port" -eq "$uat_port" ] || [ "$dev_port" -eq "$prod_port" ] || [ "$uat_port" -eq "$prod_port" ]; then
+if [ "$dev_port" -eq "$pp_port" ] || [ "$dev_port" -eq "$prod_port" ] || [ "$pp_port" -eq "$prod_port" ]; then
   echo 'The three ports must be different.' >&2
   exit 1
 fi
@@ -28,10 +28,10 @@ test -x /usr/bin/java
 
 install -m 644 psoft-g1@.service /etc/systemd/system/psoft-g1@.service
 install -d -m 755 /etc/psoft-g1
-for name in dev uat prod; do
+for name in dev pp prod; do
   case "$name" in
     dev) port=$dev_port ;;
-    uat) port=$uat_port ;;
+    pp) port=$pp_port ;;
     prod) port=$prod_port ;;
   esac
   if ! id "psoft-g1-$name" >/dev/null 2>&1; then
@@ -54,4 +54,4 @@ done
 visudo -cf psoft-g1.sudoers
 install -m 440 psoft-g1.sudoers /etc/sudoers.d/psoft-g1
 systemctl daemon-reload
-systemctl enable psoft-g1@dev psoft-g1@uat psoft-g1@prod
+systemctl enable psoft-g1@dev psoft-g1@pp psoft-g1@prod

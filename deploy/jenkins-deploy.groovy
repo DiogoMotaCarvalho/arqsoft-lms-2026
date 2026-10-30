@@ -1,5 +1,5 @@
 def settings(String environment) {
-    if (!(environment in ['dev', 'uat', 'prod'])) {
+    if (!(environment in ['dev', 'pp', 'prod'])) {
         error('Unknown environment.')
     }
     def target = env.PSOFT_SSH_TARGET
@@ -9,8 +9,8 @@ def settings(String environment) {
         case 'dev':
             url = env.PSOFT_DEV_URL
             break
-        case 'uat':
-            url = env.PSOFT_UAT_URL
+        case 'pp':
+            url = env.PSOFT_PP_URL
             break
         case 'prod':
             url = env.PSOFT_PROD_URL
