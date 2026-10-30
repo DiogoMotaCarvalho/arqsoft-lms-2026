@@ -1,9 +1,0 @@
-services:
-  app:
-    image: ${IMAGE}:${TAG}
-    ports:
-      - "${PORT:-8080}:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-bootstrap}
-      SPRING_DATASOURCE_URL: jdbc:h2:mem:psoft;IGNORECASE=TRUE
-    restart: unless-stopped
