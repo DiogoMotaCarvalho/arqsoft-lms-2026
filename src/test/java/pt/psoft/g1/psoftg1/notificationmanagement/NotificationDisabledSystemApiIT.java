@@ -39,13 +39,13 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 /**
  * System test of the global disable switch (issue #22, ADR-0016, criterion C3.5). With {@code
  * notifications.enabled=false}, creating a lending through REST performs no delivery and writes no
- * audit record, the counterpart to the enabled fan-out test. Not transactional at the class level so
- * the create commits and the after-commit listener would run if the feature were on.
+ * audit record, the counterpart to the enabled fan-out test. Not transactional at the class level
+ * so the create commits and the after-commit listener would run if the feature were on.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {"notifications.enabled=false"})
-class NotificationDisabledSystemApiTest {
+class NotificationDisabledSystemApiIT {
 
   private static final String ISBN = "9782826012092";
 
@@ -78,7 +78,8 @@ class NotificationDisabledSystemApiTest {
             Reader.newReader("disabled.reader@example.com", "Manuelino123!", "Reader"));
     readerDetails =
         readerRepository.save(
-            new ReaderDetails(991, reader, "2000-01-01", "919990991", true, true, true, null, null));
+            new ReaderDetails(
+                991, reader, "2000-01-01", "919990991", true, true, true, null, null));
   }
 
   @AfterEach
@@ -111,7 +112,10 @@ class NotificationDisabledSystemApiTest {
             .andReturn();
 
     lendingNumber =
-        objectMapper.readTree(created.getResponse().getContentAsString()).get("lendingNumber").asText();
+        objectMapper
+            .readTree(created.getResponse().getContentAsString())
+            .get("lendingNumber")
+            .asText();
 
     await()
         .during(1, SECONDS)

@@ -23,17 +23,18 @@ import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 
 /**
- * System-level (C3.5) acceptance tests of bibliographic enrichment through the external REST
- * interface (#6, ADR-0013), with the external gateways stubbed by {@link StubbedBibliographicGateways}.
- * A book is seeded locally and retrieved by ISBN, and the response is asserted to be enriched from the
- * configured source(s), to fall back across sources, and to return the local book when no source has
- * it. The enrichment-disabled case is in {@link BookEnrichmentDisabledApiTest}.
+ * Component-level (C3.4) tests of bibliographic enrichment with the SUT equal to the controller,
+ * the service, the repository, and the real bibliographic providers, with the external HTTP stubbed
+ * by {@link StubbedBibliographicGateways} (#6, ADR-0013). The stub returns representative Google
+ * Books and Open Library payloads of distinct models, so the real adapters and the selecting
+ * provider run and only the network is faked. Each case asserts the externally observable outcome,
+ * the description on the retrieved book's response.
  */
 @Transactional
 @SpringBootTest
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 @Import(StubbedBibliographicGateways.class)
-class BookEnrichmentSystemApiTest {
+class BookEnrichmentComponentIT {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private AuthorRepository authorRepository;
@@ -52,34 +53,46 @@ class BookEnrichmentSystemApiTest {
   }
 
   @Test
-  void retrievingABookWithAGapReturnsItEnrichedThroughRest() throws Exception {
+  void aBlankDescriptionIsFilledFromGoogleBooks() throws Exception {
     seed(StubbedBibliographicGateways.ISBN_ENRICHED, null);
 
-    getBook(StubbedBibliographicGateways.ISBN_ENRICHED)
-        .andExpect(jsonPath("$.isbn").value(StubbedBibliographicGateways.ISBN_ENRICHED))
+    mockMvc
+        .perform(get("/api/books/" + StubbedBibliographicGateways.ISBN_ENRICHED).with(reader()))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.description").value("Enriched by Google Books"));
   }
 
   @Test
-  void theConfiguredMultiSourceFallbackSurfacesThroughRest() throws Exception {
-    // Google Books has no entry, so the second configured source, Open Library, supplies the data.
+  void aBlankDescriptionIsFilledFromOpenLibraryWhenGoogleBooksHasNothing() throws Exception {
+    // Google Books returns no match for this ISBN, so the configured fallback to Open Library
+    // applies.
     seed(StubbedBibliographicGateways.ISBN_FALLBACK, null);
 
-    getBook(StubbedBibliographicGateways.ISBN_FALLBACK)
+    mockMvc
+        .perform(get("/api/books/" + StubbedBibliographicGateways.ISBN_FALLBACK).with(reader()))
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.description").value("Enriched by Open Library"));
   }
 
   @Test
-  void aBookNoSourceHasIsReturnedUnchanged() throws Exception {
-    seed(StubbedBibliographicGateways.ISBN_NO_MATCH, null);
+  void aPresentLocalDescriptionIsKept() throws Exception {
+    seed(StubbedBibliographicGateways.ISBN_LOCAL_KEPT, "Local description");
 
-    getBook(StubbedBibliographicGateways.ISBN_NO_MATCH)
-        .andExpect(jsonPath("$.isbn").value(StubbedBibliographicGateways.ISBN_NO_MATCH))
-        .andExpect(jsonPath("$.description").isEmpty());
+    mockMvc
+        .perform(get("/api/books/" + StubbedBibliographicGateways.ISBN_LOCAL_KEPT).with(reader()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.description").value("Local description"));
   }
 
-  private org.springframework.test.web.servlet.ResultActions getBook(String isbn) throws Exception {
-    return mockMvc.perform(get("/api/books/" + isbn).with(reader())).andExpect(status().isOk());
+  @Test
+  void aSourceFailureStillReturnsTheLocalBook() throws Exception {
+    seed(StubbedBibliographicGateways.ISBN_FAIL, null);
+
+    mockMvc
+        .perform(get("/api/books/" + StubbedBibliographicGateways.ISBN_FAIL).with(reader()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.isbn").value(StubbedBibliographicGateways.ISBN_FAIL))
+        .andExpect(jsonPath("$.description").isEmpty());
   }
 
   private void seed(String isbn, String description) {

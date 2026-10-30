@@ -9,10 +9,10 @@ import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
  * triggers or the existing mechanisms.
  *
  * <p>Channels are dumb: they deliver what they are given and hold no knowledge of lending events.
- * Delivery is best-effort: a channel with no usable address for the reader (for example SMS when the
- * reader has no phone) reports {@link DeliveryStatus#SKIPPED}, and an ordinary delivery failure is
- * reported as {@link DeliveryStatus#FAILED} rather than thrown, so the composite notifier (#22) can
- * audit the per-channel outcome and still fan out to the other channels.
+ * Delivery is best-effort: a channel with no usable address for the reader (for example SMS when
+ * the reader has no phone) reports {@link DeliveryStatus#SKIPPED}, and an ordinary delivery failure
+ * is reported as {@link DeliveryStatus#FAILED} rather than thrown, so the composite notifier (#22)
+ * can audit the per-channel outcome and still fan out to the other channels.
  */
 public interface NotificationChannel {
 

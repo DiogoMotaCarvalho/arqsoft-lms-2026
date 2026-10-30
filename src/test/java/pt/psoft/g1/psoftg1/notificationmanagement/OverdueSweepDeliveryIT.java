@@ -37,8 +37,8 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
  * own transaction truly commits.
  */
 @SpringBootTest
-@Import(NotificationTriggerIntegrationTest.RecordingChannelConfig.class)
-class OverdueSweepDeliveryIntegrationTest {
+@Import(NotificationTriggerIT.RecordingChannelConfig.class)
+class OverdueSweepDeliveryIT {
 
   private static final String ISBN = "9782826012092";
 
@@ -49,7 +49,7 @@ class OverdueSweepDeliveryIntegrationTest {
   @Autowired private BookRepository bookRepository;
   @Autowired private GenreRepository genreRepository;
   @Autowired private AuthorRepository authorRepository;
-  @Autowired private NotificationTriggerIntegrationTest.RecordingChannel recordingChannel;
+  @Autowired private NotificationTriggerIT.RecordingChannel recordingChannel;
 
   private Author author;
   private Genre genre;

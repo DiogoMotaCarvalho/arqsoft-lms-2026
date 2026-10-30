@@ -13,8 +13,8 @@ import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
 /**
  * Opaque-box tests (SUT equal to the adapter class) of the SMS mechanism (issue #20, ADR-0015,
  * criterion C3.1). The {@link SmsGateway} boundary is stubbed by a recording double, so each case
- * asserts the concrete SMS the adapter would send (recipient, body) rather than that the gateway was
- * merely invoked. Runs over plain objects with no Spring context.
+ * asserts the concrete SMS the adapter would send (recipient, body) rather than that the gateway
+ * was merely invoked. Runs over plain objects with no Spring context.
  */
 class SmsNotificationChannelTest {
 

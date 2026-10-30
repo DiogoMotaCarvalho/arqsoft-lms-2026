@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.lendingmanagement.services;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.hibernate.StaleObjectStateException;
@@ -33,6 +34,7 @@ class LendingServiceImplTest {
   private final InMemoryFineRepository fineRepository = new InMemoryFineRepository();
   private final InMemoryBookRepository bookRepository = new InMemoryBookRepository();
   private final InMemoryReaderRepository readerRepository = new InMemoryReaderRepository();
+  private final List<Object> publishedEvents = new ArrayList<>();
 
   private final LendingServiceImpl service =
       new LendingServiceImpl(
@@ -40,7 +42,8 @@ class LendingServiceImplTest {
           fineRepository,
           bookRepository,
           readerRepository,
-          new SelectingLendingPolicyProvider(lendingRepository, LendingPolicyFixtures.factory()));
+          new SelectingLendingPolicyProvider(lendingRepository, LendingPolicyFixtures.factory()),
+          publishedEvents::add);
 
   private Book book;
   private ReaderDetails reader;

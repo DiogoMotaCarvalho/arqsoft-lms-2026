@@ -77,10 +77,10 @@ class LayeringRulesTest {
           .resideInAPackage("..notificationmanagement..");
 
   /**
-   * The notification delivery audit is a JPA entity and must stay in the notification infrastructure,
-   * never in the framework-free notification domain (issue #22, ADR-0016). Together with {@code
-   * new_domain_must_be_framework_free}, this keeps persistence out of the domain and the composite and
-   * renderer free of JPA.
+   * The notification delivery audit is a JPA entity and must stay in the notification
+   * infrastructure, never in the framework-free notification domain (issue #22, ADR-0016). Together
+   * with {@code new_domain_must_be_framework_free}, this keeps persistence out of the domain and
+   * the composite and renderer free of JPA.
    */
   @ArchTest
   static final ArchRule notification_jpa_entities_live_in_infrastructure =

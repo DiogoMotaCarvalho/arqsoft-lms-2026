@@ -30,7 +30,7 @@ import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 @SpringBootTest(properties = "bibliographic.enrichment.enabled=false")
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 @Import(StubbedBibliographicGateways.class)
-class BookEnrichmentDisabledApiTest {
+class BookEnrichmentDisabledApiIT {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private AuthorRepository authorRepository;

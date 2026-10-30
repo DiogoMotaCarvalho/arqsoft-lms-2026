@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * The default, self-contained {@link EmailGateway} (issue #19, ADR-0015): it records the delivery to
- * the log rather than talking to an SMTP server, so the email mechanism runs and is demonstrable end
- * to end with no external account or credentials. A real SMTP sender (for example over Spring {@code
- * JavaMailSender}) is a later alternative implementation of this same interface, selected by
+ * The default, self-contained {@link EmailGateway} (issue #19, ADR-0015): it records the delivery
+ * to the log rather than talking to an SMTP server, so the email mechanism runs and is demonstrable
+ * end to end with no external account or credentials. A real SMTP sender (for example over Spring
+ * {@code JavaMailSender}) is a later alternative implementation of this same interface, selected by
  * configuration, with no change to {@link EmailNotificationChannel}.
  */
 @Component

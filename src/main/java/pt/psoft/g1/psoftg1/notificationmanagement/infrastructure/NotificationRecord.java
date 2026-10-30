@@ -14,9 +14,9 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEventType;
 
 /**
  * The persisted delivery audit (issue #22, ADR-0016): one record per mechanism per lending event. A
- * fan-out to two active channels writes two records, so a run where one channel succeeds and another
- * fails keeps both outcomes. Both successes and failures are recorded, so the audit doubles as the
- * best-effort delivery log and a mechanism being down is visible rather than silent.
+ * fan-out to two active channels writes two records, so a run where one channel succeeds and
+ * another fails keeps both outcomes. Both successes and failures are recorded, so the audit doubles
+ * as the best-effort delivery log and a mechanism being down is visible rather than silent.
  *
  * <p>It is a JPA entity and therefore lives in the notification infrastructure, never in the
  * framework-free notification domain (enforced by ArchUnit). A skipped delivery (the reader had no

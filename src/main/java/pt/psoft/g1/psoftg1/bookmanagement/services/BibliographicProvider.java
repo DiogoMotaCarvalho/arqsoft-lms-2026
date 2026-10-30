@@ -26,8 +26,8 @@ public interface BibliographicProvider {
   /**
    * The provider's stable source name (for example {@code "google-books"}, {@code "open-library"}),
    * used by source selection (#5) to refer to a source by name in configuration and to index the
-   * available providers. Added in #5 (ADR-0012) as an additive extension of the original single-method
-   * port (ADR-0008), so each adapter is self-identifying.
+   * available providers. Added in #5 (ADR-0012) as an additive extension of the original
+   * single-method port (ADR-0008), so each adapter is self-identifying.
    */
   String source();
 

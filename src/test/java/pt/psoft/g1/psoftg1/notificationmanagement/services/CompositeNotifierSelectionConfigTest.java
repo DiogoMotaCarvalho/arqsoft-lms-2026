@@ -12,12 +12,12 @@ import pt.psoft.g1.psoftg1.notificationmanagement.infrastructure.NotificationRec
 import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
 
 /**
- * Context-binding test for the mechanism selection configuration (issue #22, ADR-0016), in the style
- * of the bibliographic source-selection test. It asserts the setup-time outcome: a valid {@code
- * notifications.channels} list binds and the context starts, an empty list binds and defaults to all
- * channels, and a name with no matching channel fails context startup (the fail-fast validation in
- * the composite's construction), so a typo becomes a boot failure rather than a silently un-notified
- * reader.
+ * Context-binding test for the mechanism selection configuration (issue #22, ADR-0016), in the
+ * style of the bibliographic source-selection test. It asserts the setup-time outcome: a valid
+ * {@code notifications.channels} list binds and the context starts, an empty list binds and
+ * defaults to all channels, and a name with no matching channel fails context startup (the
+ * fail-fast validation in the composite's construction), so a typo becomes a boot failure rather
+ * than a silently un-notified reader.
  */
 class CompositeNotifierSelectionConfigTest {
 

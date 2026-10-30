@@ -19,9 +19,9 @@ import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
  *
  * <p>On each event it fans the notification out to every active channel, deliberately unlike the
  * bibliographic first-present-wins selection, because a reader should be reached by each configured
- * means. Each attempt is recorded as one {@link NotificationRecord}: a {@code SENT} or {@code FAILED}
- * outcome is persisted, a quiet skip is not. A channel's failure is isolated so the others still run,
- * and the whole feature can be turned off with {@code notifications.enabled}.
+ * means. Each attempt is recorded as one {@link NotificationRecord}: a {@code SENT} or {@code
+ * FAILED} outcome is persisted, a quiet skip is not. A channel's failure is isolated so the others
+ * still run, and the whole feature can be turned off with {@code notifications.enabled}.
  */
 @Service
 public class CompositeNotifier implements Notifier {
@@ -74,7 +74,8 @@ public class CompositeNotifier implements Notifier {
         result = channel.send(notification);
       } catch (RuntimeException e) {
         // Defensive: a channel reports a delivery failure as a result, so an exception here is an
-        // unexpected fault. Isolate it so the remaining channels still run, and record it as failed.
+        // unexpected fault. Isolate it so the remaining channels still run, and record it as
+        // failed.
         result = DeliveryResult.failed(null, e.getMessage());
       }
       record(notification, channel.type(), result);

@@ -10,19 +10,19 @@ import org.springframework.stereotype.Service;
 
 /**
  * The configured bibliographic source selection (#5, ADR-0012). It is itself a {@link
- * BibliographicProvider} and the {@link Primary} bean, so the Book flow (#6) injects this one provider
- * and never sees the individual sources. It indexes all provider beans by their {@link
+ * BibliographicProvider} and the {@link Primary} bean, so the Book flow (#6) injects this one
+ * provider and never sees the individual sources. It indexes all provider beans by their {@link
  * BibliographicProvider#source()} name and keeps the configured active ones in order (defaulting to
  * all registered providers when {@code bibliographic.sources} is empty). A configured name with no
- * matching provider fails fast at construction, so a typo fails startup rather than silently yielding
- * nothing.
+ * matching provider fails fast at construction, so a typo fails startup rather than silently
+ * yielding nothing.
  *
  * <p>A lookup tries the active sources in the configured order with first-present-wins: a present
- * result is returned at once (later sources are not consulted), a not-found moves to the next source,
- * and a {@link BibliographicLookupException} is recorded and also moves to the next (fallback). After
- * all active sources, if none returned a result and at least one failed, the failure is raised, and
- * otherwise the result is empty. With a single active source this is exactly that source's behaviour,
- * so the port's two-outcome contract is preserved.
+ * result is returned at once (later sources are not consulted), a not-found moves to the next
+ * source, and a {@link BibliographicLookupException} is recorded and also moves to the next
+ * (fallback). After all active sources, if none returned a result and at least one failed, the
+ * failure is raised, and otherwise the result is empty. With a single active source this is exactly
+ * that source's behaviour, so the port's two-outcome contract is preserved.
  */
 @Service
 @Primary

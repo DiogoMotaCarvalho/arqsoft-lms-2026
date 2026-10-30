@@ -27,7 +27,6 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEventType;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.CreateLendingRequest;
@@ -41,18 +40,17 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 /**
  * System/component test of the notification fan-out and delivery audit through the real REST
  * interface (issue #22, ADR-0016, criteria C3.4 and C3.5). With email and SMS active in
- * configuration, a lending is created through {@code POST /api/lendings}; the SUT is the controller,
- * the service, the after-commit listener, the composite notifier, the two channels with their
- * self-contained gateways, and the audit repository. It is not transactional at the class level, so
- * the create really commits and the after-commit notification runs. The test asserts the persisted
- * outcome: one SENT audit record per active mechanism for the created lending, which is the stable
- * end-to-end evidence ADR-0016 chose the audit to provide.
+ * configuration, a lending is created through {@code POST /api/lendings}; the SUT is the
+ * controller, the service, the after-commit listener, the composite notifier, the two channels with
+ * their self-contained gateways, and the audit repository. It is not transactional at the class
+ * level, so the create really commits and the after-commit notification runs. The test asserts the
+ * persisted outcome: one SENT audit record per active mechanism for the created lending, which is
+ * the stable end-to-end evidence ADR-0016 chose the audit to provide.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(
-    properties = {"notifications.enabled=true", "notifications.channels=email,sms"})
-class NotificationFanoutSystemApiTest {
+@TestPropertySource(properties = {"notifications.enabled=true", "notifications.channels=email,sms"})
+class NotificationFanoutSystemApiIT {
 
   private static final String ISBN = "9782826012092";
 
@@ -81,10 +79,12 @@ class NotificationFanoutSystemApiTest {
         bookRepository.save(
             new Book(ISBN, "O Inspetor Max", "A police dog story.", genre, List.of(author), null));
     reader =
-        userRepository.save(Reader.newReader("fanout.reader@example.com", "Manuelino123!", "Reader"));
+        userRepository.save(
+            Reader.newReader("fanout.reader@example.com", "Manuelino123!", "Reader"));
     readerDetails =
         readerRepository.save(
-            new ReaderDetails(990, reader, "2000-01-01", "919990990", true, true, true, null, null));
+            new ReaderDetails(
+                990, reader, "2000-01-01", "919990990", true, true, true, null, null));
   }
 
   @AfterEach
@@ -117,7 +117,10 @@ class NotificationFanoutSystemApiTest {
             .andReturn();
 
     lendingNumber =
-        objectMapper.readTree(created.getResponse().getContentAsString()).get("lendingNumber").asText();
+        objectMapper
+            .readTree(created.getResponse().getContentAsString())
+            .get("lendingNumber")
+            .asText();
 
     await()
         .atMost(5, SECONDS)

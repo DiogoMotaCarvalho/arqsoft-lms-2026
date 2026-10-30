@@ -37,8 +37,8 @@ import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationChannel;
  * published in a transaction that rolls back is never delivered.
  */
 @SpringBootTest
-@Import(NotificationTriggerIntegrationTest.RecordingChannelConfig.class)
-class NotificationTriggerIntegrationTest {
+@Import(NotificationTriggerIT.RecordingChannelConfig.class)
+class NotificationTriggerIT {
 
   /** A notification together with the thread it was delivered on, for the off-thread assertion. */
   record Delivery(Notification notification, Thread thread) {}

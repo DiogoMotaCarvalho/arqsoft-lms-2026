@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 
 /**
  * Test support for the bibliographic enrichment tests (#6, ADR-0013). It stubs the external HTTP at
- * the boundary while keeping the real adapters and the real selecting provider: it supplies a {@link
- * WebClient.Builder} whose stub {@link ExchangeFunction} routes by request host (Google Books versus
- * Open Library) and by the queried ISBN, returning representative payloads of the two distinct source
- * models. The real adapters build their clients from this builder, so the whole stack runs and only
- * the network is stubbed.
+ * the boundary while keeping the real adapters and the real selecting provider: it supplies a
+ * {@link WebClient.Builder} whose stub {@link ExchangeFunction} routes by request host (Google
+ * Books versus Open Library) and by the queried ISBN, returning representative payloads of the two
+ * distinct source models. The real adapters build their clients from this builder, so the whole
+ * stack runs and only the network is stubbed.
  */
 @TestConfiguration
 public class StubbedBibliographicGateways {

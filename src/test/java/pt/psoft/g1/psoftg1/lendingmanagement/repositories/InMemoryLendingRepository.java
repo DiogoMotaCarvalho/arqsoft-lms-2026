@@ -41,6 +41,15 @@ public class InMemoryLendingRepository implements LendingRepository {
   }
 
   @Override
+  public List<Lending> listOverdueNotNotified(LocalDate today) {
+    return lendings.stream()
+        .filter(l -> l.getReturnedDate() == null)
+        .filter(l -> l.getLimitDate().isBefore(today))
+        .filter(l -> !l.isOverdueNotified())
+        .toList();
+  }
+
+  @Override
   public List<Lending> listCompletedByReaderNumberSince(String readerNumber, LocalDate since) {
     return lendings.stream()
         .filter(l -> l.getReaderDetails().getReaderNumber().equals(readerNumber))
