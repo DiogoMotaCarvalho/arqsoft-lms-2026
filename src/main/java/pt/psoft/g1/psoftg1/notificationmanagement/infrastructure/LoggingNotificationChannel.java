@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
+import pt.psoft.g1.psoftg1.notificationmanagement.services.DeliveryResult;
 import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationChannel;
 
 /**
@@ -20,13 +21,14 @@ public class LoggingNotificationChannel implements NotificationChannel {
   private static final Logger log = LoggerFactory.getLogger(LoggingNotificationChannel.class);
 
   @Override
-  public void send(Notification notification) {
+  public DeliveryResult send(Notification notification) {
     log.info(
         "[{}] notification to reader {}: {} | {}",
         notification.getEventType(),
         notification.getReaderNumber(),
         notification.getSubject(),
         notification.getBody());
+    return DeliveryResult.sent(notification.getReaderNumber());
   }
 
   @Override

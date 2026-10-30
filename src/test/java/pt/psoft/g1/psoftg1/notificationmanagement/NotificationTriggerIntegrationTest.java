@@ -20,6 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEvent;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEventType;
 import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
+import pt.psoft.g1.psoftg1.notificationmanagement.services.DeliveryResult;
 import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationChannel;
 
 /**
@@ -47,8 +48,9 @@ class NotificationTriggerIntegrationTest {
     final List<Delivery> delivered = new CopyOnWriteArrayList<>();
 
     @Override
-    public void send(Notification notification) {
+    public DeliveryResult send(Notification notification) {
       delivered.add(new Delivery(notification, Thread.currentThread()));
+      return DeliveryResult.sent(notification.getReaderNumber());
     }
 
     @Override

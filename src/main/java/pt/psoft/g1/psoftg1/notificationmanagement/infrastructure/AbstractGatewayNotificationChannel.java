@@ -1,8 +1,7 @@
 package pt.psoft.g1.psoftg1.notificationmanagement.infrastructure;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
+import pt.psoft.g1.psoftg1.notificationmanagement.services.DeliveryResult;
 import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationChannel;
 
 /**
@@ -22,28 +21,17 @@ import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationChannel;
  */
 public abstract class AbstractGatewayNotificationChannel implements NotificationChannel {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
-
   @Override
-  public final void send(Notification notification) {
+  public final DeliveryResult send(Notification notification) {
     final String address = recipientAddress(notification);
     if (address == null || address.isBlank()) {
-      log.debug(
-          "No {} address for reader {}; skipping {} notification",
-          type(),
-          notification.getReaderNumber(),
-          type());
-      return;
+      return DeliveryResult.skipped();
     }
     try {
       deliver(notification, address);
+      return DeliveryResult.sent(address);
     } catch (RuntimeException e) {
-      log.warn(
-          "{} delivery failed for reader {} lending {}: {}",
-          type(),
-          notification.getReaderNumber(),
-          notification.getLendingNumber(),
-          e.getMessage());
+      return DeliveryResult.failed(address, e.getMessage());
     }
   }
 

@@ -1,12 +1,11 @@
 package pt.psoft.g1.psoftg1.notificationmanagement.infrastructure;
 
 import java.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
+import pt.psoft.g1.psoftg1.notificationmanagement.services.DeliveryResult;
 import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationChannel;
 
 /**
@@ -27,8 +26,6 @@ public class WebhookNotificationChannel implements NotificationChannel {
   /** This channel's stable mechanism name, the key selection (#22) uses to activate it. */
   static final String TYPE = "webhook";
 
-  private static final Logger log = LoggerFactory.getLogger(WebhookNotificationChannel.class);
-
   private final WebClient webClient;
   private final String baseUrl;
   private final Duration timeout;
@@ -40,12 +37,9 @@ public class WebhookNotificationChannel implements NotificationChannel {
   }
 
   @Override
-  public void send(Notification notification) {
+  public DeliveryResult send(Notification notification) {
     if (baseUrl == null || baseUrl.isBlank()) {
-      log.debug(
-          "No webhook endpoint configured; skipping webhook notification for lending {}",
-          notification.getLendingNumber());
-      return;
+      return DeliveryResult.skipped();
     }
 
     final WebhookPayload payload = WebhookPayload.from(notification);
@@ -59,12 +53,9 @@ public class WebhookNotificationChannel implements NotificationChannel {
           .toBodilessEntity()
           .timeout(timeout)
           .block();
+      return DeliveryResult.sent(baseUrl);
     } catch (RuntimeException e) {
-      log.warn(
-          "Webhook delivery failed for lending {} to {}: {}",
-          notification.getLendingNumber(),
-          baseUrl,
-          e.getMessage());
+      return DeliveryResult.failed(baseUrl, e.getMessage());
     }
   }
 

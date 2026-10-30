@@ -1,7 +1,6 @@
 package pt.psoft.g1.psoftg1.notificationmanagement.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,16 +11,26 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEventType;
 import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
 
 /**
- * Unit tests of the listener's fan-out and best-effort isolation (issue #18, ADR-0014), driven
- * through the package-private {@code dispatch} so no Spring context or transaction is needed. They
- * assert the delivered outcome: every channel receives the one rendered notification, and a channel
- * that throws neither stops the other channels nor propagates the failure to the caller (so a
- * mechanism being down never breaks the lending flow). The real {@link NotificationRenderer} is
- * used because it is a pure function; only the channels are test doubles.
+ * Unit test of the listener's render-and-delegate step (issue #18, ADR-0014; #22, ADR-0016), driven
+ * through the package-private {@code dispatch} so no Spring context or transaction is needed. It
+ * asserts the outcome the listener is responsible for: the event is rendered once and the resulting
+ * {@link Notification}, with the right content and recipient bundle, is handed to the {@link
+ * Notifier}. The fan-out, selection, and audit are the composite notifier's responsibility and are
+ * tested in {@code CompositeNotifierTest}; here the notifier is a recording double.
  */
 class LendingEventListenerTest {
 
   private final NotificationRenderer renderer = new NotificationRenderer();
+
+  /** Records the notifications handed to it. */
+  private static final class RecordingNotifier implements Notifier {
+    private final List<Notification> received = new ArrayList<>();
+
+    @Override
+    public void notify(Notification notification) {
+      received.add(notification);
+    }
+  }
 
   private static LendingEvent anEvent() {
     return new LendingEvent(
@@ -35,55 +44,20 @@ class LendingEventListenerTest {
         null);
   }
 
-  /** A channel that records what it was asked to deliver. */
-  private static final class RecordingChannel implements NotificationChannel {
-    private final List<Notification> delivered = new ArrayList<>();
-
-    @Override
-    public void send(Notification notification) {
-      delivered.add(notification);
-    }
-
-    @Override
-    public String type() {
-      return "recording";
-    }
-  }
-
-  /** A channel that always fails, standing in for a mechanism that is down. */
-  private static final class FailingChannel implements NotificationChannel {
-    @Override
-    public void send(Notification notification) {
-      throw new IllegalStateException("mechanism down");
-    }
-
-    @Override
-    public String type() {
-      return "failing";
-    }
-  }
-
   @Test
-  void deliversTheSameRenderedNotificationToEveryChannel() {
-    RecordingChannel first = new RecordingChannel();
-    RecordingChannel second = new RecordingChannel();
-    LendingEventListener listener = new LendingEventListener(renderer, List.of(first, second));
+  void rendersTheEventOnceAndHandsTheNotificationToTheNotifier() {
+    RecordingNotifier notifier = new RecordingNotifier();
+    LendingEventListener listener = new LendingEventListener(renderer, notifier);
 
     listener.dispatch(anEvent());
 
-    assertThat(first.delivered).hasSize(1);
-    assertThat(second.delivered).hasSize(1);
-    assertThat(first.delivered.get(0).getSubject()).isEqualTo("New lending 2024/15");
-    assertThat(second.delivered.get(0)).isSameAs(first.delivered.get(0));
-  }
-
-  @Test
-  void aFailingChannelDoesNotStopTheOthersNorPropagate() {
-    RecordingChannel healthy = new RecordingChannel();
-    LendingEventListener listener =
-        new LendingEventListener(renderer, List.of(new FailingChannel(), healthy));
-
-    assertThatCode(() -> listener.dispatch(anEvent())).doesNotThrowAnyException();
-    assertThat(healthy.delivered).hasSize(1);
+    assertThat(notifier.received).hasSize(1);
+    Notification notification = notifier.received.get(0);
+    assertThat(notification.getEventType()).isEqualTo(LendingEventType.CREATED);
+    assertThat(notification.getLendingNumber()).isEqualTo("2024/15");
+    assertThat(notification.getReaderNumber()).isEqualTo("2024/1");
+    assertThat(notification.getEmail()).isEqualTo("reader@example.com");
+    assertThat(notification.getPhone()).isEqualTo("912345678");
+    assertThat(notification.getSubject()).isEqualTo("New lending 2024/15");
   }
 }

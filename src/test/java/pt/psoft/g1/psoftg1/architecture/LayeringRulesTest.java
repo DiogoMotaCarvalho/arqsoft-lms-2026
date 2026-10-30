@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.architecture;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
@@ -74,6 +75,23 @@ class LayeringRulesTest {
           .should()
           .dependOnClassesThat()
           .resideInAPackage("..notificationmanagement..");
+
+  /**
+   * The notification delivery audit is a JPA entity and must stay in the notification infrastructure,
+   * never in the framework-free notification domain (issue #22, ADR-0016). Together with {@code
+   * new_domain_must_be_framework_free}, this keeps persistence out of the domain and the composite and
+   * renderer free of JPA.
+   */
+  @ArchTest
+  static final ArchRule notification_jpa_entities_live_in_infrastructure =
+      classes()
+          .that()
+          .areAnnotatedWith(jakarta.persistence.Entity.class)
+          .and()
+          .resideInAPackage("..notificationmanagement..")
+          .should()
+          .resideInAPackage("..notificationmanagement.infrastructure..")
+          .allowEmptyShould(true);
 
   /**
    * The six bounded contexts may reference one another, but must not form dependency cycles. Scoped
