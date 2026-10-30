@@ -118,6 +118,8 @@ public class SecurityConfig {
         .permitAll()
         .requestMatchers(format("%s/**", swaggerPath))
         .permitAll()
+        .requestMatchers(HttpMethod.GET, "/actuator/health/**", "/actuator/info")
+        .permitAll()
         // Our public endpoints
         .requestMatchers("/api/public/**")
         .permitAll() // public assets & end-points

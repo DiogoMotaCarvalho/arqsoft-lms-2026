@@ -43,6 +43,9 @@
 		<pitest.maven.version>1.16.3</pitest.maven.version>
 		<pitest.junit5.version>1.2.1</pitest.junit5.version>
 
+		<!-- commit embedded in build-info; CI passes -Drelease.commit=$GIT_COMMIT -->
+		<release.commit>local</release.commit>
+
 		<!-- SonarQube analysis settings (host.url & token passed at runtime / by Jenkins) -->
 		<sonar.projectKey>pt.psoft.g1:psoft-g1</sonar.projectKey>
 		<sonar.projectName>psoft-g1</sonar.projectName>
@@ -109,6 +112,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- health and build info for deployment checks -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- Mapper library to automate model transformations DTO <-> Model -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -144,6 +153,18 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+						<configuration>
+							<additionalProperties>
+								<commit>${release.commit}</commit>
+							</additionalProperties>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- JaCoCo code coverage -->
