@@ -35,8 +35,8 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
  * service, the domain policy, and the repository, driven through the real REST endpoint over H2
  * (issue #13, ADR-0007). The lending flow has no external gateways to substitute: the bibliographic
  * gateways (Google Books, Open Library) belong to the Book flow, so there is nothing to fake here,
- * and the whole stack is real. The caller is a stub JWT principal with no real credentials, resolved
- * by the controller against a seeded reader fixture.
+ * and the whole stack is real. The caller is a stub JWT principal with no real credentials,
+ * resolved by the controller against a seeded reader fixture.
  *
  * <p>Each case asserts the externally observable outcome (the HTTP status, the renewed limit date,
  * and the renewal count) rather than any internal structure. The fixture reader has no completed
@@ -67,7 +67,8 @@ class LendingRenewalComponentTest {
 
   @BeforeEach
   void setUp() {
-    author = new Author("Manuel Antonio Pina", "Escritor portugues premiado com o Premio Camoes", null);
+    author =
+        new Author("Manuel Antonio Pina", "Escritor portugues premiado com o Premio Camoes", null);
     authorRepository.save(author);
 
     genre = new Genre("Genero");
@@ -116,7 +117,10 @@ class LendingRenewalComponentTest {
     mockMvc.perform(renew(lending).with(owner())).andExpect(status().isForbidden());
 
     assertThat(
-            lendingRepository.findByLendingNumber(lending.getLendingNumber()).orElseThrow().getRenewalCount())
+            lendingRepository
+                .findByLendingNumber(lending.getLendingNumber())
+                .orElseThrow()
+                .getRenewalCount())
         .isZero();
   }
 
@@ -127,7 +131,10 @@ class LendingRenewalComponentTest {
     // three renewals are allowed under the Standard policy (maxRenewals = 3)
     for (int i = 1; i <= 3; i++) {
       long version =
-          lendingRepository.findByLendingNumber(lending.getLendingNumber()).orElseThrow().getVersion();
+          lendingRepository
+              .findByLendingNumber(lending.getLendingNumber())
+              .orElseThrow()
+              .getVersion();
       mockMvc
           .perform(renew(lending, version).with(owner()))
           .andExpect(status().isOk())
@@ -136,18 +143,28 @@ class LendingRenewalComponentTest {
 
     // the fourth renewal crosses the MaxRenewals boundary and is refused
     long version =
-        lendingRepository.findByLendingNumber(lending.getLendingNumber()).orElseThrow().getVersion();
+        lendingRepository
+            .findByLendingNumber(lending.getLendingNumber())
+            .orElseThrow()
+            .getVersion();
     mockMvc.perform(renew(lending, version).with(owner())).andExpect(status().isForbidden());
   }
 
   @Test
   void renewalRejectedForAnAlreadyReturnedLending() throws Exception {
-    // returned on time, so the policy would allow it, but the entity refuses to renew a returned one
+    // returned on time, so the policy would allow it, but the entity refuses to renew a returned
+    // one
     final Lending lending =
         save(
             Lending.newBootstrappingLending(
-                book, readerDetails, LocalDate.now().getYear(), nextSeq(),
-                LocalDate.now().minusDays(5), LocalDate.now().minusDays(1), 15, 300));
+                book,
+                readerDetails,
+                LocalDate.now().getYear(),
+                nextSeq(),
+                LocalDate.now().minusDays(5),
+                LocalDate.now().minusDays(1),
+                15,
+                300));
 
     mockMvc.perform(renew(lending).with(owner())).andExpect(status().isBadRequest());
   }
@@ -181,9 +198,7 @@ class LendingRenewalComponentTest {
   void renewalWithoutIfMatchIsABadRequest() throws Exception {
     final Lending lending = activeLending(LocalDate.now(), 15);
 
-    mockMvc
-        .perform(patch(renewUri(lending)).with(owner()))
-        .andExpect(status().isBadRequest());
+    mockMvc.perform(patch(renewUri(lending)).with(owner())).andExpect(status().isBadRequest());
   }
 
   // --- fixture helpers ---
@@ -191,8 +206,14 @@ class LendingRenewalComponentTest {
   private Lending activeLending(LocalDate startDate, int durationInDays) {
     return save(
         Lending.newBootstrappingLending(
-            book, readerDetails, LocalDate.now().getYear(), nextSeq(), startDate, null,
-            durationInDays, 300));
+            book,
+            readerDetails,
+            LocalDate.now().getYear(),
+            nextSeq(),
+            startDate,
+            null,
+            durationInDays,
+            300));
   }
 
   private Lending save(Lending lending) {

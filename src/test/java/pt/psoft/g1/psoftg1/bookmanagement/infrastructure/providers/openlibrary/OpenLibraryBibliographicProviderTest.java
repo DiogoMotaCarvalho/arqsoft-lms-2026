@@ -18,10 +18,10 @@ import reactor.core.publisher.Mono;
 /**
  * Opaque-box tests of the Open Library adapter at SUT = the adapter class, with the external call
  * stubbed at the HTTP boundary (#4, ADR-0011). The adapter's {@link WebClient} is built from a stub
- * {@link ExchangeFunction} returning representative Open Library Books-API JSON, so the real response
- * decoding (a map keyed by the bibkey, with authors as objects carrying a name) and the real mapping
- * are exercised with no network and no new test dependency. Each case asserts the externally
- * observable outcome: the mapped record, an empty result, or the raised exception.
+ * {@link ExchangeFunction} returning representative Open Library Books-API JSON, so the real
+ * response decoding (a map keyed by the bibkey, with authors as objects carrying a name) and the
+ * real mapping are exercised with no network and no new test dependency. Each case asserts the
+ * externally observable outcome: the mapped record, an empty result, or the raised exception.
  */
 class OpenLibraryBibliographicProviderTest {
 

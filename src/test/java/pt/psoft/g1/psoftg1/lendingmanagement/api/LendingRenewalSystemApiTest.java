@@ -219,7 +219,13 @@ class LendingRenewalSystemApiTest {
       final LocalDate start = LocalDate.now().minusMonths(2).minusDays(i);
       lendingRepository.save(
           Lending.newBootstrappingLending(
-              book, reader, LocalDate.now().getYear(), historySeq++, start, start.plusDays(5), 15,
+              book,
+              reader,
+              LocalDate.now().getYear(),
+              historySeq++,
+              start,
+              start.plusDays(5),
+              15,
               300));
     }
   }

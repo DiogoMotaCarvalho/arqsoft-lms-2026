@@ -8,9 +8,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * Externalized configuration for the Google Books adapter (#3, ADR-0010), bound from the {@code
  * bibliographic.google-books} prefix. The base URL has a sensible default, the API key is optional
- * (Google Books volume lookups work without one, subject to rate limits), and the timeout bounds the
- * single blocking call. None of these is hard-coded in the adapter, which is the C2.1 evidence that a
- * change needs only configuration, no code edit.
+ * (Google Books volume lookups work without one, subject to rate limits), and the timeout bounds
+ * the single blocking call. None of these is hard-coded in the adapter, which is the C2.1 evidence
+ * that a change needs only configuration, no code edit.
  */
 @Getter
 @Setter

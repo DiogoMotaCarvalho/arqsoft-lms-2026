@@ -188,8 +188,7 @@ public class LendingController {
                 () -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
 
     // only the reader who owns the lending may renew it
-    if (!Objects.equals(
-        loggedReaderDetails.getReaderNumber(), maybeLending.getReaderNumber())) {
+    if (!Objects.equals(loggedReaderDetails.getReaderNumber(), maybeLending.getReaderNumber())) {
       throw new AccessDeniedException("Reader does not have permission to renew this lending");
     }
 

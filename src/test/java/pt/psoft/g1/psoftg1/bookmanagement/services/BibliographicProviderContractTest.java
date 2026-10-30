@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the {@link BibliographicProvider} contract against an in-memory stub, with no network and no
- * Spring context (issue #2, ADR-0008). It proves the two outcomes every adapter must honour: a known
- * ISBN yields a populated result, an unknown ISBN yields an empty result (not an error), and a source
- * failure is reported by throwing {@link BibliographicLookupException}.
+ * Tests the {@link BibliographicProvider} contract against an in-memory stub, with no network and
+ * no Spring context (issue #2, ADR-0008). It proves the two outcomes every adapter must honour: a
+ * known ISBN yields a populated result, an unknown ISBN yields an empty result (not an error), and
+ * a source failure is reported by throwing {@link BibliographicLookupException}.
  */
 class BibliographicProviderContractTest {
 
