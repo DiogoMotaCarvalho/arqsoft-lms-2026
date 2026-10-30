@@ -2,41 +2,25 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-public class PhoneNumberTest {
-  @Test
-  void ensureValidMobilePhoneNumberIsAccepted() {
-    assertDoesNotThrow(() -> new PhoneNumber("912345678"));
+class PhoneNumberTest {
+  @ParameterizedTest
+  @ValueSource(strings = {"912345678", "212345678"})
+  void ensureMobileAndFixedNumbersAreAccepted(String number) {
+    assertEquals(number, new PhoneNumber(number).toString());
   }
 
-  @Test
-  void ensureValidFixedPhoneNumberIsAccepted() {
-    assertDoesNotThrow(() -> new PhoneNumber("212345678"));
+  @ParameterizedTest
+  @ValueSource(strings = {"", "91234567", "21234567", "9123456789", "00123456789"})
+  void ensureNumberMustHaveNineDigits(String number) {
+    assertThrows(IllegalArgumentException.class, () -> new PhoneNumber(number));
   }
 
-  @Test
-  void ensureInvalidPhoneNumberThrowsException() {
-    assertThrows(IllegalArgumentException.class, () -> new PhoneNumber("12345678")); // Too short
-    assertThrows(IllegalArgumentException.class, () -> new PhoneNumber("00123456789")); // Too long
-    assertThrows(
-        IllegalArgumentException.class, () -> new PhoneNumber("abcdefghij")); // Non-numeric
-    assertThrows(
-        IllegalArgumentException.class, () -> new PhoneNumber("512345678")); // Invalid start digit
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> new PhoneNumber("91234567")); // Too short by one digit
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> new PhoneNumber("21234567")); // Too short by one digit
-  }
-
-  @Test
-  void ensureCorrectStringRepresentation() {
-    PhoneNumber phoneNumber = new PhoneNumber("912345678");
-    assertEquals("912345678", phoneNumber.toString());
-
-    PhoneNumber anotherPhoneNumber = new PhoneNumber("212345678");
-    assertEquals("212345678", anotherPhoneNumber.toString());
+  @ParameterizedTest
+  @ValueSource(strings = {"112345678", "312345678", "512345678", "812345678", "+35191234"})
+  void ensureNumberMustStartWith9Or2(String number) {
+    assertThrows(IllegalArgumentException.class, () -> new PhoneNumber(number));
   }
 }
