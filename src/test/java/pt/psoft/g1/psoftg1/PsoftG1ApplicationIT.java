@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PsoftG1ApplicationTests {
+class PsoftG1ApplicationIT {
 
   @Test
   void contextLoads() {

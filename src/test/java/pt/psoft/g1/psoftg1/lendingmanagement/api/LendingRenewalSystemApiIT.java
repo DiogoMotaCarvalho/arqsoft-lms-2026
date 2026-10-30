@@ -49,7 +49,7 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 @Transactional
 @SpringBootTest
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-class LendingRenewalSystemApiTest {
+class LendingRenewalSystemApiIT {
 
   private static final String ISBN = "9782826012092";
 

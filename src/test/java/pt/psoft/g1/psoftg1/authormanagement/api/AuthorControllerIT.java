@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AuthorController.class)
 @AutoConfigureMockMvc
-public class AuthorControllerIntegrationTest {
+public class AuthorControllerIT {
 
   @BeforeEach
   public void setUp() {

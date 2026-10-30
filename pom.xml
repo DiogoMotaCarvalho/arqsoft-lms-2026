@@ -292,6 +292,12 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
+			<!-- Integration tests (*IT) run in `verify`; unit tests (*Test) stay in Surefire's `test` -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 
