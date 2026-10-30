@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Optional;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import org.springframework.web.reactive.function.client.ExchangeFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicData;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicLookupException;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicProvider;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicProviderContract;
 import reactor.core.publisher.Mono;
 
 /**
@@ -116,6 +119,25 @@ class OpenLibraryBibliographicProviderTest {
     assertThatExceptionOfType(BibliographicLookupException.class)
         .isThrownBy(() -> provider(HttpStatus.OK, "this is not json {").findByIsbn(ISBN))
         .withMessageContaining(ISBN);
+  }
+
+  @Nested
+  class Contract extends BibliographicProviderContract {
+    @Override
+    protected BibliographicProvider providerThatKnows(String isbn, String title) {
+      return provider(
+          HttpStatus.OK, "{ \"ISBN:%s\": { \"title\": \"%s\" } }".formatted(isbn, title));
+    }
+
+    @Override
+    protected BibliographicProvider providerThatKnowsNothing() {
+      return provider(HttpStatus.OK, "{}");
+    }
+
+    @Override
+    protected BibliographicProvider providerThatFails() {
+      return provider(HttpStatus.INTERNAL_SERVER_ERROR, "{}");
+    }
   }
 
   /** An adapter whose WebClient returns the given status and JSON body for any request. */
