@@ -36,6 +36,8 @@
 		<checkstyle.version>10.23.1</checkstyle.version>
 		<spotless.plugin.version>2.43.0</spotless.plugin.version>
 		<google.java.format.version>1.25.2</google.java.format.version>
+		<pitest.version>1.20.0</pitest.version>
+		<pitest.mutationThreshold>75</pitest.mutationThreshold>
 
 		<!-- mutation testing (PIT); run on demand via the `mutation` profile -->
 		<pitest.maven.version>1.16.3</pitest.maven.version>
@@ -297,6 +299,40 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>${pitest.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>${pitest.junit5.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<targetClasses>
+						<param>pt.psoft.g1.psoftg1.*.model.*</param>
+						<param>pt.psoft.g1.psoftg1.*.services.*</param>
+					</targetClasses>
+					<excludedClasses>
+						<param>*Request</param>
+						<param>*Mapper</param>
+						<param>*MapperImpl</param>
+					</excludedClasses>
+					<targetTests>
+						<param>pt.psoft.g1.psoftg1.*Test</param>
+					</targetTests>
+					<threads>4</threads>
+					<timestampedReports>false</timestampedReports>
+					<outputFormats>
+						<param>HTML</param>
+						<param>XML</param>
+					</outputFormats>
+					<mutationThreshold>${pitest.mutationThreshold}</mutationThreshold>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
