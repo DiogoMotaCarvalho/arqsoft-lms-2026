@@ -53,6 +53,15 @@ public interface SpringDataLendingRepository
 
   @Override
   @Query(
+      "SELECT l "
+          + "FROM Lending l "
+          + "WHERE l.returnedDate IS NULL "
+          + "AND l.limitDate < :today "
+          + "AND l.overdueNotifiedAt IS NULL")
+  List<Lending> listOverdueNotNotified(@Param("today") LocalDate today);
+
+  @Override
+  @Query(
       value = "SELECT AVG(DATEDIFF(day, l.start_date, l.returned_date)) " + "FROM Lending l",
       nativeQuery = true)
   Double getAverageDuration();

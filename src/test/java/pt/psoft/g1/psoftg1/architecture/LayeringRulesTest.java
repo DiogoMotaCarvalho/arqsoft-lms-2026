@@ -43,18 +43,37 @@ class LayeringRulesTest {
 
   /**
    * New feature domain must be framework-free (no Spring, no JPA). Allow-list, extended per
-   * feature. {@code allowEmptyShould} because the first entry ({@code
-   * lendingmanagement.model.policy}) is created by #8, which this ticket precedes.
+   * feature. The notification domain (#18) and the lending-event snapshot it consumes are added
+   * here, alongside the lending-policy domain (#8). {@code allowEmptyShould} is kept from the first
+   * entry's introduction.
    */
   @ArchTest
   static final ArchRule new_domain_must_be_framework_free =
       noClasses()
           .that()
-          .resideInAnyPackage("..lendingmanagement.model.policy..")
+          .resideInAnyPackage(
+              "..lendingmanagement.model.policy..",
+              "..lendingmanagement.model.events..",
+              "..notificationmanagement.model..")
           .should()
           .dependOnClassesThat()
           .resideInAnyPackage("org.springframework..", "jakarta.persistence..")
           .allowEmptyShould(true);
+
+  /**
+   * The notification context may depend on the lending context (it listens for the lending event),
+   * but the dependency must stay one-way: the lending context must never depend on the notification
+   * context (issue #18, ADR-0014). This keeps the two contexts able to evolve independently and
+   * fixes the direction of the single allowed cross-context edge.
+   */
+  @ArchTest
+  static final ArchRule lending_must_not_depend_on_notifications =
+      noClasses()
+          .that()
+          .resideInAPackage("..lendingmanagement..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..notificationmanagement..");
 
   /**
    * The six bounded contexts may reference one another, but must not form dependency cycles. Scoped

@@ -24,6 +24,13 @@ public interface LendingRepository {
 
   List<Lending> getOverdue(Page page);
 
+  /**
+   * Lendings that are now overdue (not returned and past their limit date) and whose
+   * becoming-overdue has not yet been notified, as of {@code today}. Used by the overdue sweep
+   * (issue #18) so a lending is notified at most once.
+   */
+  List<Lending> listOverdueNotNotified(LocalDate today);
+
   List<Lending> searchLendings(
       Page page,
       String readerNumber,

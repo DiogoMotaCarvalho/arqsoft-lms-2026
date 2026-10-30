@@ -16,6 +16,7 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
@@ -116,13 +117,22 @@ public class Lending {
 
   /**
    * Number of times this lending has been renewed. Starts at zero and is incremented by {@link
-   * #renew(long, LocalDate)}. The applicable {@code LendingPolicy} decides whether a further renewal
-   * is allowed (e.g. the Standard policy caps it at {@code maxRenewals}); the entity only keeps the
-   * count and the state change (ADR-0007). The column is created by {@code ddl-auto=update}.
+   * #renew(long, LocalDate)}. The applicable {@code LendingPolicy} decides whether a further
+   * renewal is allowed (e.g. the Standard policy caps it at {@code maxRenewals}); the entity only
+   * keeps the count and the state change (ADR-0007). The column is created by {@code
+   * ddl-auto=update}.
    */
   @Column(nullable = false)
   @Getter
   private int renewalCount;
+
+  /**
+   * When this lending's becoming-overdue was notified to the reader, or {@code null} while it has
+   * not been notified (issue #18, ADR-0014). The overdue sweep sets this once so a later run does
+   * not notify the same lending again; it is the only persisted state this issue introduces. The
+   * column is created by {@code ddl-auto=update}.
+   */
+  @Getter private LocalDateTime overdueNotifiedAt;
 
   /** Protected empty constructor for ORM only. */
   protected Lending() {}
@@ -235,6 +245,22 @@ public class Lending {
       return Math.max((int) ChronoUnit.DAYS.between(this.limitDate, this.returnedDate), 0);
     } else {
       return Math.max((int) ChronoUnit.DAYS.between(this.limitDate, LocalDate.now()), 0);
+    }
+  }
+
+  /** Whether this lending's becoming-overdue has already been notified to the reader. */
+  public boolean isOverdueNotified() {
+    return this.overdueNotifiedAt != null;
+  }
+
+  /**
+   * Records that this lending's becoming-overdue has now been notified, so the overdue sweep does
+   * not notify the same lending again (issue #18, ADR-0014). Idempotent: once marked, the timestamp
+   * is not overwritten by a later call.
+   */
+  public void markOverdueNotified() {
+    if (this.overdueNotifiedAt == null) {
+      this.overdueNotifiedAt = LocalDateTime.now();
     }
   }
 

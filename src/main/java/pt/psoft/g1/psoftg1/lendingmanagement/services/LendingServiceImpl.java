@@ -7,13 +7,17 @@ import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEvent;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEventType;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.ReaderLendingContext;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.RenewalContext;
@@ -31,6 +35,7 @@ public class LendingServiceImpl implements LendingService {
   private final BookRepository bookRepository;
   private final ReaderRepository readerRepository;
   private final LendingPolicyProvider lendingPolicyProvider;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Value("${fineValuePerDayInCents}")
   private int fineValuePerDayInCents;
@@ -58,6 +63,7 @@ public class LendingServiceImpl implements LendingService {
   }
 
   @Override
+  @Transactional
   public Lending create(final CreateLendingRequest resource) {
     final var b =
         bookRepository
@@ -85,7 +91,9 @@ public class LendingServiceImpl implements LendingService {
     final LocalDate limitDate = policy.limitDateFor(LocalDate.now(), context);
     final Lending l = new Lending(b, r, seq, limitDate, fineValuePerDayInCents);
 
-    return lendingRepository.save(l);
+    final Lending saved = lendingRepository.save(l);
+    eventPublisher.publishEvent(LendingEvent.of(LendingEventType.CREATED, saved));
+    return saved;
   }
 
   /**
@@ -105,6 +113,7 @@ public class LendingServiceImpl implements LendingService {
   }
 
   @Override
+  @Transactional
   public Lending setReturned(
       final String lendingNumber,
       final SetLendingReturnedRequest resource,
@@ -123,10 +132,13 @@ public class LendingServiceImpl implements LendingService {
       fineRepository.save(fine);
     }
 
-    return lendingRepository.save(lending);
+    final Lending saved = lendingRepository.save(lending);
+    eventPublisher.publishEvent(LendingEvent.of(LendingEventType.RETURNED, saved));
+    return saved;
   }
 
   @Override
+  @Transactional
   public Lending renew(final String lendingNumber, final long desiredVersion) {
 
     final var lending =
@@ -151,7 +163,9 @@ public class LendingServiceImpl implements LendingService {
 
     lending.renew(desiredVersion, policy.renewalLimitDateFor(context));
 
-    return lendingRepository.save(lending);
+    final Lending saved = lendingRepository.save(lending);
+    eventPublisher.publishEvent(LendingEvent.of(LendingEventType.RENEWED, saved));
+    return saved;
   }
 
   /**
