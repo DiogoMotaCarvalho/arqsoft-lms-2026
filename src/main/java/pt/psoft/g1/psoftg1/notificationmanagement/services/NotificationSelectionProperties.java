@@ -11,9 +11,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * notifications} prefix. {@code channels} is an ordered list of mechanism names (for example {@code
  * email,sms,webhook}): one name is a single-mechanism setup, several names enable several at once,
  * and an empty list defaults to all registered channels, mirroring {@code bibliographic.sources}
- * (ADR-0012). Unlike bibliographic selection, the composite notifier fans out to all active channels
- * rather than stopping at the first. A name with no matching channel fails startup. {@code enabled}
- * is a global switch that turns all notifications off, mirroring {@code
+ * (ADR-0012). Unlike bibliographic selection, the composite notifier fans out to all active
+ * channels rather than stopping at the first. A name with no matching channel fails startup. {@code
+ * enabled} is a global switch that turns all notifications off, mirroring {@code
  * bibliographic.enrichment.enabled}.
  */
 @Getter

@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests the configured source selection (#5, ADR-0012) with in-memory stub providers, asserting the
- * observable outcome of a lookup across the active sources rather than how iteration works. Covers the
- * single-source and multi-source cases, the order and fallback behaviour, and the fail-fast rejection
- * of an unknown configured source.
+ * observable outcome of a lookup across the active sources rather than how iteration works. Covers
+ * the single-source and multi-source cases, the order and fallback behaviour, and the fail-fast
+ * rejection of an unknown configured source.
  */
 class SelectingBibliographicProviderTest {
 
@@ -21,10 +21,12 @@ class SelectingBibliographicProviderTest {
 
   @Test
   void singleSourceWithTheBookReturnsIt() {
-    SelectingBibliographicProvider selector =
-        selector(List.of(present("a")), props("a"));
+    SelectingBibliographicProvider selector = selector(List.of(present("a")), props("a"));
 
-    assertThat(selector.findByIsbn(ISBN)).get().extracting(BibliographicData::getSource).isEqualTo("a");
+    assertThat(selector.findByIsbn(ISBN))
+        .get()
+        .extracting(BibliographicData::getSource)
+        .isEqualTo("a");
   }
 
   @Test
@@ -49,7 +51,10 @@ class SelectingBibliographicProviderTest {
     SelectingBibliographicProvider selector =
         selector(List.of(present("a"), neverConsulted("z")), props("a", "z"));
 
-    assertThat(selector.findByIsbn(ISBN)).get().extracting(BibliographicData::getSource).isEqualTo("a");
+    assertThat(selector.findByIsbn(ISBN))
+        .get()
+        .extracting(BibliographicData::getSource)
+        .isEqualTo("a");
   }
 
   @Test
@@ -57,7 +62,10 @@ class SelectingBibliographicProviderTest {
     SelectingBibliographicProvider selector =
         selector(List.of(empty("a"), present("b")), props("a", "b"));
 
-    assertThat(selector.findByIsbn(ISBN)).get().extracting(BibliographicData::getSource).isEqualTo("b");
+    assertThat(selector.findByIsbn(ISBN))
+        .get()
+        .extracting(BibliographicData::getSource)
+        .isEqualTo("b");
   }
 
   @Test
@@ -65,7 +73,10 @@ class SelectingBibliographicProviderTest {
     SelectingBibliographicProvider selector =
         selector(List.of(failing("a"), present("b")), props("a", "b"));
 
-    assertThat(selector.findByIsbn(ISBN)).get().extracting(BibliographicData::getSource).isEqualTo("b");
+    assertThat(selector.findByIsbn(ISBN))
+        .get()
+        .extracting(BibliographicData::getSource)
+        .isEqualTo("b");
   }
 
   @Test
@@ -113,7 +124,10 @@ class SelectingBibliographicProviderTest {
     // no configured list: both are active, so the one that has the book answers
     SelectingBibliographicProvider selector = selector(List.of(empty("a"), present("b")), props());
 
-    assertThat(selector.findByIsbn(ISBN)).get().extracting(BibliographicData::getSource).isEqualTo("b");
+    assertThat(selector.findByIsbn(ISBN))
+        .get()
+        .extracting(BibliographicData::getSource)
+        .isEqualTo("b");
   }
 
   // --- helpers ---

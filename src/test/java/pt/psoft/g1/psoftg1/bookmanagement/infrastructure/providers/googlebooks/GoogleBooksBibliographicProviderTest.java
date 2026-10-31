@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Optional;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,17 @@ import org.springframework.web.reactive.function.client.ExchangeFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicData;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicLookupException;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicProvider;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicProviderContract;
 import reactor.core.publisher.Mono;
 
 /**
  * Opaque-box tests of the Google Books adapter at SUT = the adapter class, with the external call
  * stubbed at the HTTP boundary (#3, ADR-0010). The adapter's {@link WebClient} is built from a stub
- * {@link ExchangeFunction} returning representative Google Books JSON, so the real response decoding
- * and the real mapping are exercised with no network and no new test dependency. Each case asserts
- * the externally observable outcome: the mapped record, an empty result, or the raised exception.
+ * {@link ExchangeFunction} returning representative Google Books JSON, so the real response
+ * decoding and the real mapping are exercised with no network and no new test dependency. Each case
+ * asserts the externally observable outcome: the mapped record, an empty result, or the raised
+ * exception.
  */
 class GoogleBooksBibliographicProviderTest {
 
@@ -109,6 +113,39 @@ class GoogleBooksBibliographicProviderTest {
     assertThatExceptionOfType(BibliographicLookupException.class)
         .isThrownBy(() -> provider(HttpStatus.OK, "this is not json {").findByIsbn(ISBN))
         .withMessageContaining(ISBN);
+  }
+
+  @Nested
+  class Contract extends BibliographicProviderContract {
+    @Override
+    protected BibliographicProvider providerThatKnows(String isbn, String title) {
+      String json =
+          """
+          {
+            "totalItems": 1,
+            "items": [
+              {
+                "volumeInfo": {
+                  "title": "%s",
+                  "industryIdentifiers": [{"type": "ISBN_13", "identifier": "%s"}]
+                }
+              }
+            ]
+          }
+          """
+              .formatted(title, isbn);
+      return provider(HttpStatus.OK, json);
+    }
+
+    @Override
+    protected BibliographicProvider providerThatKnowsNothing() {
+      return provider(HttpStatus.OK, "{ \"kind\": \"books#volumes\", \"totalItems\": 0 }");
+    }
+
+    @Override
+    protected BibliographicProvider providerThatFails() {
+      return provider(HttpStatus.INTERNAL_SERVER_ERROR, "{}");
+    }
   }
 
   /** An adapter whose WebClient returns the given status and JSON body for any request. */

@@ -6,8 +6,8 @@ package pt.psoft.g1.psoftg1.notificationmanagement.services;
  *
  * <ul>
  *   <li>{@code SENT}: the channel delivered the notification.
- *   <li>{@code SKIPPED}: the channel had no usable address for the reader, so it is not applicable (a
- *       quiet skip, not an error, and not audited).
+ *   <li>{@code SKIPPED}: the channel had no usable address for the reader, so it is not applicable
+ *       (a quiet skip, not an error, and not audited).
  *   <li>{@code FAILED}: the channel attempted delivery and it failed (audited with a reason).
  * </ul>
  */

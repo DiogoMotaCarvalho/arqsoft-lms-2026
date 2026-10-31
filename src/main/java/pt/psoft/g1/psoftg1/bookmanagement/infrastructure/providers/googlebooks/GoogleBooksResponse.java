@@ -9,8 +9,8 @@ import lombok.Setter;
  * Internal data holders for the Google Books Volumes API response (#3). Package-private to the
  * adapter, since the Google Books shape must not leak out of this package. Only the fields the
  * adapter maps are declared; {@code @JsonIgnoreProperties(ignoreUnknown = true)} tolerates the many
- * fields Google Books returns that the internal model cannot hold (publisher, published date, cover,
- * identifiers, and the rest), including when decoded by a plain {@code WebClient} in tests.
+ * fields Google Books returns that the internal model cannot hold (publisher, published date,
+ * cover, identifiers, and the rest), including when decoded by a plain {@code WebClient} in tests.
  */
 @Getter
 @Setter

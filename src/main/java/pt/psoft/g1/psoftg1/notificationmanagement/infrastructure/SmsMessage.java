@@ -3,9 +3,9 @@ package pt.psoft.g1.psoftg1.notificationmanagement.infrastructure;
 /**
  * The concrete SMS an {@link SmsNotificationChannel} hands to an {@link SmsGateway} (issue #20,
  * ADR-0015): the recipient phone number and the short text body. SMS carries the body only, not a
- * subject. It is the shape the adapter maps a {@code Notification} onto, and what the opaque-box test
- * asserts, so the mapping is verifiable without any delivery. Immutable, both fields required and
- * non-blank.
+ * subject. It is the shape the adapter maps a {@code Notification} onto, and what the opaque-box
+ * test asserts, so the mapping is verifiable without any delivery. Immutable, both fields required
+ * and non-blank.
  */
 public final class SmsMessage {
 

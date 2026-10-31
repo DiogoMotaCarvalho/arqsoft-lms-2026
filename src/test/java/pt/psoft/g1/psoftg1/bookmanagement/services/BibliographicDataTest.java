@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Transparent-box tests over the construction of the neutral bibliographic record (issue #2,
- * ADR-0008). Each case asserts the outcome of a construction branch: a required field absent or blank
- * fails fast, and an absent optional field is handled gracefully. This is the mapping that #2 owns;
- * source-specific parsing is tested in the adapters (#3, #4).
+ * ADR-0008). Each case asserts the outcome of a construction branch: a required field absent or
+ * blank fails fast, and an absent optional field is handled gracefully. This is the mapping that #2
+ * owns; source-specific parsing is tested in the adapters (#3, #4).
  */
 class BibliographicDataTest {
 
@@ -22,7 +22,8 @@ class BibliographicDataTest {
   @Test
   void buildsWithAllFieldsPresent() {
     BibliographicData data =
-        new BibliographicData(ISBN, TITLE, "A description", List.of("Ana", "Bruno"), "google-books");
+        new BibliographicData(
+            ISBN, TITLE, "A description", List.of("Ana", "Bruno"), "google-books");
 
     assertThat(data.getIsbn()).isEqualTo(ISBN);
     assertThat(data.getTitle()).isEqualTo(TITLE);

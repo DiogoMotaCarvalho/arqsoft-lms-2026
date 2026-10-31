@@ -1,112 +1,140 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
-import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
+import pt.psoft.g1.psoftg1.lendingmanagement.repositories.InMemoryLendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
-/**
- * Tests the runtime provider by supplying representative reader histories through a substituted
- * repository and asserting the policy it resolves. The criteria come from the real factory (minimum
- * 5 completed lendings, minimum on-time ratio 80). The decision itself is covered in depth by
- * LendingPolicySelectorTest, so these cases confirm the gathering and wiring.
- */
 class SelectingLendingPolicyProviderTest {
+  private static final LocalDate TODAY = LocalDate.now();
+  private static final LocalDate HISTORY_START =
+      TODAY.minusMonths(LendingPolicyFixtures.HISTORY_MONTHS);
+  private static final int DURATION = LendingPolicyFixtures.STANDARD_DURATION;
 
-  private static final String READER = "2024/1";
+  private final InMemoryLendingRepository lendingRepository = new InMemoryLendingRepository();
+  private final SelectingLendingPolicyProvider provider =
+      new SelectingLendingPolicyProvider(lendingRepository, LendingPolicyFixtures.factory());
 
-  private static LendingPolicyFactory factory() {
-    LendingPolicyProperties props = new LendingPolicyProperties();
-    LendingPolicyProperties.Standard s = props.getStandard();
-    s.setMaxActiveLendings(3);
-    s.setLendingDurationInDays(15);
-    s.setMaxRenewals(3);
-    s.setRenewalDurationInDays(15);
-    LendingPolicyProperties.Adaptive a = props.getAdaptive();
-    a.setMaxActiveLendings(5);
-    a.setFirstThreshold(2);
-    a.setSecondThreshold(4);
-    a.setLongPeriod(21);
-    a.setStandardPeriod(14);
-    a.setShortPeriod(7);
-    LendingPolicyProperties.Selection sel = props.getSelection();
-    sel.setHistoryPeriodInMonths(12);
-    sel.setMinCompletedLendings(5);
-    sel.setMinOnTimeRatio(80);
-    return new LendingPolicyFactory(props);
+  private final Book book =
+      new Book(
+          "9782826012092",
+          "O Inspetor Max",
+          null,
+          new Genre("Policial"),
+          List.of(new Author("Manuel Antonio Pina", "Escritor português", null)),
+          null);
+  private final ReaderDetails reader = reader(1, "manuel@gmail.com");
+  private int sequence;
+
+  private static ReaderDetails reader(int number, String username) {
+    return new ReaderDetails(
+        number,
+        Reader.newReader(username, "Manuelino123!", "Manuel Coives"),
+        "2000-01-01",
+        "919191919",
+        true,
+        false,
+        false,
+        null,
+        null);
   }
 
-  private static Lending lendingDelayedBy(int days) {
-    Lending lending = mock(Lending.class);
-    when(lending.getDaysDelayed()).thenReturn(days);
-    return lending;
+  private void returnedOnTime(ReaderDetails owner, LocalDate returnedDate) {
+    save(owner, returnedDate.minusDays(DURATION - 1), returnedDate);
   }
 
-  private static ReaderDetails reader() {
-    ReaderDetails reader = mock(ReaderDetails.class);
-    when(reader.getReaderNumber()).thenReturn(READER);
-    return reader;
+  private void returnedLate(ReaderDetails owner, LocalDate returnedDate) {
+    save(owner, returnedDate.minusDays(DURATION + 5), returnedDate);
   }
 
-  /** A list of mocked completed lendings, {@code onTime} of which were returned on time. */
-  private static List<Lending> completed(int total, int onTime) {
-    List<Lending> lendings = new ArrayList<>();
-    for (int i = 0; i < total; i++) {
-      lendings.add(lendingDelayedBy(i < onTime ? 0 : 3));
+  private void save(ReaderDetails owner, LocalDate startDate, LocalDate returnedDate) {
+    lendingRepository.save(
+        Lending.newBootstrappingLending(
+            book, owner, TODAY.getYear(), ++sequence, startDate, returnedDate, DURATION, 200));
+  }
+
+  private void recentOnTimeReturns(ReaderDetails owner, int count) {
+    for (int i = 0; i < count; i++) {
+      returnedOnTime(owner, TODAY.minusDays(10 + i));
     }
-    return lendings;
+  }
+
+  private String policyName() {
+    return provider.policyFor(reader).name();
   }
 
   @Test
-  void selectsAdaptiveForAGoodHistory() {
-    List<Lending> completed = completed(5, 5);
-    LendingRepository repo = mock(LendingRepository.class);
-    when(repo.listCompletedByReaderNumberSince(eq(READER), any(LocalDate.class)))
-        .thenReturn(completed);
-    when(repo.listOutstandingByReaderNumber(READER)).thenReturn(List.of());
+  void ensureReaderWithGoodRecentHistoryGetsAdaptivePolicy() {
+    recentOnTimeReturns(reader, LendingPolicyFixtures.MIN_COMPLETED);
 
-    var provider = new SelectingLendingPolicyProvider(repo, factory());
-    assertEquals("adaptive", provider.policyFor(reader()).name());
+    assertEquals("adaptive", policyName());
   }
 
   @Test
-  void selectsStandardWhenTooFewCompletedLendings() {
-    List<Lending> completed = completed(2, 2);
-    LendingRepository repo = mock(LendingRepository.class);
-    when(repo.listCompletedByReaderNumberSince(eq(READER), any(LocalDate.class)))
-        .thenReturn(completed);
-    when(repo.listOutstandingByReaderNumber(READER)).thenReturn(List.of());
+  void ensureReaderWithTooFewCompletedLendingsGetsStandardPolicy() {
+    recentOnTimeReturns(reader, LendingPolicyFixtures.MIN_COMPLETED - 1);
 
-    var provider = new SelectingLendingPolicyProvider(repo, factory());
-    assertEquals("standard", provider.policyFor(reader()).name());
+    assertEquals("standard", policyName());
   }
 
   @Test
-  void selectsStandardWhenAnActiveLendingIsOverdue() {
-    List<Lending> completed = completed(5, 5);
-    List<Lending> outstanding = List.of(lendingDelayedBy(3));
-    LendingRepository repo = mock(LendingRepository.class);
-    when(repo.listCompletedByReaderNumberSince(eq(READER), any(LocalDate.class)))
-        .thenReturn(completed);
-    when(repo.listOutstandingByReaderNumber(READER)).thenReturn(outstanding);
+  void ensureReaderWithTooManyLateReturnsGetsStandardPolicy() {
+    recentOnTimeReturns(reader, 3);
+    returnedLate(reader, TODAY.minusDays(20));
+    returnedLate(reader, TODAY.minusDays(30));
 
-    var provider = new SelectingLendingPolicyProvider(repo, factory());
-    assertEquals("standard", provider.policyFor(reader()).name());
+    assertEquals("standard", policyName());
   }
 
   @Test
-  void toleratesNullReaderByReturningStandard() {
-    LendingRepository repo = mock(LendingRepository.class);
-    var provider = new SelectingLendingPolicyProvider(repo, factory());
+  void ensureReaderWithAnOverdueLendingGetsStandardPolicy() {
+    recentOnTimeReturns(reader, LendingPolicyFixtures.MIN_COMPLETED);
+    save(reader, TODAY.minusDays(DURATION + 3), null);
+
+    assertEquals("standard", policyName());
+  }
+
+  @Test
+  void ensureOutstandingLendingWithinLimitDoesNotBlockAdaptivePolicy() {
+    recentOnTimeReturns(reader, LendingPolicyFixtures.MIN_COMPLETED);
+    save(reader, TODAY.minusDays(2), null);
+
+    assertEquals("adaptive", policyName());
+  }
+
+  @Test
+  void ensureLendingReturnedAtStartOfHistoryPeriodCounts() {
+    recentOnTimeReturns(reader, LendingPolicyFixtures.MIN_COMPLETED - 1);
+    returnedOnTime(reader, HISTORY_START);
+
+    assertEquals("adaptive", policyName());
+  }
+
+  @Test
+  void ensureLendingReturnedBeforeHistoryPeriodIsIgnored() {
+    recentOnTimeReturns(reader, LendingPolicyFixtures.MIN_COMPLETED - 1);
+    returnedOnTime(reader, HISTORY_START.minusDays(1));
+
+    assertEquals("standard", policyName());
+  }
+
+  @Test
+  void ensureOtherReadersHistoryIsIgnored() {
+    recentOnTimeReturns(reader(2, "joao@gmail.com"), LendingPolicyFixtures.MIN_COMPLETED);
+
+    assertEquals("standard", policyName());
+  }
+
+  @Test
+  void ensureMissingReaderGetsStandardPolicy() {
     assertEquals("standard", provider.policyFor(null).name());
-    verifyNoInteractions(repo);
   }
 }

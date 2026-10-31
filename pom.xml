@@ -25,16 +25,26 @@
 
 		<jacoco.version>0.8.12</jacoco.version>
 
+		<!-- toolchain compatibility: Lombok >= 1.18.36 and Byte Buddy >= 1.17 are required to
+		     compile / mock on recent JDKs (22+); both still target release 17 -->
+		<lombok.version>1.18.38</lombok.version>
+		<byte-buddy.version>1.17.5</byte-buddy.version>
+
 		<!-- static analysis / quality tooling -->
 		<sonar.maven.plugin.version>4.0.0.4121</sonar.maven.plugin.version>
 		<checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
 		<checkstyle.version>10.23.1</checkstyle.version>
 		<spotless.plugin.version>2.43.0</spotless.plugin.version>
 		<google.java.format.version>1.25.2</google.java.format.version>
+		<pitest.version>1.20.0</pitest.version>
+		<pitest.mutationThreshold>75</pitest.mutationThreshold>
 
 		<!-- mutation testing (PIT); run on demand via the `mutation` profile -->
 		<pitest.maven.version>1.16.3</pitest.maven.version>
 		<pitest.junit5.version>1.2.1</pitest.junit5.version>
+
+		<!-- commit embedded in build-info; CI passes -Drelease.commit=$GIT_COMMIT -->
+		<release.commit>local</release.commit>
 
 		<!-- SonarQube analysis settings (host.url & token passed at runtime / by Jenkins) -->
 		<sonar.projectKey>pt.psoft.g1:psoft-g1</sonar.projectKey>
@@ -102,6 +112,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- health and build info for deployment checks -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- Mapper library to automate model transformations DTO <-> Model -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -137,6 +153,18 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+						<configuration>
+							<additionalProperties>
+								<commit>${release.commit}</commit>
+							</additionalProperties>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- JaCoCo code coverage -->
@@ -270,7 +298,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.30</version>
+							<version>${lombok.version}</version>
 						</path>
 						<!-- Mapper library to automate model transformations DTO: <-> Model -->
 						<path>
@@ -285,6 +313,46 @@
 							<version>0.2.0</version>
 						</path>
 					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<!-- Integration tests (*IT) run in `verify`; unit tests (*Test) stay in Surefire's `test` -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>${pitest.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>${pitest.junit5.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<targetClasses>
+						<param>pt.psoft.g1.psoftg1.*.model.*</param>
+						<param>pt.psoft.g1.psoftg1.*.services.*</param>
+					</targetClasses>
+					<excludedClasses>
+						<param>*Request</param>
+						<param>*Mapper</param>
+						<param>*MapperImpl</param>
+					</excludedClasses>
+					<targetTests>
+						<param>pt.psoft.g1.psoftg1.*Test</param>
+					</targetTests>
+					<threads>4</threads>
+					<timestampedReports>false</timestampedReports>
+					<outputFormats>
+						<param>HTML</param>
+						<param>XML</param>
+					</outputFormats>
+					<mutationThreshold>${pitest.mutationThreshold}</mutationThreshold>
 				</configuration>
 			</plugin>
 		</plugins>

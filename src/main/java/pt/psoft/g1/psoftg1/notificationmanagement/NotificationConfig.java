@@ -10,8 +10,8 @@ import pt.psoft.g1.psoftg1.notificationmanagement.services.NotificationSelection
 /**
  * Wires the notification context (issue #18, ADR-0014; extended in #22, ADR-0016). It enables
  * asynchronous execution so the after-commit {@code LendingEventListener} runs off the request
- * thread, registers the framework-free {@link NotificationRenderer} as a bean so the renderer itself
- * carries no Spring dependency, and binds the mechanism-selection configuration ({@link
+ * thread, registers the framework-free {@link NotificationRenderer} as a bean so the renderer
+ * itself carries no Spring dependency, and binds the mechanism-selection configuration ({@link
  * NotificationSelectionProperties}).
  */
 @Configuration

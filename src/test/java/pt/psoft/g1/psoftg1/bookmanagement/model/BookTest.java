@@ -3,9 +3,13 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 class BookTest {
@@ -73,5 +77,125 @@ class BookTest {
     authors.add(validAuthor1);
     authors.add(validAuthor2);
     assertDoesNotThrow(() -> new Book(validIsbn, validTitle, null, validGenre, authors, null));
+  }
+
+  private Book persistedBook(String photoUri) {
+    authors.add(validAuthor1);
+    Book book = new Book(validIsbn, validTitle, "Descrição", validGenre, authors, photoUri);
+    ReflectionTestUtils.setField(book, "version", 3L);
+    return book;
+  }
+
+  @Test
+  void ensureGettersReturnConstructorValues() {
+    Book book = persistedBook("cover.png");
+
+    assertEquals(validIsbn, book.getIsbn());
+    assertEquals(validTitle, book.getTitle().toString());
+    assertEquals("Descrição", book.getDescription());
+    assertEquals(validGenre, book.getGenre());
+    assertEquals(List.of(validAuthor1), book.getAuthors());
+    assertEquals("cover.png", book.getPhoto().getPhotoFile());
+  }
+
+  @Test
+  void ensurePatchWithStaleVersionFails() {
+    Book book = persistedBook(null);
+    assertThrows(
+        StaleObjectStateException.class,
+        () -> book.applyPatch(2L, "Outro", null, null, null, null));
+    assertEquals(validTitle, book.getTitle().toString());
+  }
+
+  @Test
+  void ensurePatchUpdatesProvidedFields() {
+    Book book = persistedBook(null);
+    Genre terror = new Genre("Terror");
+
+    book.applyPatch(3L, "Novo titulo", "Nova descrição", terror, List.of(validAuthor2), "new.png");
+
+    assertEquals("Novo titulo", book.getTitle().toString());
+    assertEquals("Nova descrição", book.getDescription());
+    assertEquals(terror, book.getGenre());
+    assertEquals(List.of(validAuthor2), book.getAuthors());
+    assertEquals("new.png", book.getPhoto().getPhotoFile());
+  }
+
+  @Test
+  void ensurePatchKeepsFieldsThatAreNotProvided() {
+    Book book = persistedBook("cover.png");
+
+    book.applyPatch(3L, null, null, null, null, null);
+
+    assertEquals(validTitle, book.getTitle().toString());
+    assertEquals("Descrição", book.getDescription());
+    assertEquals(validGenre, book.getGenre());
+    assertEquals(List.of(validAuthor1), book.getAuthors());
+    assertEquals("cover.png", book.getPhoto().getPhotoFile());
+  }
+
+  @Test
+  void ensureRemovePhotoWithWrongVersionFails() {
+    Book book = persistedBook("cover.png");
+
+    assertThrows(ConflictException.class, () -> book.removePhoto(1L));
+    assertNotNull(book.getPhoto());
+  }
+
+  @Test
+  void ensureRemovePhotoClearsPhoto() {
+    Book book = persistedBook("cover.png");
+
+    book.removePhoto(3L);
+
+    assertNull(book.getPhoto());
+  }
+
+  @Test
+  void ensureBookWithInvalidIsbnIsRejected() {
+    authors.add(validAuthor1);
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> new Book("9782826012099", validTitle, null, validGenre, authors, null));
+  }
+
+  @Test
+  void ensureBookWithBlankTitleIsRejected() {
+    authors.add(validAuthor1);
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> new Book(validIsbn, " ", null, validGenre, authors, null));
+  }
+
+  @Test
+  void ensureNewBookHasNoVersion() {
+    authors.add(validAuthor1);
+    assertNull(new Book(validIsbn, validTitle, null, validGenre, authors, null).getVersion());
+  }
+
+  @Test
+  void ensureBookDescriptionIsSanitized() {
+    authors.add(validAuthor1);
+    Book book =
+        new Book(validIsbn, validTitle, "Livro<script>x()</script>", validGenre, authors, null);
+
+    assertEquals("Livro", book.getDescription());
+  }
+
+  @Test
+  void ensurePatchWithInvalidTitleFailsAndKeepsTitle() {
+    Book book = persistedBook(null);
+    assertThrows(
+        IllegalArgumentException.class, () -> book.applyPatch(3L, " ", null, null, null, null));
+    assertEquals(validTitle, book.getTitle().toString());
+  }
+
+  @Test
+  void ensureRemovePhotoOnBookWithoutPhotoKeepsItEmpty() {
+    Book book = persistedBook(null);
+
+    book.removePhoto(3L);
+
+    assertNull(book.getPhoto());
   }
 }

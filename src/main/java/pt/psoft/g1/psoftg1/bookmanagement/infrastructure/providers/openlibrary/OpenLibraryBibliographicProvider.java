@@ -21,11 +21,12 @@ import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicProvider;
  *
  * <p>It honours the port's two-outcome contract: a response with no matching entry is {@link
  * Optional#empty()}, and a transport, decode, or mapping failure (non-2xx status, timeout,
- * unparseable body, or an entry the neutral record rejects) is a {@link BibliographicLookupException}.
- * One blocking call with a configured timeout, no retry or fallback (that is selection, #5).
+ * unparseable body, or an entry the neutral record rejects) is a {@link
+ * BibliographicLookupException}. One blocking call with a configured timeout, no retry or fallback
+ * (that is selection, #5).
  *
- * <p>It is a plain {@code @Component}. It now coexists with the Google Books adapter as a second bean
- * of the port type, and choosing between them is the job of selection (#5) and wiring (#6).
+ * <p>It is a plain {@code @Component}. It now coexists with the Google Books adapter as a second
+ * bean of the port type, and choosing between them is the job of selection (#5) and wiring (#6).
  */
 @Component
 public class OpenLibraryBibliographicProvider implements BibliographicProvider {
@@ -89,7 +90,9 @@ public class OpenLibraryBibliographicProvider implements BibliographicProvider {
     }
   }
 
-  /** The author names, or {@code null} when the entry carries none (the record then holds empty). */
+  /**
+   * The author names, or {@code null} when the entry carries none (the record then holds empty).
+   */
   private static List<String> authorNames(OpenLibraryBook book) {
     if (book.getAuthors() == null) {
       return null;

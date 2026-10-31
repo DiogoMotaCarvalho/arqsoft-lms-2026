@@ -55,7 +55,8 @@ public class LendingPolicyProperties {
 
     @AssertTrue(
         message =
-            "adaptive thresholds must satisfy 0 < firstThreshold < secondThreshold < maxActiveLendings")
+            "adaptive thresholds must satisfy "
+                + "0 < firstThreshold < secondThreshold < maxActiveLendings")
     public boolean isThresholdsStrictlyOrdered() {
       return 0 < firstThreshold
           && firstThreshold < secondThreshold

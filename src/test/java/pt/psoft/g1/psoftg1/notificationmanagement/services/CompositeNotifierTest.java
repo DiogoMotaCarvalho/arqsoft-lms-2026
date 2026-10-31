@@ -101,8 +101,7 @@ class CompositeNotifierTest {
         .containsExactlyInAnyOrder("email", "sms");
     assertThat(records)
         .allSatisfy(r -> assertThat(r.getOutcome()).isEqualTo(NotificationRecord.Outcome.SENT));
-    assertThat(records)
-        .allSatisfy(r -> assertThat(r.getLendingNumber()).isEqualTo("2024/15"));
+    assertThat(records).allSatisfy(r -> assertThat(r.getLendingNumber()).isEqualTo("2024/15"));
   }
 
   @Test

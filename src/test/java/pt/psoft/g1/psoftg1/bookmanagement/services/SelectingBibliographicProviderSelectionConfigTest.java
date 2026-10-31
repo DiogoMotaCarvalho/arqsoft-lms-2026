@@ -21,7 +21,9 @@ class SelectingBibliographicProviderSelectionConfigTest {
 
   @Test
   void aValidSourceListBindsAndTheContextStarts() {
-    runner.withPropertyValues("bibliographic.sources=x,y").run(ctx -> assertThat(ctx).hasNotFailed());
+    runner
+        .withPropertyValues("bibliographic.sources=x,y")
+        .run(ctx -> assertThat(ctx).hasNotFailed());
   }
 
   @Test

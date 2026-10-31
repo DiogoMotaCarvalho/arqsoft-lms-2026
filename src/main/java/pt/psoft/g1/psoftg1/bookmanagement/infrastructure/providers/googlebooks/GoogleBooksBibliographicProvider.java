@@ -18,9 +18,9 @@ import pt.psoft.g1.psoftg1.bookmanagement.services.BibliographicProvider;
  * is a {@link BibliographicLookupException}. It makes a single blocking call with a configured
  * timeout and performs no retry or fallback, which is the concern of selection (#5).
  *
- * <p>It is a plain {@code @Component} with no wiring and no qualifier. When the Open Library adapter
- * (#4) is added there will be two beans of the port type, and choosing between them is the job of
- * selection (#5) and of wiring the lookup into the Book flow (#6).
+ * <p>It is a plain {@code @Component} with no wiring and no qualifier. When the Open Library
+ * adapter (#4) is added there will be two beans of the port type, and choosing between them is the
+ * job of selection (#5) and of wiring the lookup into the Book flow (#6).
  */
 @Component
 public class GoogleBooksBibliographicProvider implements BibliographicProvider {

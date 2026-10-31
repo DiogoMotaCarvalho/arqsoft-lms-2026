@@ -3,11 +3,8 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.hibernate.StaleObjectStateException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
-import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
-import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 class AuthorTest {
@@ -15,17 +12,14 @@ class AuthorTest {
   private final String validBio =
       "O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.";
 
-  private final UpdateAuthorRequest request =
-      new UpdateAuthorRequest(validName, validBio, null, null);
-
-  private static class EntityWithPhotoImpl extends EntityWithPhoto {}
-
-  @BeforeEach
-  void setUp() {}
-
   @Test
   void ensureNameNotNull() {
     assertThrows(IllegalArgumentException.class, () -> new Author(null, validBio, null));
+  }
+
+  @Test
+  void ensureNameMustBeAlphanumeric() {
+    assertThrows(IllegalArgumentException.class, () -> new Author("João@Alberto", validBio, null));
   }
 
   @Test
@@ -34,44 +28,24 @@ class AuthorTest {
   }
 
   @Test
-  void whenVersionIsStaleItIsNotPossibleToPatch() {
-    final var subject = new Author(validName, validBio, null);
-
-    assertThrows(
-        StaleObjectStateException.class,
-        () -> subject.applyPatch(999, request.getName(), request.getBio(), request.getPhotoURI()));
+  void ensureBioNotBlank() {
+    assertThrows(IllegalArgumentException.class, () -> new Author(validName, " ", null));
   }
 
   @Test
-  void testCreateAuthorWithoutPhoto() {
+  void ensureAuthorIsCreatedWithNameAndBio() {
     Author author = new Author(validName, validBio, null);
-    assertNotNull(author);
-    assertNull(author.getPhoto());
+
+    assertEquals(validName, author.getName());
+    assertEquals(validBio, author.getBio());
   }
 
   @Test
-  void testCreateAuthorRequestWithPhoto() {
-    CreateAuthorRequest request =
-        new CreateAuthorRequest(validName, validBio, null, "photoTest.jpg");
-    Author author = new Author(request.getName(), request.getBio(), "photoTest.jpg");
-    assertNotNull(author);
-    assertEquals(request.getPhotoURI(), author.getPhoto().getPhotoFile());
-  }
+  void ensureNewAuthorHasInitialVersionAndNoId() {
+    Author author = new Author(validName, validBio, null);
 
-  @Test
-  void testCreateAuthorRequestWithoutPhoto() {
-    CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, null);
-    Author author = new Author(request.getName(), request.getBio(), null);
-    assertNotNull(author);
-    assertNull(author.getPhoto());
-  }
-
-  @Test
-  void testEntityWithPhotoSetPhotoInternalWithValidURI() {
-    EntityWithPhoto entity = new EntityWithPhotoImpl();
-    String validPhotoURI = "photoTest.jpg";
-    entity.setPhoto(validPhotoURI);
-    assertNotNull(entity.getPhoto());
+    assertEquals(0L, author.getVersion());
+    assertNull(author.getId());
   }
 
   @Test
@@ -86,5 +60,69 @@ class AuthorTest {
     Photo photo = author.getPhoto();
     assertNotNull(photo);
     assertEquals("photoTest.jpg", photo.getPhotoFile());
+  }
+
+  @Test
+  void whenVersionIsStaleItIsNotPossibleToPatch() {
+    Author author = new Author(validName, validBio, null);
+
+    assertThrows(
+        StaleObjectStateException.class, () -> author.applyPatch(999, "Outro", null, null));
+    assertEquals(validName, author.getName());
+  }
+
+  @Test
+  void ensurePatchUpdatesProvidedFields() {
+    Author author = new Author(validName, validBio, null);
+
+    author.applyPatch(0L, "Novo Nome", "Nova bio", "new.png");
+
+    assertEquals("Novo Nome", author.getName());
+    assertEquals("Nova bio", author.getBio());
+    assertEquals("new.png", author.getPhoto().getPhotoFile());
+  }
+
+  @Test
+  void ensurePatchKeepsFieldsThatAreNotProvided() {
+    Author author = new Author(validName, validBio, "photoTest.jpg");
+
+    author.applyPatch(0L, null, null, null);
+
+    assertEquals(validName, author.getName());
+    assertEquals(validBio, author.getBio());
+    assertEquals("photoTest.jpg", author.getPhoto().getPhotoFile());
+  }
+
+  @Test
+  void ensurePatchWithInvalidNameFails() {
+    Author author = new Author(validName, validBio, null);
+
+    assertThrows(IllegalArgumentException.class, () -> author.applyPatch(0L, "N@me", null, null));
+    assertEquals(validName, author.getName());
+  }
+
+  @Test
+  void ensurePatchWithBlankBioFails() {
+    Author author = new Author(validName, validBio, null);
+
+    assertThrows(IllegalArgumentException.class, () -> author.applyPatch(0L, null, "", null));
+    assertEquals(validBio, author.getBio());
+  }
+
+  @Test
+  void ensureRemovePhotoWithWrongVersionFails() {
+    Author author = new Author(validName, validBio, "photoTest.jpg");
+
+    assertThrows(ConflictException.class, () -> author.removePhoto(1L));
+    assertNotNull(author.getPhoto());
+  }
+
+  @Test
+  void ensureRemovePhotoClearsPhoto() {
+    Author author = new Author(validName, validBio, "photoTest.jpg");
+
+    author.removePhoto(0L);
+
+    assertNull(author.getPhoto());
   }
 }

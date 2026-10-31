@@ -14,8 +14,8 @@ import pt.psoft.g1.psoftg1.notificationmanagement.model.Notification;
  * Opaque-box tests (SUT equal to the adapter class) of the email mechanism (issue #19, ADR-0015,
  * criterion C3.1). The {@link EmailGateway} boundary is stubbed by a recording double, so each case
  * asserts the concrete email the adapter would send (recipient, subject, body) rather than that the
- * gateway was merely invoked. Prior art: the bibliographic adapter class tests that stub the external
- * boundary. Runs over plain objects with no Spring context.
+ * gateway was merely invoked. Prior art: the bibliographic adapter class tests that stub the
+ * external boundary. Runs over plain objects with no Spring context.
  */
 class EmailNotificationChannelTest {
 

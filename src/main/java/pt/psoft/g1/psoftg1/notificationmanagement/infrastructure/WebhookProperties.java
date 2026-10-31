@@ -17,7 +17,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "notifications.webhook")
 public class WebhookProperties {
 
-  /** Endpoint the webhook POSTs to. Blank means no endpoint is configured and delivery is skipped. */
+  /**
+   * Endpoint the webhook POSTs to. Blank means no endpoint is configured and delivery is skipped.
+   */
   private String baseUrl = "";
 
   /** Timeout for the single POST call. */
