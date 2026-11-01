@@ -341,7 +341,38 @@ Commits: `059a2df`, `0a38ae3`, `08b9b02`, `abb4512`, `ffbdb79`, `f4f1586`, `3eea
 - **New concern: a gap in the rules.** No rule forbids `services` from depending on `infrastructure`, the
   case found in Iteration 4.
 
-## 7. Cross-iteration synthesis
+## 7. Reference architectures and patterns
+
+| Reference architecture | Use | Why |
+|---|---|---|
+| Modular monolith | one Spring Boot JAR, one package per bounded context | the base project's structure; one server (see the C4 views) |
+| Clean Architecture | inside each module: `api`, `services`, `model`, `infrastructure`, dependencies pointing inwards | keeps the new domain rules free of Spring and JPA (D5) |
+| Ports and Adapters | `LendingPolicyProvider`, `BibliographicProvider`, `NotificationChannel` and `Notifier` as ports; adapters in `infrastructure` | each variation point and external system behind an interface (D1, D2, D4) |
+| In-process event-driven | Spring events between Lending and Notifications, after commit, asynchronously | decouples the two modules without new infrastructure (D4) |
+
+Rejected: microservices (they would multiply deployments on one server, and need the base project's
+cross-module coupling removed first) and a broker-based event architecture (Iteration 4, A3).
+
+| Pattern | Where | Iteration |
+|---|---|---|
+| Strategy | `LendingPolicy`, `StandardLendingPolicy`, `AdaptiveLendingPolicy` | 1 |
+| Factory | `LendingPolicyFactory` | 1 |
+| Value Object | `PolicyDecision`, `BibliographicData`, `LendingEvent`, `Notification` | 1–4 |
+| Adapter / Anti-Corruption Layer | `GoogleBooksBibliographicProvider`, `OpenLibraryBibliographicProvider` | 2 |
+| Composite + Chain of Responsibility (fallback) | `SelectingBibliographicProvider` | 3 |
+| Composite (fan-out) | `CompositeNotifier` | 4 |
+| Observer / domain events | `LendingEvent`, `LendingEventListener` | 4 |
+| Template Method | `AbstractGatewayNotificationChannel` | 4 |
+| Gateway | `EmailGateway`, `SmsGateway` | 4 |
+
+**Classification of the other architectural factors:**
+
+| Type | Items |
+|---|---|
+| Constraints | evolve the base project's code and REST API; Java 17 target; one Linux server; the course's delivery model (Jenkins, JAR on systemd) |
+| Concerns | the base project's module cycles and boundary violations; a thin test suite; a build that failed on current JDKs; JPA entities detached after commit |
+
+## 8. Cross-iteration synthesis
 
 | Iteration | Decision | Evaluation / carry-forward |
 |---|---|---|

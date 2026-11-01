@@ -103,16 +103,16 @@ we own, rather than a vague goal.
 - **Status.** Enabled by the bibliographic provider port, realized by the Google Books and Open Library
   adapters and by source selection.
 
-### EVO-3. Add a notification channel (hypothetical)
+### EVO-3. Add a notification channel
 
 - **Scenario.** A developer must add a notification channel, for example email or SMS, so that readers
   are notified of events such as an overdue lending.
 - **Impact criterion.** Were notifications introduced behind a channel port, a new channel would be
   added by creating one new adapter plus its configuration, with zero changes to the code that raises
   notifications.
-- **Status.** Forward-looking. No notification feature exists in the system yet. The scenario is
-  recorded so that the axis has a stated impact budget and the same ports-and-adapters shape as the
-  other two axes, and so that the design is judged against it if notifications are built.
+- **Status.** Demonstrated. Notifications were built behind the `NotificationChannel` port (#18). The
+  SMS (#20) and webhook (#21) channels were then added as adapters with their configuration, without
+  changing the lending flow. See the ADD record, iteration 4 ([`add.md`](add.md)).
 
 ## Traceability
 
@@ -126,10 +126,9 @@ view tickets (#7, #14, #28) and the full versioned matrix (#29) are tracked sepa
 | ASR-3 Testability | #17, #30, #8, #10, #12, #13 | ADR-0005, ADR-0002 | The PIT mutation tooling, the ArchUnit layering enforcement, and the policy tests. |
 | EVO-1 Add a lending policy | #10 | ADR-0004 | The Adaptive policy added behind the Strategy port. |
 | EVO-2 Add a bibliographic source | #2, #3, #4, #5 | ADR-0008 | The provider port and its adapters and selection. |
-| EVO-3 Add a notification channel | none | none | Hypothetical axis, recorded for impact budgeting. |
+| EVO-3 Add a notification channel | #18, #19, #20, #21, #22 | ADR-0014, ADR-0015, ADR-0016 | The `NotificationChannel` port, its email, SMS, webhook and logging adapters, and the composite notifier. |
 
 ## Revisit conditions
 
-The catalog is revisited if a new variability axis appears, if a driver's measure proves unachievable
-or too weak in practice, or if a notification feature is introduced, at which point EVO-3 is grounded
-in real artifacts.
+The catalog is revisited if a new variability axis appears, or if a driver's measure proves unachievable
+or too weak in practice. The full requirement-to-test traceability is in [`traceability.md`](traceability.md).
