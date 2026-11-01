@@ -28,14 +28,14 @@ sh setup-environments.sh                  # private ports 8181, 8182, 8183
 sh setup-environments.sh 2228 2229 2226   # or choose them
 ```
 
-This creates one service per environment (`psoft-g1@dev`, `@pp`, `@prod`) with its own system user, `/opt/psoft-g1/<env>` for the JAR, `/var/lib/psoft-g1/<env>` for uploads, and `/etc/psoft-g1/<env>.env` for configuration. It allows `deploy` to start and stop only these services. Existing `.env` files are kept; edit one and restart its service to change it.
+This creates one service per environment (`psoft-g1@dev`, `@pp`, `@prod`) with its own system user, `/opt/psoft-g1/<env>` for the JAR, `/var/lib/psoft-g1/<env>` for uploads, and `/etc/psoft-g1/<env>.env` for configuration. It allows `deploy` to start and stop only these services. Existing `.env` files are kept. Edit one and restart its service to change it.
 
 Each environment uses an in-memory H2 database seeded by the `bootstrap` profile, so data resets on every deployment.
 
 ## Jenkins
 
 - **Plugins:** Pipeline, Git, JUnit, SSH Agent, Copy Artifact, Lockable Resources, Coverage (coverage and mutation reports), Warnings Next Generation (Checkstyle report).
-- **Agent:** Java 17+, `sh`, `ssh`/`scp`, `curl` and `python3`. The Maven Wrapper downloads Maven on the first build.
+- **Agent:** Java 17+, `sh`, `ssh`, `scp`, `curl` and `python3`. The Maven Wrapper downloads Maven on the first build.
 - **known_hosts:** add the server's host key for the agent's user (`ssh-keyscan -p PORT HOST >> ~/.ssh/known_hosts`). Do not disable host key checking.
 - **Global environment variables** (Manage Jenkins → System):
   - `PSOFT_SSH_TARGET`: `deploy@HOST`
@@ -44,5 +44,5 @@ Each environment uses an in-memory H2 database seeded by the `bootstrap` profile
 - **Credentials:**
   - `psoft-deploy-ssh`: SSH username with private key, user `deploy`
   - `psoft-smoke-user`: username and password of a user seeded by the bootstrap profile
-- **Jobs:** three Pipeline jobs from SCM, named as in the table above. Give psoft-g1-ci the branch specifier `**` so every branch is built; only `main` deploys.
+- **Jobs:** three Pipeline jobs from SCM, named as in the table above. Give psoft-g1-ci the branch specifier `**` so every branch is built, and only `main` deploys.
 - **Approvers:** a `release-managers` user or group.

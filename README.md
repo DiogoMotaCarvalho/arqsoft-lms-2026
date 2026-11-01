@@ -1,4 +1,4 @@
-# psoft-g1 — Library Management System
+# psoft-g1: Library Management System
 
 Spring Boot REST API for books, authors, genres, readers, lendings and users.
 
@@ -42,7 +42,7 @@ SPRING_DATASOURCE_URL='jdbc:h2:mem:psoft;IGNORECASE=TRUE' java -jar target/psoft
 ```
 
 Reports:
-- test results: `target/surefire-reports` and `target/failsafe-reports`;
+- test results: `target/surefire-reports` and `target/failsafe-reports`,
 - coverage: `target/site/jacoco/index.html`.
 
 ## CI/CD and deployment

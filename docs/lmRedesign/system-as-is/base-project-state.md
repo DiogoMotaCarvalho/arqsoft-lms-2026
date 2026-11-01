@@ -3,7 +3,7 @@
 This document records the state of the Library Management System as its original team left it, before any of
 the current project's changes. It covers four aspects: implementation and deployment, build and testing practices,
 test quantity, coverage and effectiveness, and software quality indicators. It describes the system as it
-is; problems are recorded, not fixed.
+is. Problems are recorded, not fixed.
 
 **Baseline.** Commit `c716e06`, the last commit of the base project's team. The history before it has
 356 commits by 5 authors.
@@ -173,7 +173,7 @@ There are 1,245 lines of test code against 6,185 lines of production code, a rat
 Coverage is concentrated in the domain model. The application services are nearly untested: only
 `LendingServiceImpl` has meaningful coverage (42%). The REST layer is untested apart from what loading the
 Spring context touches. The custom query implementations are untested except for one Lending repository
-test. The `configuration` package shows 99% only because every Spring test loads it; no test checks the
+test. The `configuration` package shows 99% only because every Spring test loads it, but no test checks the
 security rules. The heat map above gives the breakdown by module and layer.
 
 ### 3.3 Effectiveness
@@ -188,7 +188,7 @@ mappers excluded), against all tests.
 | **Total** | **433** | **128** | **39** | **266** | **30%** | **77%** |
 
 The mutation score is the share of all mutants killed. Test strength is the share killed among the mutants
-the tests reach. A test strength of 77% means the existing tests mostly do check what they execute; the low
+the tests reach. A test strength of 77% means the existing tests mostly do check what they execute. The low
 overall score comes from how little they execute. 61% of the mutants are in code that no test runs. By
 module, the domain models of Genre (83%), Book (64%) and Shared (61%) are the best tested. User (23%) and
 the services of Author, Book, Genre, Reader, Shared and User (0%) are the weakest.
@@ -212,18 +212,18 @@ suite.
 
 | Indicator | Value | Notes |
 |---|---|---|
-| Size | 140 main files, 6,185 lines of code; 23 test files, 1,245 lines | measured on hand-written sources |
+| Size | 140 main files, 6,185 lines of code, 23 test files, 1,245 lines | measured on hand-written sources |
 | Cyclomatic complexity | 912 over 458 methods (JaCoCo, including generated mappers) | average about 2 per method |
 | Complexity hot spots | `Bootstrapper` 95, `ReaderController` 44, `BookServiceImpl` 37, `ReaderServiceImpl` 33, `BookController` 29 | none of these classes is covered by tests |
 | Largest classes | `Bootstrapper` 536 lines, `ReaderController` 352, `UserBootstrapper` 271, `Lending` 261 | |
 | Line coverage | 19.9% | section 3.2 |
 | Branch coverage | 12.2% | section 3.2 |
 | Mutation score | 30% (test strength 77%) | section 3.3 |
-| Checkstyle warnings | **5,682**, in all 140 main files | this repository's rules (Google style); section 4.1 |
+| Checkstyle warnings | **5,682**, in all 140 main files | this repository's rules (Google style), section 4.1 |
 | Commented-out code | about 28 lines in main code, plus 7 commented-out tests | heuristic count |
-| TODO / FIXME markers | 1 | |
-| Architecture conformance | 5 dependency cycles between modules; 7 boundary or layering violations in the Readers module alone | C4 Level 2 and Level 3 views |
-| Build reproducibility | broken wrapper; fails on current JDKs; no JDK pinned | section 2 |
+| TODO or FIXME markers | 1 | |
+| Architecture conformance | 5 dependency cycles between modules, 7 boundary or layering violations in the Readers module alone | C4 Level 2 and Level 3 views |
+| Build reproducibility | broken wrapper, fails on current JDKs, no JDK pinned | section 2 |
 | Secrets in source control | 3 (JWT signing key, database password, API key) | section 1.2 |
 | Duplication | not measured | no duplication tool ran on the baseline |
 
@@ -247,14 +247,14 @@ suite.
 
 Almost all warnings are formatting: indentation, tabs, whitespace, line length and import order. They are
 the result of no formatter or style check being part of the build, not of design problems. The few
-behaviour-related rules are `NeedBraces` (67 `if`/`for` bodies without braces) and `AvoidStarImport`.
+behaviour-related rules are `NeedBraces` (67 `if` or `for` bodies without braces) and `AvoidStarImport`.
 
 ### 4.2 Architecture indicators
 
 Section 1.1 and the C4 views describe the architecture in detail. As indicators:
 
-- **Cycles:** Author, Book, Genre, Lending, Reader and Shared all take part in at least one cycle; only
-  User and Auth do not. This makes those modules impossible to build, test or replace independently.
+- **Cycles:** Author, Book, Genre, Lending, Reader and Shared all take part in at least one cycle, whereas
+  only User and Auth do not. This makes those modules impossible to build, test or replace independently.
 - **Boundary violations:** in Readers alone, the service layer injects four repositories from other
   modules, the domain entity holds other modules' entities, and queries join four other modules' tables.
   The thick, API-bypassing dependencies in the Level 2 view show the same pattern in Author, Book, Genre
@@ -274,8 +274,8 @@ Section 1.1 and the C4 views describe the architecture in detail. As indicators:
   no health endpoint, secrets are committed, and the database server is started by hand.
 - **Build and testing practices:** manual and local only. There is no CI, the wrapper is broken, the
   build does not work on current JDKs, and there is no quality tooling of any kind.
-- **Tests:** 102 passing tests that cover 20% of lines. The domain model is reasonably tested; services,
-  controllers, queries, security and the external integration are essentially untested. Mutation score
+- **Tests:** 102 passing tests that cover 20% of lines. The domain model is reasonably tested, whereas
+  services, controllers, queries, security and the external integration are essentially untested. Mutation score
   is 30%: the tests that exist are fairly effective, but most of the code is never exercised. Two
   integration tests cannot fail.
 - **Quality indicators:** about 5,700 style warnings, complexity concentrated in untested controllers,

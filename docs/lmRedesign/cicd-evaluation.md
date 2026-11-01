@@ -9,8 +9,8 @@ and [`system-current/current-project-state.md`](system-current/current-project-s
 
 **How the evidence was collected.**
 - **Stage times.** The CI stages were run in order on a clean copy of the repository, with the same
-  commands as `jenkins/Jenkinsfile.ci`, on a development machine (JDK 24, Maven wrapper). The times are
-  wall-clock times on that machine and vary with load; the ranges come from two runs.
+  commands as `jenkins/Jenkinsfile.ci`, on one developer laptop (JDK 24, Maven wrapper). The times are
+  wall-clock times on that machine and vary with load. The ranges come from two runs.
 - **The deployment chain.** The smoke test was run against the packaged JAR, started as the systemd
   service starts it.
 - **Delivery metrics.** Metrics that need a history of pipeline runs (deployment frequency, lead time,
@@ -23,13 +23,13 @@ and [`system-current/current-project-state.md`](system-current/current-project-s
 | Trigger | none: a push runs nothing | every push to any branch runs `psoft-g1-ci` |
 | Build | local Maven, broken wrapper, fails on current JDKs | `./mvnw` on any machine, JDK 17 or later |
 | Automated checks before an artifact exists | 0 | 7 gates: compile, formatting, Checkstyle, unit tests with architecture rules, integration tests, coverage (60% of lines), mutation (75%) |
-| Test levels run automatically | none (tests run only by hand) | unit, application, adapter, contract, architecture, integration, system/API, smoke |
+| Test levels run automatically | none (tests run only by hand) | unit, application, adapter, contract, architecture, integration, system and API, smoke |
 | Reported results | none | test results, Checkstyle issues, coverage and mutation, with HTML reports archived per build |
 | Deployable artifact | none kept; built on a laptop | one JAR per `main` build, with its commit embedded, fingerprinted and archived as *validated*, then *accepted* |
 | Environments | one implicit (the developer's machine) | DEV, PP (staging) and PROD, created by one script, configured per environment |
 | Deployment | `java -jar` by hand, after starting an H2 server by hand | scripted over SSH, with a lock per environment |
 | Verification after deployment | none | smoke test: commit and environment identity, readiness, login, authorisation |
-| Promotion to production | not applicable | same JAR; manual acceptance in PP; re-check before promotion |
+| Promotion to production | not applicable | same JAR, manual acceptance in PP, re-check before promotion |
 | Manual steps from commit to production | every step (no production existed) | one: the acceptance in PP |
 | Rollback | not applicable | re-run PROD with an earlier PP build |
 
@@ -41,8 +41,8 @@ and [`system-current/current-project-state.md`](system-current/current-project-s
 |---|---|---|
 | Compile | 19 s | 5% |
 | Static analysis (Spotless, Checkstyle) | 14 s | 4% |
-| Unit tests (500, including ArchUnit) | 43–77 s | 15% |
-| Integration tests (51, JaCoCo agent) | 69–93 s | 20% |
+| Unit tests (500, including ArchUnit) | 43 to 77 s | 15% |
+| Integration tests (51, JaCoCo agent) | 69 to 93 s | 20% |
 | Coverage report and gate | 5 s | 1% |
 | Mutation tests (PIT, 660 mutants) | 186 s | 48% |
 | Package | 17 s | 4% |
@@ -63,7 +63,7 @@ check. The smoke test allows up to 150 seconds for start-up.
 | Tests (all passing) | 102 | 551 (500 unit, 51 integration) |
 | Line coverage, all classes, unit and integration tests | 19.9% | 69.3% |
 | Line coverage as gated in CI (project exclusions) | not measured | 67.3% (gate 60%) |
-| Mutation score / test strength | 30% / 77% | 80% / 90% (gate 75%) |
+| Mutation score and test strength | 30% and 77% | 80% and 90% (gate 75%) |
 | Checkstyle warnings | 5,682 | 0 (gate: any warning fails) |
 | New module cycles allowed | not checked | 0 (ArchUnit, versioned baseline of 10 existing cycles) |
 | Tests that cannot fail | 2 | 0 |
@@ -76,7 +76,7 @@ check. The smoke test allows up to 150 seconds for start-up.
 - **Mutation testing takes half of the pipeline (186 s).** PIT mutates every class of `model` and
   `services` on every push, to every branch.
 - **The integration tests start many Spring contexts.** Different `@TestPropertySource` and configuration
-  combinations prevent context reuse, so 51 tests take 70–90 seconds.
+  combinations prevent context reuse, so 51 tests take 70 to 90 seconds.
 - **Each stage is a separate `./mvnw` call** that starts Maven and checks the build again, a few seconds
   each.
 - **Everything is sequential, on one agent.** Static analysis and the unit tests do not depend on each
@@ -85,8 +85,8 @@ check. The smoke test allows up to 150 seconds for start-up.
   production by design (DP-15).
 
 **Limitations:**
-- **In-memory database.** Each environment runs H2 in memory, reseeded with demo data at start; a
-  persistent database for PP and PROD is listed in section 6.
+- **No persistent database.** Each environment reseeds an in-memory H2 at start, so PP and PROD cannot
+  hold real data, and a restart loses everything.
 - **One server for all environments.** A server failure affects DEV, PP and PROD together, and resource
   contention between them is possible.
 - **Rollback is manual,** and limited to the 30 builds Jenkins keeps.
@@ -94,8 +94,8 @@ check. The smoke test allows up to 150 seconds for start-up.
 - **Delivery metrics build up over time.** Deployment frequency, lead time, change failure rate and
   recovery time come from the Jenkins build history as runs accumulate (section 4).
 - **The test suite has known gaps:**
-  - controllers of the older modules and some custom queries are untested;
-  - two security defects inherited from the base project were found by the new tests; their fixes are
+  - controllers of the older modules and some custom queries are untested
+  - two security defects inherited from the base project were found by the new tests, and their fixes are
     planned (see [`testing-strategy.md`](../testing/testing-strategy.md), section 6).
 
 ## 4. Delivery metrics to collect once Jenkins runs
@@ -106,7 +106,7 @@ check. The smoke test allows up to 150 seconds for start-up.
 | Lead time for changes | from the commit time (`GIT_COMMIT` in `release.properties`) to the end of the PROD build that deployed it | `release.properties` + `git log` + Jenkins |
 | Change failure rate | PROD deployments followed by a failed smoke test or a rollback, divided by all PROD deployments | Jenkins build results |
 | Time to restore | from a failed PROD build to the next successful one | Jenkins build history |
-| CI duration and failure rate | total and per-stage duration; share of CI builds failing, per stage | Jenkins (Pipeline Stage View) |
+| CI duration and failure rate | total and per-stage duration, share of CI builds failing per stage | Jenkins (Pipeline Stage View) |
 
 These cover the delivery side of the process. Together with the outcome metrics of section 2.2, they
 allow the next round of improvements to be judged against evidence.
@@ -115,19 +115,19 @@ allow the next round of improvements to be judged against evidence.
 
 | Improvement | Problem it addresses | Evidence |
 |---|---|---|
-| Working Maven wrapper; Lombok and Byte Buddy upgraded | build only worked on some JDKs, and needed a local Maven | the pipeline commands run on JDK 24 from a clean copy |
-| Jenkins CI on every push | nothing ran automatically | 7 gates before any artifact; feedback in 35 s to 7 min |
+| Working Maven wrapper, with Lombok and Byte Buddy upgraded | build only worked on some JDKs, and needed a local Maven | the pipeline commands run on JDK 24 from a clean copy |
+| Jenkins CI on every push | nothing ran automatically | 7 gates before any artifact, feedback in 35 s to 7 min |
 | Spotless and zero-warning Checkstyle | 5,682 style warnings | 0 warnings, kept at 0 by the gate |
-| Separate unit and integration test stages | one mixed phase; slow tests gated fast ones | unit failures reported before any Spring test runs |
-| New test levels and tests | 20% coverage, services and API untested | 102 → 551 tests; coverage and mutation in section 2.2 |
-| Coverage over unit and integration tests, with a 60% gate | coverage unmeasured; then measured on unit tests only and never enforced | 67.3% measured in CI; a drop below 60% fails the build |
+| Separate unit and integration test stages | one mixed phase, slow tests gated fast ones | unit failures reported before any Spring test runs |
+| New test levels and tests | 20% coverage, services and API untested | 102 → 551 tests, with coverage and mutation in section 2.2 |
+| Coverage over unit and integration tests, with a 60% gate | coverage unmeasured, then measured on unit tests only and never enforced | 67.3% measured in CI, and a drop below 60% fails the build |
 | PIT with a 75% gate | test effectiveness unknown | 80% score, 90% strength |
-| ArchUnit rules with a versioned cycle baseline | nothing stopped the structure from eroding; the baseline was git-ignored, so the cycle rule could not fail in CI | rule fails on any new cycle; missing baseline fails the build |
+| ArchUnit rules with a versioned cycle baseline | nothing stopped the structure from eroding, and the baseline was git-ignored, so the cycle rule could not fail in CI | rule fails on any new cycle, and a missing baseline fails the build |
 | Results published in Jenkins | results only in logs | Checkstyle, coverage and mutation reports per build |
 | Build once, promote by build number, commit embedded | no artifact management | PROD runs the exact JAR accepted in PP; `/actuator/info` shows its commit |
 | Three systemd environments, set up by a script | one implicit environment | DEV, PP and PROD created the same way, configured per environment |
 | Smoke test after each deployment | no verification after deployment | identity, readiness, login and authorisation checked in each environment |
-| Rewritten tests that could not fail; authorisation tests | false confidence; no security tests | 0 vacuous tests; 8 security system tests; 2 defects found |
+| Rewritten tests that could not fail, and authorisation tests | false confidence, no security tests | 0 vacuous tests, 8 security system tests, 2 defects found |
 
 ## 6. Next improvements, in order of expected value
 
