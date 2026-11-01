@@ -134,7 +134,7 @@ The application is now deployed to three environments by Jenkins.
   - Checkstyle, failing on any warning;
   - Spotless with google-java-format, run manually;
   - ArchUnit 1.3.0, as a test dependency;
-  - the SonarQube scanner, configured but not run anywhere.
+  - the SonarQube scanner, for on-demand analysis (`./mvnw sonar:sonar`) outside the pipeline.
 - **JUnit 4 is no longer declared.** All tests are JUnit 5.
 
 **Continuous integration and delivery.** Three Jenkins pipelines are in the repository: `jenkins/`, and

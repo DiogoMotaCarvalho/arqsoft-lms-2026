@@ -99,14 +99,13 @@ pass. The smoke test covers what no earlier level can: the real configuration on
 - **Untested REST layer.** The controllers of Authors, Readers, Genres and user administration are barely
   exercised, and the Genre, Reader and User custom queries are untested. The next system tests should
   target them.
-- **Two security defects in the application,** found while writing the authorisation tests and not yet
-  fixed:
+- **Two security defects inherited from the base project,** found by the new authorisation tests:
   - **Shadowed role rules.** In `SecurityConfig`, `GET /api/books/{isbn}` is declared before
     `/api/books/top5` and `/api/books/suggestions`, and `GET /api/authors/{authorNumber}` before
     `/api/authors/top5`. The more specific role rules therefore never apply.
   - **Registration hashes the password twice,** so a self-registered account cannot log in.
 
-  Each fix should come with a test that reproduces the defect.
+  Each fix is planned together with a test that reproduces the defect.
 - **Mutation testing doesn't use the integration tests.** PIT runs against the unit tests only, so code
   that only the integration tests reach counts as not covered.
 - **Mockito remains in four unit-test classes,** where a fake would fit the classicist approach better:

@@ -3,7 +3,7 @@
 This document is the catalog of Architecturally Significant Requirements for the Library Management
 System redesign. It turns the three architectural drivers named in the problem statement (section 1.2),
 namely Extensibility, Configurability, and Testability, into prioritized, measurable quality-attribute
-scenarios that drive the ADD process and the architecture decisions recorded in `docs/adr`.
+scenarios that drive the ADD process and the architecture decisions recorded in the ADD record (`add.md`).
 
 Each driver is expressed as one six-part quality-attribute scenario (source, stimulus, artifact,
 environment, response, and response measure) with a priority. The catalog then records one evolution

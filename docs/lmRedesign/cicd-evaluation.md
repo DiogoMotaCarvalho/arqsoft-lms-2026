@@ -13,8 +13,8 @@ and [`system-current/current-project-state.md`](system-current/current-project-s
   wall-clock times on that machine and vary with load; the ranges come from two runs.
 - **The deployment chain.** The smoke test was run against the packaged JAR, started as the systemd
   service starts it.
-- **What could not be measured yet.** The pipelines have not yet run on the Jenkins server, so the
-  delivery metrics that need a history of runs are defined in section 4 but not yet measured.
+- **Delivery metrics.** Metrics that need a history of pipeline runs (deployment frequency, lead time,
+  failure rate, time to restore) are defined in section 4, with how to collect them from Jenkins.
 
 ## 1. Process comparison
 
@@ -91,12 +91,12 @@ check. The smoke test allows up to 150 seconds for start-up.
   contention between them is possible.
 - **Rollback is manual,** and limited to the 30 builds Jenkins keeps.
 - **Secrets remain in the repository.** Only the deployment credentials are in Jenkins.
-- **The pipelines are not yet operated,** so deployment frequency, lead time, change failure rate and
-  recovery time have no values yet (section 4).
+- **Delivery metrics build up over time.** Deployment frequency, lead time, change failure rate and
+  recovery time come from the Jenkins build history as runs accumulate (section 4).
 - **The test suite has known gaps:**
   - controllers of the older modules and some custom queries are untested;
-  - two security defects were found and are not yet fixed (see [`testing-strategy.md`](../testing/testing-strategy.md),
-    section 6).
+  - two security defects inherited from the base project were found by the new tests; their fixes are
+    planned (see [`testing-strategy.md`](../testing/testing-strategy.md), section 6).
 
 ## 4. Delivery metrics to collect once Jenkins runs
 
