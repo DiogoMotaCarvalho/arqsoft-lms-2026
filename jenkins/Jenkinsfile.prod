@@ -1,0 +1,61 @@
+pipeline {
+  agent none
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+    disableConcurrentBuilds()
+    preserveStashes(buildCount: 5)
+  }
+
+  parameters {
+    string(name: 'PP_BUILD', defaultValue: '', description: 'Number of the psoft-g1-pp build that accepted the JAR.')
+  }
+
+  environment {
+    PP_JOB = 'psoft-g1-pp'
+  }
+
+  stages {
+    stage('Select accepted artifact') {
+      agent any
+      steps {
+        script {
+          if (!(params.PP_BUILD ==~ /[1-9][0-9]*/)) {
+            error('PP_BUILD must be a build number.')
+          }
+        }
+        dir('artifact') {
+          deleteDir()
+          copyArtifacts(projectName: env.PP_JOB, selector: specific(params.PP_BUILD),
+            filter: 'accepted/app.jar,accepted/release.properties,accepted/acceptance.properties',
+            flatten: true, fingerprintArtifacts: true)
+        }
+        script {
+          for (def file in ['app.jar', 'release.properties', 'acceptance.properties']) {
+            if (!fileExists("artifact/${file}")) {
+              error('The selected PP build did not publish an accepted JAR.')
+            }
+          }
+          echo readFile('artifact/release.properties')
+          echo readFile('artifact/acceptance.properties')
+          currentBuild.description = "PP #${params.PP_BUILD}"
+        }
+        stash name: 'prod-candidate', includes: 'artifact/app.jar,artifact/release.properties,artifact/acceptance.properties'
+      }
+    }
+
+    stage('Deploy PROD') {
+      agent any
+      steps {
+        dir('artifact') { deleteDir() }
+        unstash 'prod-candidate'
+        script {
+          def deploy = load 'deploy/jenkins-deploy.groovy'
+          deploy.call('prod')
+        }
+        writeFile file: 'artifact/production.properties', text: "PP_JOB=${env.PP_JOB}\nPP_BUILD=${params.PP_BUILD}\nPROD_JOB=${env.JOB_NAME}\nPROD_BUILD=${env.BUILD_NUMBER}\n"
+        archiveArtifacts artifacts: 'artifact/app.jar,artifact/release.properties,artifact/acceptance.properties,artifact/production.properties', fingerprint: true
+      }
+    }
+  }
+}

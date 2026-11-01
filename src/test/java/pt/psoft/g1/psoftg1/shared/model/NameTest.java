@@ -3,6 +3,8 @@ package pt.psoft.g1.psoftg1.shared.model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class NameTest {
   @Test
@@ -10,24 +12,22 @@ class NameTest {
     assertThrows(IllegalArgumentException.class, () -> new Name(null));
   }
 
-  @Test
-  void ensureNameMustNotBeBlank() {
-    assertThrows(IllegalArgumentException.class, () -> new Name(""));
+  @ParameterizedTest
+  @ValueSource(strings = {"", " ", "\t"})
+  void ensureNameMustNotBeBlank(String name) {
+    assertThrows(IllegalArgumentException.class, () -> new Name(name));
   }
 
-  @Test
-  void ensureNameMustOnlyBeAlphanumeric() {
-    assertThrows(IllegalArgumentException.class, () -> new Name("Ricardo!"));
+  @ParameterizedTest
+  @ValueSource(strings = {"Ricardo!", "joao@mail", "Ana.Silva", "<script>", "Rui_Costa"})
+  void ensureNameMustOnlyBeAlphanumeric(String name) {
+    assertThrows(IllegalArgumentException.class, () -> new Name(name));
   }
 
-  /** Text from <a href="https://www.lipsum.com/">Lorem Ipsum</a> generator. */
-  @Test
-  void ensureNameMustNotBeOversize() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () ->
-            new Name(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fermentum venenatis augue, a congue turpis eleifend ut. Etiam fringilla ex nulla, id quis."));
+  @ParameterizedTest
+  @ValueSource(strings = {"João Álvares", "Joana d'Arc", "Maria-José", "Pedro II", "Luís 3"})
+  void ensureNameAcceptsAccentsApostrophesHyphensAndDigits(String name) {
+    assertEquals(name, new Name(name).toString());
   }
 
   @Test
@@ -41,5 +41,13 @@ class NameTest {
     final var name = new Name("Some name");
     name.setName("Some other name");
     assertEquals("Some other name", name.toString());
+  }
+
+  @Test
+  void ensureInvalidChangeKeepsPreviousName() {
+    final var name = new Name("Some name");
+
+    assertThrows(IllegalArgumentException.class, () -> name.setName("N@me"));
+    assertEquals("Some name", name.toString());
   }
 }

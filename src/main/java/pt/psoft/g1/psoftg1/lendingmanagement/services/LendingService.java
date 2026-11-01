@@ -29,6 +29,17 @@ public interface LendingService {
 
   Lending setReturned(String id, SetLendingReturnedRequest resource, long desiredVersion);
 
+  /**
+   * Renews an existing lending. The applicable lending policy is re-evaluated at this moment (per
+   * the Lending Policies Specification), decides whether the renewal is allowed and what the new
+   * limit date is, and the lending records the extension. See ADR-0007.
+   *
+   * @param lendingNumber the lending to renew
+   * @param desiredVersion the client's expected version, for optimistic locking
+   * @return the renewed lending
+   */
+  Lending renew(String lendingNumber, long desiredVersion);
+
   Double getAverageDuration();
 
   List<Lending> getOverdue(Page page);

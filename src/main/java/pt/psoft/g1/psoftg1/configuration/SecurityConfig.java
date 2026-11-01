@@ -118,6 +118,8 @@ public class SecurityConfig {
         .permitAll()
         .requestMatchers(format("%s/**", swaggerPath))
         .permitAll()
+        .requestMatchers(HttpMethod.GET, "/actuator/health/**", "/actuator/info")
+        .permitAll()
         // Our public endpoints
         .requestMatchers("/api/public/**")
         .permitAll() // public assets & end-points
@@ -213,6 +215,8 @@ public class SecurityConfig {
         .hasRole(Role.LIBRARIAN)
         .requestMatchers(HttpMethod.GET, "/api/lendings/overdue")
         .hasRole(Role.LIBRARIAN)
+        .requestMatchers(HttpMethod.PATCH, "/api/lendings/{year}/{seq}/renew")
+        .hasRole(Role.READER)
         .requestMatchers(HttpMethod.PATCH, "/api/lendings/{year}/{seq}")
         .hasRole(Role.READER)
         .requestMatchers(HttpMethod.POST, "/api/lendings/search")

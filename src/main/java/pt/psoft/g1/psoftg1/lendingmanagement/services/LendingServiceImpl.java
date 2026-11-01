@@ -7,13 +7,20 @@ import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEvent;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.events.LendingEventType;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.LendingPolicy;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.ReaderLendingContext;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.policy.RenewalContext;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
@@ -27,9 +34,8 @@ public class LendingServiceImpl implements LendingService {
   private final FineRepository fineRepository;
   private final BookRepository bookRepository;
   private final ReaderRepository readerRepository;
-
-  @Value("${lendingDurationInDays}")
-  private int lendingDurationInDays;
+  private final LendingPolicyProvider lendingPolicyProvider;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Value("${fineValuePerDayInCents}")
   private int fineValuePerDayInCents;
@@ -57,23 +63,8 @@ public class LendingServiceImpl implements LendingService {
   }
 
   @Override
+  @Transactional
   public Lending create(final CreateLendingRequest resource) {
-    int count = 0;
-
-    Iterable<Lending> lendingList =
-        lendingRepository.listOutstandingByReaderNumber(resource.getReaderNumber());
-    for (Lending lending : lendingList) {
-      // Business rule: cannot create a lending if user has late outstanding books to return.
-      if (lending.getDaysDelayed() > 0) {
-        throw new LendingForbiddenException("Reader has book(s) past their due date");
-      }
-      count++;
-      // Business rule: cannot create a lending if user already has 3 outstanding books to return.
-      if (count >= 3) {
-        throw new LendingForbiddenException("Reader has three books outstanding already");
-      }
-    }
-
     final var b =
         bookRepository
             .findByIsbn(resource.getIsbn())
@@ -82,13 +73,47 @@ public class LendingServiceImpl implements LendingService {
         readerRepository
             .findByReaderNumber(resource.getReaderNumber())
             .orElseThrow(() -> new NotFoundException("Reader not found"));
-    int seq = lendingRepository.getCountFromCurrentYear() + 1;
-    final Lending l = new Lending(b, r, seq, lendingDurationInDays, fineValuePerDayInCents);
 
-    return lendingRepository.save(l);
+    // Delegate the borrow-eligibility and lending-period decisions to the applicable policy;
+    // the service only gathers the reader's situation and maps a denial to the exception.
+    final ReaderLendingContext context = buildReaderLendingContext(resource.getReaderNumber());
+    final LendingPolicy policy = lendingPolicyProvider.policyFor(r);
+
+    policy
+        .canBorrow(context)
+        .getReason()
+        .ifPresent(
+            reason -> {
+              throw new LendingForbiddenException(reason);
+            });
+
+    int seq = lendingRepository.getCountFromCurrentYear() + 1;
+    final LocalDate limitDate = policy.limitDateFor(LocalDate.now(), context);
+    final Lending l = new Lending(b, r, seq, limitDate, fineValuePerDayInCents);
+
+    final Lending saved = lendingRepository.save(l);
+    eventPublisher.publishEvent(LendingEvent.of(LendingEventType.CREATED, saved));
+    return saved;
+  }
+
+  /**
+   * Summarizes the reader's active lendings (not yet returned, overdue included) into the data a
+   * {@link LendingPolicy} needs to decide a new lending.
+   */
+  private ReaderLendingContext buildReaderLendingContext(String readerNumber) {
+    int activeLendings = 0;
+    boolean hasOverdue = false;
+    for (Lending lending : lendingRepository.listOutstandingByReaderNumber(readerNumber)) {
+      activeLendings++;
+      if (lending.getDaysDelayed() > 0) {
+        hasOverdue = true;
+      }
+    }
+    return new ReaderLendingContext(activeLendings, hasOverdue);
   }
 
   @Override
+  @Transactional
   public Lending setReturned(
       final String lendingNumber,
       final SetLendingReturnedRequest resource,
@@ -107,7 +132,54 @@ public class LendingServiceImpl implements LendingService {
       fineRepository.save(fine);
     }
 
-    return lendingRepository.save(lending);
+    final Lending saved = lendingRepository.save(lending);
+    eventPublisher.publishEvent(LendingEvent.of(LendingEventType.RETURNED, saved));
+    return saved;
+  }
+
+  @Override
+  @Transactional
+  public Lending renew(final String lendingNumber, final long desiredVersion) {
+
+    final var lending =
+        lendingRepository
+            .findByLendingNumber(lendingNumber)
+            .orElseThrow(
+                () -> new NotFoundException("Cannot renew lending with this lending number"));
+
+    // Re-evaluate the applicable policy at renewal time (lending spec §4.3), then delegate the
+    // renewal decision and the renewed limit date to it; the service only gathers the situation
+    // and maps a denial to the exception. The state change itself stays on the entity (ADR-0007).
+    final LendingPolicy policy = lendingPolicyProvider.policyFor(lending.getReaderDetails());
+    final RenewalContext context = buildRenewalContext(lending);
+
+    policy
+        .canRenew(context)
+        .getReason()
+        .ifPresent(
+            reason -> {
+              throw new LendingForbiddenException(reason);
+            });
+
+    lending.renew(desiredVersion, policy.renewalLimitDateFor(context));
+
+    final Lending saved = lendingRepository.save(lending);
+    eventPublisher.publishEvent(LendingEvent.of(LendingEventType.RENEWED, saved));
+    return saved;
+  }
+
+  /**
+   * Summarizes the facts a {@link LendingPolicy} needs to decide a renewal: the lending's current
+   * limit date, how many times it has already been renewed, whether it is currently overdue, and
+   * how many active lendings the reader holds (the lending being renewed is itself active and is
+   * therefore included in that count).
+   */
+  private RenewalContext buildRenewalContext(final Lending lending) {
+    final boolean overdue = lending.getDaysDelayed() > 0;
+    final int activeLendings =
+        lendingRepository.listOutstandingByReaderNumber(lending.getReaderNumber()).size();
+    return new RenewalContext(
+        lending.getLimitDate(), lending.getRenewalCount(), overdue, activeLendings);
   }
 
   @Override

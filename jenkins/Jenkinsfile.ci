@@ -1,0 +1,83 @@
+pipeline {
+  agent any
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+    disableConcurrentBuilds()
+    copyArtifactPermission('psoft-g1-pp')
+    timeout(time: 45, unit: 'MINUTES')
+  }
+
+  environment {
+    MAVEN_ARGS = '-B -ntp'
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        sh './mvnw clean compile'
+      }
+    }
+    stage('Static analysis') {
+      steps {
+        sh './mvnw spotless:check checkstyle:check'
+      }
+    }
+    stage('Unit tests') {
+      steps {
+        sh './mvnw test'
+      }
+      post {
+        always {
+          junit 'target/surefire-reports/*.xml'
+        }
+      }
+    }
+    stage('Integration tests') {
+      steps {
+        sh './mvnw failsafe:integration-test failsafe:verify'
+      }
+      post {
+        always {
+          junit 'target/failsafe-reports/*.xml'
+        }
+      }
+    }
+    stage('Mutation tests') {
+      steps {
+        sh './mvnw pitest:mutationCoverage'
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'target/pit-reports/**', allowEmptyArchive: true
+        }
+      }
+    }
+    stage('Package') {
+      steps {
+        sh './mvnw package -DskipTests -Drelease.commit="$GIT_COMMIT"'
+      }
+    }
+    stage('Deploy DEV') {
+      when {
+        expression { env.GIT_BRANCH in ['origin/main', 'main'] || env.BRANCH_NAME == 'main' }
+      }
+      steps {
+        dir('artifact') { deleteDir() }
+        sh '''
+          mkdir -p artifact
+          cp target/psoft-g1-*.jar artifact/app.jar
+          printf 'CI_JOB=%s\nCI_BUILD=%s\nGIT_COMMIT=%s\n' "$JOB_NAME" "$BUILD_NUMBER" "$GIT_COMMIT" > artifact/release.properties
+        '''
+        script {
+          def deploy = load 'deploy/jenkins-deploy.groovy'
+          deploy.call('dev')
+        }
+        dir('validated') { deleteDir() }
+        sh 'mkdir -p validated && cp artifact/app.jar artifact/release.properties validated/'
+        archiveArtifacts artifacts: 'validated/app.jar,validated/release.properties', fingerprint: true
+        build job: 'psoft-g1-pp', parameters: [string(name: 'CI_BUILD', value: env.BUILD_NUMBER)], wait: false
+      }
+    }
+  }
+}

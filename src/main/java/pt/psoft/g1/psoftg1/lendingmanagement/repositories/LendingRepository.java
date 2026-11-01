@@ -15,11 +15,21 @@ public interface LendingRepository {
 
   List<Lending> listOutstandingByReaderNumber(String readerNumber);
 
+  /** Completed (returned) lendings of a reader whose return date is on or after {@code since}. */
+  List<Lending> listCompletedByReaderNumberSince(String readerNumber, LocalDate since);
+
   Double getAverageDuration();
 
   Double getAvgLendingDurationByIsbn(String isbn);
 
   List<Lending> getOverdue(Page page);
+
+  /**
+   * Lendings that are now overdue (not returned and past their limit date) and whose
+   * becoming-overdue has not yet been notified, as of {@code today}. Used by the overdue sweep
+   * (issue #18) so a lending is notified at most once.
+   */
+  List<Lending> listOverdueNotNotified(LocalDate today);
 
   List<Lending> searchLendings(
       Page page,

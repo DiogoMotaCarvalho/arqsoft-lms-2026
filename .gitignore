@@ -25,6 +25,10 @@ dist/
 
 # JetBrains IDE
 .idea/
+*.iml
+
+# ArchUnit freeze baseline (regenerated locally; allowStoreCreation=true)
+archunit_store/
 
 # Unit test reports
 TEST*.xml

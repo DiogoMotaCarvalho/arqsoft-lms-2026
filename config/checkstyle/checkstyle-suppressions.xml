@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<!-- Both names are part of the public API: `_links` is the HAL field in JSON responses and
+     `photoURI` is a request parameter, so renaming them would break clients. -->
+<suppressions>
+  <suppress checks="MemberName" files=".*View\.java" message="'_links'"/>
+  <suppress checks="AbbreviationAsWordInName" message="'photoURI'"/>
+</suppressions>

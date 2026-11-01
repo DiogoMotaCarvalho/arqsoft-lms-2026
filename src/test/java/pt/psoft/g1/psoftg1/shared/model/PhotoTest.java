@@ -3,21 +3,48 @@ package pt.psoft.g1.psoftg1.shared.model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 class PhotoTest {
+  private static class PhotoHolder extends EntityWithPhoto {}
+
   @Test
   void ensurePathMustNotBeNull() {
     assertThrows(NullPointerException.class, () -> new Photo(null));
   }
 
   @Test
-  void ensurePathIsValidToLocalFile() {
-    Path fileStorageLocation = Paths.get("uploads-psoft-g1").toAbsolutePath().normalize();
-    assertNotEquals(null, fileStorageLocation.toString());
+  void ensurePhotoStoresPath() {
+    Photo photo = new Photo(Path.of("photoTest.jpg"));
+    assertEquals("photoTest.jpg", photo.getPhotoFile());
+  }
 
-    Photo photo = new Photo(Paths.get("photoTest.jpg"));
-    assertEquals(photo.getPhotoFile(), "photoTest.jpg");
+  @Test
+  void ensureEntityStoresValidPhotoPath() {
+    PhotoHolder entity = new PhotoHolder();
+
+    entity.setPhoto("photoTest.jpg");
+
+    assertEquals("photoTest.jpg", entity.getPhoto().getPhotoFile());
+  }
+
+  @Test
+  void ensureEntityDiscardsInvalidPhotoPath() {
+    PhotoHolder entity = new PhotoHolder();
+    entity.setPhoto("photoTest.jpg");
+
+    entity.setPhoto("invalid\0path.jpg");
+
+    assertNull(entity.getPhoto());
+  }
+
+  @Test
+  void ensureEntityPhotoCanBeCleared() {
+    PhotoHolder entity = new PhotoHolder();
+    entity.setPhoto("photoTest.jpg");
+
+    entity.setPhoto(null);
+
+    assertNull(entity.getPhoto());
   }
 }
