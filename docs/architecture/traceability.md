@@ -58,3 +58,28 @@ the code that implements it, and the tests that verify it.
 
   Both are recorded in the [testing strategy](../testing/testing-strategy.md) and the
   [ADD record](add.md), iteration 4.
+
+## ADR references
+
+The code comments and the ASR catalog cite decisions ADR-0001 to ADR-0016. Each one is recorded, with
+its alternatives and rationale, in the ADD record ([`add.md`](add.md)) or the process design
+([`development-process-design.md`](../lmRedesign/system-to-be/development-process-design.md)):
+
+| ADR cited | Decision | Recorded in |
+|---|---|---|
+| ADR-0001 | lending-policy Strategy interface | `add.md`, Iteration 1 |
+| ADR-0002 | layering rules with ArchUnit | `add.md`, Iteration 5; DP-8 |
+| ADR-0003 | externalised, startup-validated lending-policy configuration | `add.md`, Iteration 1; DP-16 |
+| ADR-0004 | interpretation of the Adaptive policy's renewal rules | `add.md`, Iteration 1 (`AdaptiveLendingPolicy`) |
+| ADR-0005 | mutation testing with PIT | `add.md`, Iteration 5; DP-10 |
+| ADR-0006 | per-reader policy selection at request time | `add.md`, Iteration 1 |
+| ADR-0007 | renewal: the policy decides, the entity keeps the count | `add.md`, Iteration 1 |
+| ADR-0008 | bibliographic provider port and neutral `BibliographicData` | `add.md`, Iteration 2 |
+| ADR-0009 | ASR methodology | [`asr-catalog.md`](asr-catalog.md); `add.md`, section 1 |
+| ADR-0010 | Google Books adapter | `add.md`, Iteration 2 |
+| ADR-0011 | Open Library adapter | `add.md`, Iteration 2 |
+| ADR-0012 | source selection and fallback | `add.md`, Iteration 3 |
+| ADR-0013 | best-effort enrichment on read | `add.md`, Iteration 3 |
+| ADR-0014 | lending events and the notification port | `add.md`, Iteration 4 |
+| ADR-0015 | email, SMS and webhook channels | `add.md`, Iteration 4 |
+| ADR-0016 | channel selection, fan-out and delivery audit | `add.md`, Iteration 4 |
