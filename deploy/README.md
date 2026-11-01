@@ -11,7 +11,7 @@ push → psoft-g1-ci ──(main only)──> DEV ──> psoft-g1-pp ──(acc
 | psoft-g1-pp | jenkins/Jenkinsfile.pp | psoft-g1-ci, with `CI_BUILD` |
 | psoft-g1-prod | jenkins/Jenkinsfile.prod | psoft-g1-pp, with `PP_BUILD` |
 
-1. **CI** runs static analysis, unit tests, integration tests and the PIT gate on every branch. On `main` it packages the JAR with the commit embedded, deploys it to DEV, smoke-tests it, archives it as `validated/` and starts PP.
+1. **CI** runs static analysis, unit tests, integration tests, the coverage gate and the PIT gate on every branch, and publishes the test, Checkstyle, coverage and mutation reports. On `main` it packages the JAR with the commit embedded, deploys it to DEV, smoke-tests it, archives it as `validated/` and starts PP.
 2. **PP** (pre-production) copies the JAR of that exact CI build, deploys it, and waits up to 7 days for a `release-managers` member to accept it. It then re-checks that PP still runs that deployment, archives the JAR with the approver as `accepted/`, and starts PROD.
 3. **PROD** copies the accepted JAR of that exact PP build, deploys it and archives the full record.
 
@@ -34,7 +34,7 @@ Each environment uses an in-memory H2 database seeded by the `bootstrap` profile
 
 ## Jenkins
 
-- **Plugins:** Pipeline, Git, JUnit, SSH Agent, Copy Artifact, Lockable Resources.
+- **Plugins:** Pipeline, Git, JUnit, SSH Agent, Copy Artifact, Lockable Resources, Coverage (coverage and mutation reports), Warnings Next Generation (Checkstyle report).
 - **Agent:** Java 17+, `sh`, `ssh`/`scp`, `curl` and `python3`. The Maven Wrapper downloads Maven on the first build.
 - **known_hosts:** add the server's host key for the agent's user (`ssh-keyscan -p PORT HOST >> ~/.ssh/known_hosts`). Do not disable host key checking.
 - **Global environment variables** (Manage Jenkins → System):

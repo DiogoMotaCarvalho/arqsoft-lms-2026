@@ -22,6 +22,11 @@ pipeline {
       steps {
         sh './mvnw spotless:check checkstyle:check'
       }
+      post {
+        always {
+          recordIssues tools: [checkStyle(pattern: 'target/checkstyle-result.xml')]
+        }
+      }
     }
     stage('Unit tests') {
       steps {
@@ -35,11 +40,23 @@ pipeline {
     }
     stage('Integration tests') {
       steps {
-        sh './mvnw failsafe:integration-test failsafe:verify'
+        sh './mvnw jacoco:prepare-agent failsafe:integration-test failsafe:verify'
       }
       post {
         always {
           junit 'target/failsafe-reports/*.xml'
+        }
+      }
+    }
+    stage('Coverage') {
+      steps {
+        sh './mvnw jacoco:report jacoco:check@check'
+      }
+      post {
+        always {
+          recordCoverage id: 'coverage', name: 'Line and branch coverage',
+            tools: [[parser: 'JACOCO', pattern: 'target/site/jacoco/jacoco.xml']]
+          archiveArtifacts artifacts: 'target/site/jacoco/**', allowEmptyArchive: true
         }
       }
     }
@@ -49,6 +66,8 @@ pipeline {
       }
       post {
         always {
+          recordCoverage id: 'mutation', name: 'Mutation coverage',
+            tools: [[parser: 'PIT', pattern: 'target/pit-reports/mutations.xml']]
           archiveArtifacts artifacts: 'target/pit-reports/**', allowEmptyArchive: true
         }
       }
