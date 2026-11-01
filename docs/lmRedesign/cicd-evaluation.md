@@ -9,7 +9,7 @@ and [`system-current/current-project-state.md`](system-current/current-project-s
 
 **How the evidence was collected.**
 - **Stage times.** The CI stages were run in order on a clean copy of the repository, with the same
-  commands as `jenkins/Jenkinsfile.ci`, on one developer laptop (JDK 24, Maven wrapper). The times are
+  commands as `jenkins/Jenkinsfile.ci`, on a development machine (JDK 24, Maven wrapper). The times are
   wall-clock times on that machine and vary with load; the ranges come from two runs.
 - **The deployment chain.** The smoke test was run against the packaged JAR, started as the systemd
   service starts it.
@@ -85,8 +85,8 @@ check. The smoke test allows up to 150 seconds for start-up.
   production by design (DP-15).
 
 **Limitations:**
-- **No persistent database.** Each environment reseeds an in-memory H2 at start, so PP and PROD cannot
-  hold real data, and a restart loses everything.
+- **In-memory database.** Each environment runs H2 in memory, reseeded with demo data at start; a
+  persistent database for PP and PROD is listed in section 6.
 - **One server for all environments.** A server failure affects DEV, PP and PROD together, and resource
   contention between them is possible.
 - **Rollback is manual,** and limited to the 30 builds Jenkins keeps.

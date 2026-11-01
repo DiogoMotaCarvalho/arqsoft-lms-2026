@@ -91,8 +91,7 @@ Constraints:
 - **The application's secrets are still in the repository.** The JWT key, the database password and the
   API key are in `src/main/resources`, outside DP-16's scope. Jenkins keeps only the deployment
   credentials.
-- **The environments have no persistent database.** H2 runs in memory and is reseeded on every start, so
-  PP and PROD hold demo data only.
+- **In-memory database.** Each environment runs H2 in memory, reseeded with demo data on every start.
 - **All environments share one server (C1).** A fault in the server affects them all.
 - **Rollback is manual (DP-17),** and limited to the 30 builds Jenkins keeps.
 - **The process metrics need a running Jenkins to collect:** deployment frequency, lead time, change

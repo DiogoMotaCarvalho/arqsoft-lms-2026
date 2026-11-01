@@ -114,7 +114,8 @@ The application is now deployed to three environments by Jenkins.
     `src/main/resources`.
 - **Operations.** Actuator exposes `health` (with liveness and readiness probes) and `info`. Logging uses
   the Spring Boot defaults and goes to the systemd journal. Every notification attempt is recorded in the
-  `NOTIFICATION_RECORD` table. Email and SMS are delivered through gateways that only write to the log.
+  `NOTIFICATION_RECORD` table. Email and SMS are delivered through
+  logging gateways; a mail or SMS provider plugs in as another gateway implementation.
 
 ---
 
@@ -234,7 +235,7 @@ same count gives 1,186 lines of test code for the base project, about 1 to 5.
 - **The seeder** is covered because the integration tests start the application with the `bootstrap`
   profile.
 
-**Weak spots, mostly unchanged from the base project:**
+**Remaining gaps, mostly inherited from the base project:**
 - **The REST layer.** The Lending (60%), Shared (64%), user administration (42%), Book (29%) and Author
   (25%) controllers are exercised by the system tests. The Reader and Genre controllers stay at 1–2%.
 - **Genre, Reader and User custom queries** are at 0%.

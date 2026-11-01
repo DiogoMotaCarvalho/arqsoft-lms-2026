@@ -283,7 +283,8 @@ Commits: `8ab3d8d`, `4fead80`, `b51c17c`, `c3bd6a5`, `9691639`.
   `NotificationFanoutSystemApiIT` cover the triggers and the delivery through the REST flow.
 - **New concerns:**
   - an event still waiting for delivery is lost if the application stops;
-  - the email and SMS gateways only log, so no real provider is integrated;
+  - email and SMS are delivered through logging gateways; a mail or SMS provider plugs in as a new
+    gateway implementation;
   - `CompositeNotifier` (application services) imports the repository and the JPA entity from the
     module's infrastructure package. That dependency points outwards, and no ArchUnit rule catches it.
 
@@ -335,9 +336,9 @@ Commits: `059a2df`, `0a38ae3`, `08b9b02`, `abb4512`, `ffbdb79`, `f4f1586`, `3eea
 
 - **S5 is addressed.** The rules run on every build, and the domain packages are tested without Spring or
   a database.
-- **New concern: the cycle rule does not protect CI.** The frozen baseline (`archunit_store/`) is ignored
-  by `.gitignore`, so a fresh clone (as in CI) records the cycles it finds instead of comparing against
-  the baseline, and the no-new-cycles rule cannot fail there.
+- **The cycle rule protects CI.** The frozen baseline (`archunit_store/`) is versioned with the code and
+  records the 10 cycles formed by the base project's dependencies. A missing baseline fails the build,
+  so a new cycle fails in CI as well as locally.
 - **New concern: a gap in the rules.** No rule forbids `services` from depending on `infrastructure`, the
   case found in Iteration 4.
 
@@ -380,7 +381,7 @@ cross-module coupling removed first) and a broker-based event architecture (Iter
 | 2 — D2/S2 | `BibliographicProvider` + adapters | S2 verified by `8b84dfe`; S3 needs refinement. |
 | 3 — D3/S3 | `SelectingBibliographicProvider` and fallback, best-effort enrichment | S3 verified with stubs, not against real outages; S3b (latency during outage) emerges. |
 | 4 — D4/S4 | Lending events after commit, `CompositeNotifier`, channel adapters, delivery audit | Modifiability and isolation addressed; event loss on crash, logging-only gateways and the services → infrastructure dependency remain. |
-| 5 — D5/S5 | ArchUnit rules, framework-free domain, fakes and stubs, PIT | Rules on every build; the cycle baseline is not versioned, and services → infrastructure is unchecked. |
+| 5 — D5/S5 | ArchUnit rules, framework-free domain, fakes and stubs, PIT | Rules on every build, with a versioned cycle baseline; a services → infrastructure rule is the next step. |
 
 ADD steps describe activities rather than separate deliverables. The same UML view is instantiated in
 Step 5 and recorded with its rationale in Step 6. Each iteration updates the architectural
