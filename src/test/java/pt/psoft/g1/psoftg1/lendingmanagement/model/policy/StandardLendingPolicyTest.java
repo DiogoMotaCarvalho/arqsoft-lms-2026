@@ -6,9 +6,16 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 /**
- * Transparent-box tests at SUT = domain class for the Standard policy: decision outcomes and
- * boundary conditions. Parameters: max 3 active lendings, 15-day period, max 3 renewals, 15-day
- * renewal extension.
+ * Transparent-box and opaque-box tests at SUT = domain class for the Standard policy: decision
+ * outcomes and boundary conditions. Parameters: max 3 active lendings, 15-day period, max 3
+ * renewals, 15-day renewal extension.
+ *
+ * <p>Renewal-counting assumption (criterion C3.1): {@code renewalsSoFar} is the number of renewals
+ * already performed on the lending, and a renewal is permitted while {@code renewalsSoFar <
+ * maxRenewals}. A policy with {@code maxRenewals = N} therefore permits N renewals and denies the
+ * (N+1)th, and {@code maxRenewals = 0} permits none. The {@code maxRenewals = 0} partition is
+ * exercised below, since the parameter's domain is {@code >= 0} (unlike the strictly-positive
+ * parameters).
  */
 class StandardLendingPolicyTest {
 
@@ -39,6 +46,14 @@ class StandardLendingPolicyTest {
   @Test
   void rejectsNonPositiveRenewalDuration() {
     assertThrows(IllegalArgumentException.class, () -> new StandardLendingPolicy(3, 15, 3, 0));
+  }
+
+  @Test
+  void acceptsZeroMaxRenewals() {
+    // maxRenewals is >= 0 (unlike the strictly-positive parameters), so zero is a valid
+    // configuration meaning "no renewals allowed". Asserting that zero is accepted pins the
+    // guard's boundary at < 0 rather than <= 0.
+    assertDoesNotThrow(() -> new StandardLendingPolicy(3, 15, 0, 15));
   }
 
   // --- borrow eligibility ---
@@ -96,6 +111,17 @@ class StandardLendingPolicyTest {
   void deniesRenewalAtTheRenewalCap() {
     RenewalContext context = new RenewalContext(LocalDate.of(2026, 1, 10), 3, false);
     assertTrue(policy.canRenew(context).isDenied());
+  }
+
+  @Test
+  void deniesAnyRenewalWhenMaxRenewalsIsZero() {
+    StandardLendingPolicy noRenewals = new StandardLendingPolicy(3, 15, 0, 15);
+    // renewalsSoFar = 0, not overdue: the very first renewal is denied, because 0 >=
+    // maxRenewals(0).
+    PolicyDecision decision =
+        noRenewals.canRenew(new RenewalContext(LocalDate.of(2026, 1, 10), 0, false));
+    assertTrue(decision.isDenied());
+    assertTrue(decision.getReason().orElseThrow().contains("0 renewals"));
   }
 
   @Test
