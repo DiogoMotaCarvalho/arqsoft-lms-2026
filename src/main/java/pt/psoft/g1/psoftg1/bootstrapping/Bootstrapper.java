@@ -22,6 +22,7 @@ import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 import pt.psoft.g1.psoftg1.shared.services.ForbiddenNameService;
@@ -606,12 +607,12 @@ public class Bootstrapper implements CommandLineRunner {
               });
     }
 
-    final var readerDetails1 = readerRepository.findByReaderNumber("2024/1");
-    final var readerDetails2 = readerRepository.findByReaderNumber("2024/2");
-    final var readerDetails3 = readerRepository.findByReaderNumber("2024/3");
-    final var readerDetails4 = readerRepository.findByReaderNumber("2024/4");
-    final var readerDetails5 = readerRepository.findByReaderNumber("2024/5");
-    final var readerDetails6 = readerRepository.findByReaderNumber("2024/6");
+    final var readerDetails1 = readerRepository.findByReaderNumber(new ReaderNumber(1).toString());
+    final var readerDetails2 = readerRepository.findByReaderNumber(new ReaderNumber(2).toString());
+    final var readerDetails3 = readerRepository.findByReaderNumber(new ReaderNumber(3).toString());
+    final var readerDetails4 = readerRepository.findByReaderNumber(new ReaderNumber(4).toString());
+    final var readerDetails5 = readerRepository.findByReaderNumber(new ReaderNumber(5).toString());
+    final var readerDetails6 = readerRepository.findByReaderNumber(new ReaderNumber(6).toString());
 
     List<ReaderDetails> readers = new ArrayList<>();
     if (readerDetails1.isPresent() && readerDetails2.isPresent() && readerDetails3.isPresent()) {
